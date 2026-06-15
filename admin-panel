@@ -737,12 +737,20 @@
 // CONFIG — update these before deploying
 // ══════════════════════════════════════════════════════════════════════════════
 var SCRIPT_URL      = 'https://script.google.com/macros/s/AKfycbzWMRr34s08mgfRliKfFUKwvp6QiHSmewYTapN63Z7Ok64TKe1pDUNkTdoYkLCNVKgceg/exec';
-var SELLER_FORM_URL = 'https://fightiger23.github.io/Product_request/'; // ← hosted URL of the product creation form
+var SELLER_FORM_URL = 'YOUR_SELLER_FORM_URL_HERE'; // ← hosted URL of the product creation form
 
+// Passwords are stored as SHA-256 hashes — plain text passwords are not in this file.
+// To generate a new hash: https://emn178.github.io/online-tools/sha256.html
 var ADMIN_CREDENTIALS = [
-  { email:'bd@g2g.com',    password:'G2G@BD2025',    name:'BD Team'  },
-  { email:'admin@g2g.com', password:'G2G@Admin2025', name:'Admin'    }
+  { email:'bd@g2g.com',    hash:'f64fae4aec05b835f79c07715ba3d36fcd7ae25388bf202833f67c9d026ddd63', name:'BD Team'  },
+  { email:'admin@g2g.com', hash:'879ffd211a49e236e638f7125fb535a89ef3d058c17d6bc7a60ae7b3d4f5da18', name:'Admin'    }
 ];
+
+// Hash a string with SHA-256 (returns a Promise)
+async function sha256(str){
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // STATE
@@ -787,12 +795,15 @@ function loginKey(e){ if(e.key==='Enter') doLogin(); }
 function doLogin(){
   var email=$('loginEmail').value.trim().toLowerCase();
   var pw=$('loginPassword').value;
-  var match=ADMIN_CREDENTIALS.find(function(c){ return c.email===email&&c.password===pw; });
-  if(!match){ $('loginErr').style.display='block'; $('loginPassword').classList.add('error'); return; }
-  saveCredsIfNeeded($('loginEmail').value.trim(),pw);
-  try{ localStorage.setItem(SESSION_KEY,JSON.stringify({email:match.email,name:match.name})); }catch(e){}
-  activatePanel(match);
-  loadRequests();
+  var candidate=ADMIN_CREDENTIALS.find(function(c){ return c.email===email; });
+  if(!candidate){ $('loginErr').style.display='block'; $('loginPassword').classList.add('error'); return; }
+  sha256(pw).then(function(hashed){
+    if(hashed!==candidate.hash){ $('loginErr').style.display='block'; $('loginPassword').classList.add('error'); return; }
+    saveCredsIfNeeded($('loginEmail').value.trim(),pw);
+    try{ localStorage.setItem(SESSION_KEY,JSON.stringify({email:candidate.email,name:candidate.name})); }catch(e){}
+    activatePanel(candidate);
+    loadRequests();
+  });
 }
 function activatePanel(match){
   loggedInName=match.name;
