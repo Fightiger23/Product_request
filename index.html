@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Creation Request — G2G</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f5f7; --white: #ffffff; --border: #e2e4e9; --border-focus: #e3001b;
+    --accent: #e3001b; --accent-hover: #c40017; --accent-light: #fff0f0;
+    --text: #1a1a2e; --muted: #8a8fa8; --label: #4a4f6a;
+    --success: #00a86b; --warning: #f59e0b;
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100vh; padding: 32px 16px 80px; }
+  .container { max-width: 680px; margin: 0 auto; }
+  .header { background: #e3001b; border-radius: var(--radius); padding: 20px 28px; margin-bottom: 16px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 20px; }
+  .logo { width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 18px; letter-spacing: -1px; flex-shrink: 0; }
+  .header-text h1 { font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
+  .header-text p { font-size: 13px; color: rgba(255,255,255,0.65); }
+  .card { background: var(--white); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); transition: border-color 0.2s, box-shadow 0.2s; }
+  .card:focus-within { border-color: rgba(227,0,27,0.25); box-shadow: var(--shadow-md); }
+  .card.hidden { display: none; }
+  .card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+  .card-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .card-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .card-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .required { color: var(--accent); margin-left: 2px; }
+  .optional-tag { font-size: 10px; font-weight: 500; color: var(--muted); background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: middle; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field-block { display: flex; flex-direction: column; }
+  input[type="text"], input[type="email"], input[type="url"] { width: 100%; background: var(--white); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; padding: 10px 14px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+  input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(227,0,27,0.1); }
+  input::placeholder { color: var(--muted); font-weight: 300; }
+  input.field-error { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(227,0,27,0.08); }
+  input:disabled { background: var(--bg); color: var(--muted); cursor: not-allowed; opacity: 0.55; }
+  .field-label { font-size: 12px; font-weight: 600; color: var(--label); margin-bottom: 5px; display: block; }
+  .field-err-msg { font-size: 11px; color: var(--accent); margin-top: 4px; display: none; }
+  .identity-note { margin-top: 12px; padding: 9px 12px; background: #fffbeb; border-left: 3px solid var(--warning); border-radius: 0 6px 6px 0; font-size: 11px; color: #92640a; line-height: 1.6; }
+  .verify-pending { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; font-weight: 600; color: #92640a; background: #fff9e6; border: 1px solid #fde68a; border-radius: 20px; padding: 4px 10px; }
+  .options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+  .options-grid.single-col { grid-template-columns: 1fr; }
+  .option { display: flex; align-items: center; gap: 10px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 14px; cursor: pointer; transition: all 0.15s; font-size: 13px; font-weight: 500; color: var(--label); user-select: none; }
+  .option:hover { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+  .option.selected { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+  .option input[type="radio"], .option input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--accent); flex-shrink: 0; cursor: pointer; }
+  .sub-options { margin-top: 10px; padding: 12px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); }
+  .sub-options-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .sub-options-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+  .field-group { display: flex; flex-direction: column; gap: 10px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .key-toggle-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; margin-bottom: 14px; cursor: pointer; transition: all 0.15s; user-select: none; width: fit-content; }
+  .key-toggle-row:hover { border-color: var(--accent); background: var(--accent-light); }
+  .key-toggle-row.active { border-color: var(--accent); background: var(--accent-light); }
+  .key-toggle-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+  .key-toggle-label { font-size: 13px; font-weight: 600; color: var(--label); }
+  .key-toggle-row.active .key-toggle-label { color: var(--accent); }
+  .key-note { font-size: 11px; color: var(--muted); margin-top: -6px; margin-bottom: 14px; padding: 7px 12px; background: #fffbeb; border-left: 3px solid var(--warning); border-radius: 0 6px 6px 0; line-height: 1.5; }
+  .denom-col-headers { display: grid; grid-template-columns: 1fr 1fr 1fr 80px; gap: 8px; margin-bottom: 6px; padding: 0 2px; align-items: center; }
+  .denom-col-headers span { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+  .denom-col-headers .col-req::after { content: ' *'; color: var(--accent); }
+  .denom-rows-wrap { transition: opacity 0.2s; }
+  .denom-rows-wrap.locked { opacity: 0.38; pointer-events: none; }
+  .denom-list { display: flex; flex-direction: column; gap: 8px; }
+  .denom-row { display: grid; grid-template-columns: 1fr 1fr 1fr 36px; gap: 8px; align-items: center; }
+  .apply-all-label { display: flex; align-items: center; gap: 4px; font-size: 0.68rem; color: var(--muted); cursor: pointer; white-space: nowrap; font-weight: 500; }
+  .apply-all-label input[type="checkbox"] { width: 13px; height: 13px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+  .denom-sel-wrap { position: relative; }
+  .denom-sel-wrap select { width: 100%; appearance: none; -webkit-appearance: none; background: var(--white); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 9px 28px 9px 12px; outline: none; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+  .denom-sel-wrap select:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(227,0,27,0.1); }
+  .denom-sel-wrap::after { content: '▾'; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--muted); pointer-events: none; }
+  .denom-ds-text { width: 100%; background: var(--white); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 9px 12px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+  .denom-ds-text:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(227,0,27,0.1); }
+  .denom-row input[type="text"].denom-amt { font-size: 13px; padding: 9px 12px; margin: 0; }
+  .btn-add { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; background: var(--bg); color: var(--accent); border: 1.5px dashed rgba(227,0,27,0.35); border-radius: 8px; padding: 9px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.15s; }
+  .btn-add:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn-remove { background: #fff5f5; color: #e3001b; border: 1px solid #fecaca; border-radius: 6px; padding: 8px 10px; font-size: 14px; cursor: pointer; transition: all 0.15s; line-height: 1; flex-shrink: 0; width: 36px; }
+  .btn-remove:hover { background: #fee2e2; }
+  .dropdown-container { position: relative; width: 100%; }
+  .dropdown-input { width: 100%; background: var(--white); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; padding: 10px 14px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; cursor: pointer; display: flex; align-items: center; justify-content: space-between; min-height: 40px; }
+  .dropdown-input:hover { border-color: var(--accent); }
+  .dropdown-list { position: absolute; top: 100%; left: 0; right: 0; background: var(--white); border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; max-height: 250px; overflow-y: auto; z-index: 1000; box-shadow: var(--shadow-md); display: none; }
+  .dropdown-list.active { display: block; }
+  .dropdown-item { padding: 12px 14px; cursor: pointer; transition: background 0.1s; border-bottom: 1px solid var(--bg); font-size: 13px; color: var(--text); }
+  .dropdown-item:last-child { border-bottom: none; }
+  .dropdown-item:hover { background: var(--accent-light); color: var(--accent); }
+  .dropdown-item.hidden { display: none; }
+  .dropdown-search { padding: 8px 14px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--white); z-index: 1001; }
+  .dropdown-search input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 13px; outline: none; }
+  .dropdown-search input:focus { border-color: var(--border-focus); }
+  .dropdown-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-light); color: var(--accent); border-radius: 4px; padding: 4px 8px; margin-right: 6px; margin-bottom: 4px; font-size: 12px; font-weight: 500; }
+  .dropdown-tag-remove { cursor: pointer; font-weight: 700; }
+  .dropdown-tag-remove:hover { opacity: 0.7; }
+  .dropdown-tags-wrapper { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; min-height: 38px; padding: 6px 10px; }
+  .other-input-wrap { margin-top: 10px; }
+  .cp-note { font-size: 12px; color: #047857; background: #ecfdf5; border-left: 3px solid #10b981; padding: 8px 12px; border-radius: 0 6px 6px 0; margin-top: 8px; line-height: 1.5; }
+  /* Tiered region */
+  .tier-block { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+  .tier-block-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .tier-label { font-size: 12px; font-weight: 600; color: var(--label); }
+  .cross-region-toggle { display: flex; align-items: center; gap: 7px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--label); background: var(--white); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 12px; transition: all 0.15s; user-select: none; }
+  .cross-region-toggle:hover { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+  .cross-region-toggle.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+  .cross-region-toggle input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--accent); cursor: pointer; }
+  /* Ref */
+  .ref-url-pill { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; padding: 7px 10px; }
+  .ref-url-pill-text { font-size: 12px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ref-url-pill-domain { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+  .ref-url-pill-rm { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 16px; line-height: 1; padding: 0 2px; transition: color 0.15s; flex-shrink: 0; }
+  .ref-url-pill-rm:hover { color: var(--accent); }
+  .ref-url-input-wrap { position: relative; flex: 1; }
+  .ref-url-input-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; pointer-events: none; color: var(--muted); }
+  .ref-url-input { width: 100%; padding: 10px 14px 10px 32px !important; }
+  .ref-url-input.error { border-color: var(--accent) !important; box-shadow: 0 0 0 3px rgba(227,0,27,0.1) !important; }
+  .ref-err-msg { display: none; font-size: 11px; color: #a32d2d; margin-top: 4px; }
+  .ref-required-hint { display: none; margin-top: 8px; padding: 8px 10px; background: var(--accent-light); border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; font-size: 11px; color: #712b13; line-height: 1.5; }
+  .ref-add-more-btn { display: none; align-items: center; gap: 5px; margin-top: 8px; background: none; border: none; cursor: pointer; color: var(--accent); font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; padding: 0; }
+  .ref-add-more-btn:hover { opacity: 0.75; }
+  .ref-upload-zone { border: 1.5px dashed rgba(227,0,27,0.35); border-radius: 8px; padding: 22px 16px; text-align: center; cursor: pointer; transition: background 0.15s, border-color 0.15s; position: relative; }
+  .ref-upload-zone:hover, .ref-upload-zone.drag { background: var(--accent-light); border-color: var(--accent); }
+  .ref-upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .ref-upload-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
+  .ref-img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-top: 8px; }
+  .ref-img-item { border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; position: relative; }
+  .ref-img-item img { width: 100%; height: 90px; object-fit: cover; display: block; background: var(--bg); }
+  .ref-img-item-rm { position: absolute; top: 5px; right: 5px; background: white; border: 1px solid var(--border); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; color: var(--muted); line-height: 1; transition: color 0.15s; }
+  .ref-img-item-rm:hover { color: var(--accent); }
+  .ref-img-meta { padding: 5px 8px; background: var(--bg); border-top: 1px solid var(--border); }
+  .ref-img-name { font-size: 11px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ref-img-size { font-size: 10px; color: var(--muted); }
+  .ref-opt-hint { margin-top: 8px; padding: 8px 10px; background: var(--bg); border-left: 3px solid var(--border); border-radius: 0 6px 6px 0; font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .submit-section { margin-top: 20px; }
+  .submit-btn { width: 100%; background: var(--accent); color: white; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.3px; border: none; border-radius: var(--radius); padding: 16px; cursor: pointer; transition: all 0.2s; }
+  .submit-btn:hover { background: var(--accent-hover); box-shadow: 0 4px 14px rgba(227,0,27,0.25); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+  .error-msg { background: var(--accent-light); border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; color: var(--accent); font-size: 13px; margin-top: 12px; }
+  .success-msg { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px 20px; color: var(--success); font-size: 14px; font-weight: 600; text-align: center; margin-top: 12px; line-height: 1.7; }
+  .resubmit-banner { background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius); padding: 14px 18px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px; }
+  .resubmit-banner-icon { font-size: 20px; flex-shrink: 0; }
+  .resubmit-banner-title { font-size: 13px; font-weight: 700; color: #92640a; margin-bottom: 2px; }
+  .resubmit-banner-reason { font-size: 12px; color: #92640a; line-height: 1.6; }
+  .hidden { display: none !important; }
+  .cross-region-toggle { overflow: visible !important; }
+  .sr-tooltip-wrap { position: relative; display: inline-flex; align-items: center; margin-left: 4px; }
+  .sr-tooltip-icon { font-size: 12px; color: var(--muted); cursor: default; line-height: 1; transition: color 0.15s; }
+  .sr-tooltip-wrap:hover .sr-tooltip-icon { color: var(--accent); }
+  .cross-region-toggle.active .sr-tooltip-icon { color: rgba(227,0,27,0.6); }
+  .sr-tooltip-box { display: none; position: absolute; right: 0; top: calc(100% + 8px); width: 230px; background: #1a1a2e; color: #fff; font-size: 11px; font-weight: 400; line-height: 1.6; padding: 9px 11px; border-radius: 7px; box-shadow: 0 6px 18px rgba(0,0,0,0.25); z-index: 9999; pointer-events: none; white-space: normal; }
+  .sr-tooltip-box::before { content: ''; position: absolute; top: -5px; right: 9px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid #1a1a2e; }
+  .sr-tooltip-wrap:hover .sr-tooltip-box { display: block; }
+  @media (max-width: 520px) {
+    .two-col { grid-template-columns: 1fr; }
+    .denom-row { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
+    .denom-col-headers { display: none; }
+    .options-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo">G2G</div>
+    <div class="header-text">
+      <h1>Product Creation Request</h1>
+      <p>Submit a new product listing for BD team review</p>
+    </div>
+  </div>
+
+  <div class="resubmit-banner hidden" id="resubmitBanner">
+    <div class="resubmit-banner-icon">⚠️</div>
+    <div>
+      <div class="resubmit-banner-title">Resubmission Required — <span id="resubmitId"></span></div>
+      <div class="resubmit-banner-reason" id="resubmitReason"></div>
+    </div>
+  </div>
+
+  <form id="mainForm">
+
+    <!-- Seller Identity -->
+    <div class="card" id="cardIdentity">
+      <div class="card-header">
+        <div class="card-icon">👤</div>
+        <div>
+          <div class="card-title">Seller Identity <span class="required">*</span></div>
+          <div class="card-desc">Enter your G2G registered details. We'll use these to contact you if amendments are needed.</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field-block">
+          <label class="field-label">G2G Username <span class="required">*</span></label>
+          <input type="text" id="sellerUsername" placeholder="e.g. seller_abc123" required>
+          <div class="field-err-msg" id="usernameErr">Please enter your G2G username</div>
+        </div>
+        <div class="field-block">
+          <label class="field-label">Registered Email <span class="required">*</span></label>
+          <input type="email" id="sellerEmail" placeholder="e.g. seller@email.com" required>
+          <div class="field-err-msg" id="emailErr">Please enter a valid email address</div>
+        </div>
+      </div>
+      <div class="verify-pending">⏳ Live verification coming soon — ensure details match your G2G account</div>
+      <div class="identity-note">Your username and email will be used to notify you of your request status. Make sure these match your registered G2G seller account exactly.</div>
+    </div>
+
+    <!-- Category -->
+    <div class="card" id="cardCategory">
+      <div class="card-header">
+        <div class="card-icon">📂</div>
+        <div>
+          <div class="card-title">Category <span class="required">*</span></div>
+          <div class="card-desc">Select the product category</div>
+        </div>
+      </div>
+      <div class="options-grid" id="categoryGroup">
+        <label class="option"><input type="radio" name="category" value="Games"> <span>🎮</span> Games</label>
+        <label class="option"><input type="radio" name="category" value="Software & Apps"> <span>💻</span> Software &amp; Apps</label>
+        <label class="option"><input type="radio" name="category" value="Gift Cards"> <span>🎁</span> Gift Cards</label>
+        <label class="option"><input type="radio" name="category" value="Payment Card"> <span>💳</span> Payment Card</label>
+        <label class="option"><input type="radio" name="category" value="Telco"> <span>📱</span> Telco</label>
+        <label class="option"><input type="radio" name="category" value="Others"> <span>➕</span> Others</label>
+      </div>
+      <div class="other-input-wrap hidden" id="categoryOtherWrap">
+        <input type="text" id="categoryOther" placeholder="Describe the new category">
+      </div>
+    </div>
+
+    <!-- Region — UPDATED -->
+    <div class="card" id="cardRegion">
+      <div class="card-header" style="align-items:center;">
+        <div class="card-icon">🌍</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-title">Supported Region <span class="required">*</span></div>
+            <label class="cross-region-toggle" id="crossRegionToggle">
+              <input type="checkbox" id="crossRegionCheck">
+              Shared Region
+              <span class="sr-tooltip-wrap">
+                <span class="sr-tooltip-icon">ⓘ</span>
+                <span class="sr-tooltip-box">When checked, the product can be used across multiple regions. When unchecked, the product is restricted to a specific region only.</span>
+              </span>
+            </label>
+          </div>
+          <div class="card-desc">Region(s) where this product is available</div>
+        </div>
+      </div>
+
+      <!-- Main region dropdown (Others removed) -->
+      <div class="dropdown-container">
+        <div class="dropdown-input" id="regionDropdown" tabindex="0">
+          <span id="regionSelected">Select regions...</span><span>▼</span>
+        </div>
+        <div class="dropdown-list" id="regionList">
+          <div class="dropdown-search"><input type="text" id="regionSearch" placeholder="Search regions..."></div>
+          <div class="dropdown-item" data-value="GLOBAL">Global</div>
+          <div class="dropdown-item" data-value="AF-REGION">Africa (AF)</div>
+          <div class="dropdown-item" data-value="AS-REGION">Asia (AS)</div>
+          <div class="dropdown-item" data-value="CIS">Commonwealth of Independent States (CIS)</div>
+          <div class="dropdown-item" data-value="EU">Europe (EU)</div>
+          <div class="dropdown-item" data-value="EMEA">Europe, Middle East and Africa (EMEA)</div>
+          <div class="dropdown-item" data-value="LATAM">Latin America (LATAM)</div>
+          <div class="dropdown-item" data-value="MENA">Middle East and North Africa (MENA)</div>
+          <div class="dropdown-item" data-value="NA-REGION">North America (NA)</div>
+          <div class="dropdown-item" data-value="SEA">South East Asia (SEA)</div>
+          <div class="dropdown-item" data-value="AD">Andorra (AD)</div>
+          <div class="dropdown-item" data-value="AE">United Arab Emirates (AE)</div>
+          <div class="dropdown-item" data-value="AF">Afghanistan (AF)</div>
+          <div class="dropdown-item" data-value="AG">Antigua and Barbuda (AG)</div>
+          <div class="dropdown-item" data-value="AI">Anguilla (AI)</div>
+          <div class="dropdown-item" data-value="AL">Albania (AL)</div>
+          <div class="dropdown-item" data-value="AM">Armenia (AM)</div>
+          <div class="dropdown-item" data-value="AN">Netherlands Antilles (AN)</div>
+          <div class="dropdown-item" data-value="AO">Angola (AO)</div>
+          <div class="dropdown-item" data-value="AR">Argentina (AR)</div>
+          <div class="dropdown-item" data-value="AS">American Samoa (AS)</div>
+          <div class="dropdown-item" data-value="AT">Austria (AT)</div>
+          <div class="dropdown-item" data-value="AU">Australia (AU)</div>
+          <div class="dropdown-item" data-value="AW">Aruba (AW)</div>
+          <div class="dropdown-item" data-value="AZ">Azerbaijan (AZ)</div>
+          <div class="dropdown-item" data-value="BA">Bosnia-Herzegovina (BA)</div>
+          <div class="dropdown-item" data-value="BB">Barbados (BB)</div>
+          <div class="dropdown-item" data-value="BD">Bangladesh (BD)</div>
+          <div class="dropdown-item" data-value="BE">Belgium (BE)</div>
+          <div class="dropdown-item" data-value="BF">Burkina Faso (BF)</div>
+          <div class="dropdown-item" data-value="BG">Bulgaria (BG)</div>
+          <div class="dropdown-item" data-value="BH">Bahrain (BH)</div>
+          <div class="dropdown-item" data-value="BI">Burundi (BI)</div>
+          <div class="dropdown-item" data-value="BJ">Benin (BJ)</div>
+          <div class="dropdown-item" data-value="BM">Bermuda (BM)</div>
+          <div class="dropdown-item" data-value="BN">Brunei Darussalam (BN)</div>
+          <div class="dropdown-item" data-value="BO">Bolivia (BO)</div>
+          <div class="dropdown-item" data-value="BQ">Bonaire, Sint Eustatius and Saba (BQ)</div>
+          <div class="dropdown-item" data-value="BR">Brazil (BR)</div>
+          <div class="dropdown-item" data-value="BS">Bahamas (BS)</div>
+          <div class="dropdown-item" data-value="BT">Bhutan (BT)</div>
+          <div class="dropdown-item" data-value="BV">Bouvet Island (BV)</div>
+          <div class="dropdown-item" data-value="BW">Botswana (BW)</div>
+          <div class="dropdown-item" data-value="BY">Belarus (BY)</div>
+          <div class="dropdown-item" data-value="BZ">Belize (BZ)</div>
+          <div class="dropdown-item" data-value="CA">Canada (CA)</div>
+          <div class="dropdown-item" data-value="CC">Cocos (Keeling) Islands (CC)</div>
+          <div class="dropdown-item" data-value="CD">Congo Democratic Republic of (CD)</div>
+          <div class="dropdown-item" data-value="CF">Central African Republic (CF)</div>
+          <div class="dropdown-item" data-value="CH">Switzerland (CH)</div>
+          <div class="dropdown-item" data-value="CI">Cote D'Ivoire (CI)</div>
+          <div class="dropdown-item" data-value="CK">Cook Islands (CK)</div>
+          <div class="dropdown-item" data-value="CL">Chile (CL)</div>
+          <div class="dropdown-item" data-value="CM">Cameroon (CM)</div>
+          <div class="dropdown-item" data-value="CN">China (CN)</div>
+          <div class="dropdown-item" data-value="CO">Colombia (CO)</div>
+          <div class="dropdown-item" data-value="CR">Costa Rica (CR)</div>
+          <div class="dropdown-item" data-value="CU">Cuba (CU)</div>
+          <div class="dropdown-item" data-value="CV">Cape Verde (CV)</div>
+          <div class="dropdown-item" data-value="CW">Curaçao (CW)</div>
+          <div class="dropdown-item" data-value="CX">Christmas Island (CX)</div>
+          <div class="dropdown-item" data-value="CY">Cyprus (CY)</div>
+          <div class="dropdown-item" data-value="CZ">Czech Republic (CZ)</div>
+          <div class="dropdown-item" data-value="DE">Germany (DE)</div>
+          <div class="dropdown-item" data-value="DJ">Djibouti (DJ)</div>
+          <div class="dropdown-item" data-value="DK">Denmark (DK)</div>
+          <div class="dropdown-item" data-value="DM">Dominica (DM)</div>
+          <div class="dropdown-item" data-value="DO">Dominican Republic (DO)</div>
+          <div class="dropdown-item" data-value="DZ">Algeria (DZ)</div>
+          <div class="dropdown-item" data-value="EC">Ecuador (EC)</div>
+          <div class="dropdown-item" data-value="EE">Estonia (EE)</div>
+          <div class="dropdown-item" data-value="EG">Egypt (EG)</div>
+          <div class="dropdown-item" data-value="ES">Spain (ES)</div>
+          <div class="dropdown-item" data-value="ET">Ethiopia (ET)</div>
+          <div class="dropdown-item" data-value="FI">Finland (FI)</div>
+          <div class="dropdown-item" data-value="FJ">Fiji (FJ)</div>
+          <div class="dropdown-item" data-value="FK">Falkland Islands (Malvinas) (FK)</div>
+          <div class="dropdown-item" data-value="FM">Micronesia Federated States of (FM)</div>
+          <div class="dropdown-item" data-value="FO">Faroe Islands (FO)</div>
+          <div class="dropdown-item" data-value="FR">France (FR)</div>
+          <div class="dropdown-item" data-value="GA">Gabon (GA)</div>
+          <div class="dropdown-item" data-value="GB">Great Britain (England Scotland Wales) (GB)</div>
+          <div class="dropdown-item" data-value="GD">Grenada (GD)</div>
+          <div class="dropdown-item" data-value="GE">Georgia (GE)</div>
+          <div class="dropdown-item" data-value="GF">French Guiana (GF)</div>
+          <div class="dropdown-item" data-value="GH">Ghana (GH)</div>
+          <div class="dropdown-item" data-value="GI">Gibraltar (GI)</div>
+          <div class="dropdown-item" data-value="GL">Greenland (GL)</div>
+          <div class="dropdown-item" data-value="GM">Gambia (GM)</div>
+          <div class="dropdown-item" data-value="GN">Guinea (GN)</div>
+          <div class="dropdown-item" data-value="GP">Guadeloupe (GP)</div>
+          <div class="dropdown-item" data-value="GQ">Equatorial Guinea (GQ)</div>
+          <div class="dropdown-item" data-value="GR">Greece (GR)</div>
+          <div class="dropdown-item" data-value="GS">South Georgia and South Sandwich Islands (GS)</div>
+          <div class="dropdown-item" data-value="GT">Guatemala (GT)</div>
+          <div class="dropdown-item" data-value="GW">Guinea-Bissau (GW)</div>
+          <div class="dropdown-item" data-value="GY">Guyana (GY)</div>
+          <div class="dropdown-item" data-value="HK">Hong Kong SAR of PRC (HK)</div>
+          <div class="dropdown-item" data-value="HM">Heard Island and McDonald Islands (HM)</div>
+          <div class="dropdown-item" data-value="HN">Honduras (HN)</div>
+          <div class="dropdown-item" data-value="HR">Croatia (Hrvatska) (HR)</div>
+          <div class="dropdown-item" data-value="HT">Haiti (HT)</div>
+          <div class="dropdown-item" data-value="HU">Hungary (HU)</div>
+          <div class="dropdown-item" data-value="ID">Indonesia (ID)</div>
+          <div class="dropdown-item" data-value="IE">Ireland (IE)</div>
+          <div class="dropdown-item" data-value="IL">Israel (IL)</div>
+          <div class="dropdown-item" data-value="IN">India (IN)</div>
+          <div class="dropdown-item" data-value="IO">British Indian Ocean Territory (IO)</div>
+          <div class="dropdown-item" data-value="IQ">Iraq (IQ)</div>
+          <div class="dropdown-item" data-value="IS">Iceland (IS)</div>
+          <div class="dropdown-item" data-value="IT">Italy (IT)</div>
+          <div class="dropdown-item" data-value="JM">Jamaica (JM)</div>
+          <div class="dropdown-item" data-value="JO">Jordan (JO)</div>
+          <div class="dropdown-item" data-value="JP">Japan (JP)</div>
+          <div class="dropdown-item" data-value="KE">Kenya (KE)</div>
+          <div class="dropdown-item" data-value="KG">Kyrgyzstan (KG)</div>
+          <div class="dropdown-item" data-value="KH">Cambodia (KH)</div>
+          <div class="dropdown-item" data-value="KI">Kiribati (KI)</div>
+          <div class="dropdown-item" data-value="KM">Comoros (KM)</div>
+          <div class="dropdown-item" data-value="KN">Saint Kitts and Nevis (KN)</div>
+          <div class="dropdown-item" data-value="KR">Republic of Korea (South Korea) (KR)</div>
+          <div class="dropdown-item" data-value="KW">Kuwait (KW)</div>
+          <div class="dropdown-item" data-value="KY">Cayman Islands (KY)</div>
+          <div class="dropdown-item" data-value="KZ">Kazakhstan (KZ)</div>
+          <div class="dropdown-item" data-value="LA">Lao People's Democratic Republic (LA)</div>
+          <div class="dropdown-item" data-value="LB">Lebanon (LB)</div>
+          <div class="dropdown-item" data-value="LC">Saint Lucia (LC)</div>
+          <div class="dropdown-item" data-value="LI">Liechtenstein (LI)</div>
+          <div class="dropdown-item" data-value="LK">Sri Lanka (LK)</div>
+          <div class="dropdown-item" data-value="LR">Liberia (LR)</div>
+          <div class="dropdown-item" data-value="LS">Lesotho (LS)</div>
+          <div class="dropdown-item" data-value="LT">Lithuania (LT)</div>
+          <div class="dropdown-item" data-value="LU">Luxembourg (LU)</div>
+          <div class="dropdown-item" data-value="LV">Latvia (LV)</div>
+          <div class="dropdown-item" data-value="LY">Libyan Arab Jamahiriya (LY)</div>
+          <div class="dropdown-item" data-value="MA">Morocco (MA)</div>
+          <div class="dropdown-item" data-value="MC">Monaco (MC)</div>
+          <div class="dropdown-item" data-value="MD">Republic of Moldova (MD)</div>
+          <div class="dropdown-item" data-value="MF">Saint Martin (French part) (MF)</div>
+          <div class="dropdown-item" data-value="MG">Madagascar (MG)</div>
+          <div class="dropdown-item" data-value="MH">Marshall Islands (MH)</div>
+          <div class="dropdown-item" data-value="MK">Macedonia (MK)</div>
+          <div class="dropdown-item" data-value="ML">Mali (ML)</div>
+          <div class="dropdown-item" data-value="MM">Myanmar (MM)</div>
+          <div class="dropdown-item" data-value="MN">Mongolia (MN)</div>
+          <div class="dropdown-item" data-value="MO">Macao SAR of PRC (Macau) (MO)</div>
+          <div class="dropdown-item" data-value="MQ">Martinique (MQ)</div>
+          <div class="dropdown-item" data-value="MR">Mauritania (MR)</div>
+          <div class="dropdown-item" data-value="MS">Montserrat (MS)</div>
+          <div class="dropdown-item" data-value="MT">Malta (MT)</div>
+          <div class="dropdown-item" data-value="MU">Mauritius (MU)</div>
+          <div class="dropdown-item" data-value="MV">Maldives (MV)</div>
+          <div class="dropdown-item" data-value="MW">Malawi (MW)</div>
+          <div class="dropdown-item" data-value="MX">Mexico (MX)</div>
+          <div class="dropdown-item" data-value="MY">Malaysia (MY)</div>
+          <div class="dropdown-item" data-value="MZ">Mozambique (MZ)</div>
+          <div class="dropdown-item" data-value="NA">Namibia (NA)</div>
+          <div class="dropdown-item" data-value="NC">New Caledonia (NC)</div>
+          <div class="dropdown-item" data-value="NE">Niger (NE)</div>
+          <div class="dropdown-item" data-value="NF">Norfolk Island (NF)</div>
+          <div class="dropdown-item" data-value="NG">Nigeria (NG)</div>
+          <div class="dropdown-item" data-value="NI">Nicaragua (NI)</div>
+          <div class="dropdown-item" data-value="NL">Netherlands (NL)</div>
+          <div class="dropdown-item" data-value="NO">Norway (NO)</div>
+          <div class="dropdown-item" data-value="NP">Nepal (NP)</div>
+          <div class="dropdown-item" data-value="NR">Nauru (NR)</div>
+          <div class="dropdown-item" data-value="NU">Niue (NU)</div>
+          <div class="dropdown-item" data-value="NZ">New Zealand (NZ)</div>
+          <div class="dropdown-item" data-value="OM">Oman (OM)</div>
+          <div class="dropdown-item" data-value="PA">Panama (PA)</div>
+          <div class="dropdown-item" data-value="PE">Peru (PE)</div>
+          <div class="dropdown-item" data-value="PF">French Polynesia (PF)</div>
+          <div class="dropdown-item" data-value="PG">Papua New Guinea (PG)</div>
+          <div class="dropdown-item" data-value="PH">Philippines (PH)</div>
+          <div class="dropdown-item" data-value="PK">Pakistan (PK)</div>
+          <div class="dropdown-item" data-value="PL">Poland (PL)</div>
+          <div class="dropdown-item" data-value="PM">Saint Pierre and Miquelon (PM)</div>
+          <div class="dropdown-item" data-value="PN">Pitcairn (PN)</div>
+          <div class="dropdown-item" data-value="PR">Puerto Rico (PR)</div>
+          <div class="dropdown-item" data-value="PS">Palestine, State of (PS)</div>
+          <div class="dropdown-item" data-value="PT">Portugal (PT)</div>
+          <div class="dropdown-item" data-value="PW">Palau (PW)</div>
+          <div class="dropdown-item" data-value="PY">Paraguay (PY)</div>
+          <div class="dropdown-item" data-value="QA">Qatar (QA)</div>
+          <div class="dropdown-item" data-value="RE">Reunion (RE)</div>
+          <div class="dropdown-item" data-value="RO">Romania (RO)</div>
+          <div class="dropdown-item" data-value="RS">Serbia (RS)</div>
+          <div class="dropdown-item" data-value="RU">Russia (RU)</div>
+          <div class="dropdown-item" data-value="RW">Rwanda (RW)</div>
+          <div class="dropdown-item" data-value="SA">Saudi Arabia (SA)</div>
+          <div class="dropdown-item" data-value="SB">Solomon Islands (SB)</div>
+          <div class="dropdown-item" data-value="SC">Seychelles (SC)</div>
+          <div class="dropdown-item" data-value="SE">Sweden (SE)</div>
+          <div class="dropdown-item" data-value="SG">Singapore (SG)</div>
+          <div class="dropdown-item" data-value="SH">Saint Helena (SH)</div>
+          <div class="dropdown-item" data-value="SI">Slovenia (SI)</div>
+          <div class="dropdown-item" data-value="SK">Slovakia (SK)</div>
+          <div class="dropdown-item" data-value="SL">Sierra Leone (SL)</div>
+          <div class="dropdown-item" data-value="SM">San Marino (SM)</div>
+          <div class="dropdown-item" data-value="SN">Senegal (SN)</div>
+          <div class="dropdown-item" data-value="SR">Suriname (SR)</div>
+          <div class="dropdown-item" data-value="ST">Sao Tome and Principe (ST)</div>
+          <div class="dropdown-item" data-value="SV">El Salvador (SV)</div>
+          <div class="dropdown-item" data-value="SX">Sint Maarten (Dutch part) (SX)</div>
+          <div class="dropdown-item" data-value="SY">Syria (SY)</div>
+          <div class="dropdown-item" data-value="SZ">Swaziland (SZ)</div>
+          <div class="dropdown-item" data-value="TC">Turks and Caicos Islands (TC)</div>
+          <div class="dropdown-item" data-value="TD">Chad (TD)</div>
+          <div class="dropdown-item" data-value="TF">French Southern Territories (TF)</div>
+          <div class="dropdown-item" data-value="TG">Togo (TG)</div>
+          <div class="dropdown-item" data-value="TH">Thailand (TH)</div>
+          <div class="dropdown-item" data-value="TJ">Tajikistan (TJ)</div>
+          <div class="dropdown-item" data-value="TK">Tokelau (TK)</div>
+          <div class="dropdown-item" data-value="TL">Timor-Leste (TL)</div>
+          <div class="dropdown-item" data-value="TM">Turkmenistan (TM)</div>
+          <div class="dropdown-item" data-value="TN">Tunisia (TN)</div>
+          <div class="dropdown-item" data-value="TO">Tonga (TO)</div>
+          <div class="dropdown-item" data-value="TR">Turkey (TR)</div>
+          <div class="dropdown-item" data-value="TT">Trinidad and Tobago (TT)</div>
+          <div class="dropdown-item" data-value="TV">Tuvalu (TV)</div>
+          <div class="dropdown-item" data-value="TW">Taiwan (TW)</div>
+          <div class="dropdown-item" data-value="TZ">Tanzania United Republic of (TZ)</div>
+          <div class="dropdown-item" data-value="UA">Ukraine (UA)</div>
+          <div class="dropdown-item" data-value="UG">Uganda (UG)</div>
+          <div class="dropdown-item" data-value="US">United States (US)</div>
+          <div class="dropdown-item" data-value="UY">Uruguay (UY)</div>
+          <div class="dropdown-item" data-value="UZ">Uzbekistan (UZ)</div>
+          <div class="dropdown-item" data-value="VC">Saint Vincent and the Grenadines (VC)</div>
+          <div class="dropdown-item" data-value="VE">Venezuela (VE)</div>
+          <div class="dropdown-item" data-value="VG">Virgin Islands (UK) (VG)</div>
+          <div class="dropdown-item" data-value="VN">Vietnam (VN)</div>
+          <div class="dropdown-item" data-value="VU">Vanuatu (VU)</div>
+          <div class="dropdown-item" data-value="WF">Wallis and Futuna (WF)</div>
+          <div class="dropdown-item" data-value="WS">Samoa (WS)</div>
+          <div class="dropdown-item" data-value="YE">Yemen (YE)</div>
+          <div class="dropdown-item" data-value="YT">Mayotte (YT)</div>
+          <div class="dropdown-item" data-value="ZA">South Africa (ZA)</div>
+          <div class="dropdown-item" data-value="ZM">Zambia (ZM)</div>
+          <div class="dropdown-item" data-value="ZW">Zimbabwe (ZW)</div>
+        </div>
+      </div>
+      <div class="dropdown-tags-wrapper" id="regionTags"></div>
+      <div class="identity-note hidden" id="crossRegionNote" style="margin-top:8px;">Shared Region enabled — this product can be used across multiple regions without restrictions.</div>
+
+      <!-- Tiered Region Section -->
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+        <div style="margin-bottom:10px;">
+          <label class="field-label" style="margin:0;">Tiered Region <span class="optional-tag">optional</span></label>
+        </div>
+        <div id="tierList" style="display:flex;flex-direction:column;gap:8px;"></div>
+        <button type="button" class="btn-add" id="addTierBtn">+ Add Tier</button>
+      </div>
+    </div>
+
+    <!-- Brand Name -->
+    <div class="card" id="cardBrand">
+      <div class="card-header">
+        <div class="card-icon">🏷️</div>
+        <div>
+          <div class="card-title">Brand Name <span class="required">*</span></div>
+          <div class="card-desc">The brand name for the product (e.g. Discord, Netflix, Steam)</div>
+        </div>
+      </div>
+      <input type="text" id="brandName" placeholder="Enter brand name" required>
+      <hr class="divider">
+      <label class="field-label" style="margin-top:4px;">Product Variation <span class="optional-tag">optional</span></label>
+      <input type="text" id="productVariation" placeholder="Example: Series, Variety and etc">
+    </div>
+
+    <!-- Delivery Method -->
+    <div class="card hidden" id="cardDelivery">
+      <div class="card-header">
+        <div class="card-icon">📦</div>
+        <div>
+          <div class="card-title">Delivery Method <span class="required">*</span></div>
+          <div class="card-desc">How this product will be delivered to the buyer</div>
+        </div>
+      </div>
+      <div class="options-grid single-col" id="deliveryGroup"></div>
+      <div class="other-input-wrap hidden" id="deliveryOtherWrap">
+        <input type="text" id="deliveryOther" placeholder="Describe the delivery method">
+      </div>
+    </div>
+
+    <!-- Account Type -->
+    <div class="card hidden" id="cardAccountType">
+      <div class="card-header">
+        <div class="card-icon">👤</div>
+        <div>
+          <div class="card-title">Account Type <span class="required">*</span></div>
+          <div class="card-desc">Select the account sharing type</div>
+        </div>
+      </div>
+      <div class="options-grid" id="accountTypeGroup">
+        <label class="option"><input type="radio" name="accountType" value="Private"> 🔒 Private</label>
+        <label class="option"><input type="radio" name="accountType" value="Shared"> 👥 Shared</label>
+      </div>
+    </div>
+
+    <!-- Entry Fields -->
+    <div class="card hidden" id="cardEntryFields">
+      <div class="card-header">
+        <div class="card-icon">📋</div>
+        <div>
+          <div class="card-title">Entry Fields Required</div>
+          <div class="card-desc">What information does the buyer need to provide for delivery?</div>
+        </div>
+      </div>
+      <div class="field-group" id="entryFieldsContainer">
+        <div class="entry-field-row" id="entryFieldRow1">
+          <label class="field-label">Field 1 — Label <span class="required">*</span></label>
+          <input type="text" id="entryField1" placeholder="e.g. Player ID / UID / User Email">
+        </div>
+        <div class="entry-field-row" id="entryFieldRow2">
+          <label class="field-label">Field 2 — Label <span class="optional-tag">optional</span></label>
+          <input type="text" id="entryField2" placeholder="e.g. Server / Region">
+        </div>
+      </div>
+      <button type="button" class="btn-add" id="addEntryFieldBtn">+ Add Another Field</button>
+    </div>
+
+    <!-- Manual Top Up Fields -->
+    <div class="card hidden" id="cardMTU">
+      <div class="card-header">
+        <div class="card-icon">🔐</div>
+        <div>
+          <div class="card-title">Login Information Required <span class="required">*</span></div>
+          <div class="card-desc">Define the login credentials the seller must provide.</div>
+        </div>
+      </div>
+      <div class="field-group" id="mtuFieldsContainer">
+        <div class="mtu-field-row" id="mtuFieldRow1">
+          <label class="field-label">Field 1 Label</label>
+          <input type="text" id="mtuField1" placeholder="Login Information">
+        </div>
+        <div class="mtu-field-row" id="mtuFieldRow2">
+          <label class="field-label">Field 2 Label</label>
+          <input type="text" id="mtuField2" placeholder="Password">
+        </div>
+      </div>
+      <button type="button" class="btn-add" id="addMtuFieldBtn">+ Add Another Field</button>
+    </div>
+
+    <!-- Platform -->
+    <div class="card hidden" id="cardPlatform">
+      <div class="card-header">
+        <div class="card-icon">🖥️</div>
+        <div>
+          <div class="card-title">Platform <span class="required">*</span></div>
+          <div class="card-desc">Select all applicable platforms for this game</div>
+        </div>
+      </div>
+      <div id="platformGroup" style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <label class="option" style="width:fit-content;min-width:140px;"><input type="checkbox" name="platform" value="PC"> 🖥️ PC</label>
+          <div class="sub-options hidden" id="pcSubPlatform" style="margin-left:16px;">
+            <div class="sub-options-label">PC Store / Launcher</div>
+            <div class="sub-options-grid">
+              <label class="option"><input type="checkbox" name="pcPlatform" value="Steam"> Steam</label>
+              <label class="option"><input type="checkbox" name="pcPlatform" value="Epic Games"> Epic Games</label>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <label class="option"><input type="checkbox" name="platform" value="Xbox"> 🎮 Xbox</label>
+          <label class="option"><input type="checkbox" name="platform" value="PS"> 🎮 PS</label>
+          <label class="option"><input type="checkbox" name="platform" value="Nintendo"> 🕹️ Nintendo</label>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:500;">
+          <input type="checkbox" id="crossPlatformCheck" name="crossPlatform">
+          <span>Cross Platform</span><span class="optional-tag">optional</span>
+        </label>
+        <div class="cp-note">When enabled: Shared key across all selected platforms. When disabled: Separate key required for each platform.</div>
+      </div>
+    </div>
+
+    <!-- Denominations -->
+    <div class="card hidden" id="cardDenom">
+      <div class="card-header">
+        <div class="card-icon">🗂️</div>
+        <div>
+          <div class="card-title">Denominations <span class="required">*</span></div>
+          <div class="card-desc">List each denomination. Check Key if no denomination details apply.</div>
+        </div>
+      </div>
+      <label class="key-toggle-row" id="keyToggleRow">
+        <input type="checkbox" id="keyCheck">
+        <span>🔑</span>
+        <span class="key-toggle-label">Key</span>
+      </label>
+      <div class="key-note hidden" id="keyNote">Key selected — denomination details are not required for this product.</div>
+      <div class="denom-col-headers">
+        <span>Product Type</span>
+        <span>Dataset</span>
+        <span class="col-req">Amount</span>
+        <span>
+          <label class="apply-all-label">
+            <input type="checkbox" id="applyAllCheck">
+            <span>Apply all</span>
+          </label>
+        </span>
+      </div>
+      <div class="denom-rows-wrap" id="denomRowsWrap">
+        <div class="denom-list" id="denomList"></div>
+        <button type="button" class="btn-add" id="addDenomBtn">+ Add Denomination</button>
+      </div>
+    </div>
+
+    <!-- Reference Link -->
+    <div class="card hidden" id="cardLink">
+      <div class="card-header">
+        <div class="card-icon">🔗</div>
+        <div>
+          <div class="card-title">Reference Link / Image</div>
+          <div class="card-desc">Provide a product page URL (required) and upload reference images</div>
+        </div>
+      </div>
+      <div style="margin-bottom:18px;">
+        <label class="field-label">Reference URL <span class="required">*</span></label>
+        <div id="refUrlList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+        <div id="refUrlInputRow" style="display:flex;gap:8px;align-items:flex-start;">
+          <div class="ref-url-input-wrap" style="flex:1;">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 10l4-4M9 4h3v3M13 9v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1h3"/></svg>
+            <input type="text" id="refUrlInput" class="ref-url-input" placeholder="Paste a URL or type and press Enter" oninput="onRefUrlInput()" onkeydown="refUrlKey(event)" onpaste="handleRefUrlPaste(event)">
+            <div class="ref-err-msg" id="refUrlErr">URL must start with https://</div>
+          </div>
+        </div>
+        <div class="ref-required-hint" id="refUrlRequiredHint">At least one URL starting with <strong>https://</strong> is required.</div>
+        <button type="button" class="ref-add-more-btn" id="refAddMoreBtn" onclick="showRefUrlInput()">+ Add another URL</button>
+      </div>
+      <hr class="divider">
+      <div>
+        <label class="field-label">Reference Image <span class="optional-tag">optional</span></label>
+        <div class="ref-upload-zone" id="refUploadZone">
+          <input type="file" id="refFileInput" accept="image/png,image/jpeg,image/webp,image/gif" multiple onchange="handleRefFiles(this.files)">
+          <div class="ref-upload-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#8a8fa8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10V4M5 7l3-3 3 3"/><path d="M3 13h10"/></svg>
+          </div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;">Drop images here</div>
+          <div style="font-size:12px;color:var(--muted);"><span style="color:var(--accent);font-weight:600;">Click to browse</span> &nbsp;·&nbsp; PNG, JPG, WEBP &nbsp;·&nbsp; Max 10 MB each</div>
+        </div>
+        <div class="ref-img-grid" id="refImgGrid"></div>
+        <div class="ref-opt-hint">Images are optional but recommended — screenshots help the team verify listing details faster.</div>
+      </div>
+    </div>
+
+    <div class="submit-section">
+      <div id="errorMsg" class="error-msg hidden"></div>
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Request</button>
+      <div id="successMsg" class="success-msg hidden"></div>
+    </div>
+
+  </form>
+</div>
+
+<script>
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWMRr34s08mgfRliKfFUKwvp6QiHSmewYTapN63Z7Ok64TKe1pDUNkTdoYkLCNVKgceg/exec';
+
+var deliveryOptions = {
+  'Games':           ['Digital Pin','Direct Top Up','Manual Top Up','Others'],
+  'Software & Apps': ['Digital Pin','Account','Direct Top Up','Manual Top Up','Platform Engagement','Activation Link (URL)','Others'],
+  'Gift Cards':      ['Digital Pin','Others'],
+  'Payment Card':    ['Digital Pin','Others'],
+  'Telco':           ['Digital Pin','Direct Top Up','Manual Top Up','Others'],
+  'Others':          ['Digital Pin','Account','Direct Top Up','Manual Top Up','Platform Engagement','Activation Link (URL)','Others']
+};
+
+var datasetMap = {
+  'Currency': ['AUD','BRL','CAD','CHF','CNY','EUR','GBP','IDR','INR','JPY','KRW','MYR','PHP','SGD','THB','USD','VND','AED','HKD','TWD'],
+  'Duration': ['Days','Months','Years'],
+  'Game Currency': ['Gold','Coins','Gems','Diamonds','Crystals','Oneiric Shard','VP','Points','Credits','Tokens','V-Bucks','Robux'],
+  'Others': null
+};
+
+var currentCategory = '';
+var currentDelivery = '';
+var denomCount = 0;
+var selectedRegions = [];
+var entryFieldCount = 2;
+var mtuFieldCount = 2;
+var refUrls = [];
+var refImgs = [];
+var resubmitId = null;
+
+// ── Tiered region state ───────────────────────────────────────────────────────
+var tierCount = 0;
+var tierRegionsMap = {};
+var crossRegionEnabled = false;
+
+function show(id) { document.getElementById(id).classList.remove('hidden'); }
+function hide(id) { document.getElementById(id).classList.add('hidden'); }
+function $(id) { return document.getElementById(id); }
+function syncSelected(g) { g.querySelectorAll('.option').forEach(function(o){ o.classList.toggle('selected', o.querySelector('input').checked); }); }
+
+// ── Resubmit param ────────────────────────────────────────────────────────────
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  resubmitId = params.get('resubmit');
+  var reason = params.get('reason') ? decodeURIComponent(params.get('reason')) : '';
+  if (resubmitId) {
+    show('resubmitBanner');
+    $('resubmitId').textContent = resubmitId;
+    $('resubmitReason').textContent = reason || 'Please review and correct the information in your request before resubmitting.';
+  }
+})();
+
+// ── Cross Region toggle ───────────────────────────────────────────────────────
+$('crossRegionCheck').addEventListener('change', function() {
+  crossRegionEnabled = this.checked;
+  $('crossRegionToggle').classList.toggle('active', this.checked);
+  this.checked ? show('crossRegionNote') : hide('crossRegionNote');
+});
+
+// ── Tiered Region ─────────────────────────────────────────────────────────────
+$('addTierBtn').addEventListener('click', addTier);
+
+function addTier() {
+  tierCount++;
+  var tid = tierCount;
+  tierRegionsMap[tid] = [];
+  var block = document.createElement('div');
+  block.className = 'tier-block';
+  block.id = 'tierBlock' + tid;
+
+  var itemsHTML = getTierItemsHTML('tier' + tid);
+
+  block.innerHTML =
+    '<div class="tier-block-header">'
+      + '<span class="tier-label" id="tierLabel' + tid + '">Tier ' + tid + '</span>'
+      + '<button type="button" class="btn-remove" onclick="removeTier(' + tid + ')" style="padding:4px 8px;font-size:12px;width:auto;">×</button>'
+    + '</div>'
+    + '<div class="dropdown-container">'
+      + '<div class="dropdown-input" id="tierDropdown' + tid + '" tabindex="0">'
+        + '<span id="tierSelected' + tid + '" style="color:var(--muted);font-weight:300;">Select regions...</span><span>▼</span>'
+      + '</div>'
+      + '<div class="dropdown-list" id="tierList' + tid + '">' + itemsHTML + '</div>'
+    + '</div>'
+    + '<div class="dropdown-tags-wrapper" id="tierTags' + tid + '"></div>';
+
+  $('tierList').appendChild(block);
+  initTierDropdown(tid);
+  renumberTiers();
+}
+
+function getTierItemsHTML(pfx) {
+  var items = document.querySelectorAll('#regionList .dropdown-item');
+  var h = '<div class="dropdown-search"><input type="text" id="' + pfx + 'Search" placeholder="Search regions..." autocomplete="off"></div>';
+  items.forEach(function(i) {
+    h += '<div class="dropdown-item" data-value="' + i.dataset.value + '">' + i.textContent.trim() + '</div>';
+  });
+  return h;
+}
+
+function initTierDropdown(tid) {
+  var dd = $('tierDropdown' + tid);
+  var list = $('tierList' + tid);
+  var si = $('tier' + tid + 'Search');
+
+  dd.addEventListener('click', function() {
+    document.querySelectorAll('.dropdown-list.active').forEach(function(x) {
+      if (x.id !== 'tierList' + tid) x.classList.remove('active');
+    });
+    list.classList.toggle('active');
+    if (list.classList.contains('active')) si.focus();
+  });
+  si.addEventListener('input', function(e) {
+    var t = e.target.value.toLowerCase();
+    list.querySelectorAll('.dropdown-item').forEach(function(i) {
+      i.classList.toggle('hidden', !i.textContent.toLowerCase().includes(t));
+    });
+  });
+  si.addEventListener('click', function(e) { e.stopPropagation(); });
+  list.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('dropdown-item')) return;
+    var v = e.target.dataset.value, l = e.target.textContent.trim();
+    if (!tierRegionsMap[tid].find(function(r) { return r.value === v; })) {
+      tierRegionsMap[tid].push({ value: v, label: l });
+      updateTierDisplay(tid);
+      updateTierTags(tid);
+    }
+  });
+  document.addEventListener('click', function(e) {
+    if (!dd.contains(e.target) && !list.contains(e.target)) list.classList.remove('active');
+  });
+}
+
+function updateTierDisplay(tid) {
+  var el = $('tierSelected' + tid), r = tierRegionsMap[tid];
+  if (!r.length) { el.textContent = 'Select regions...'; el.style.color = 'var(--muted)'; el.style.fontWeight = '300'; }
+  else {
+    var n = r.map(function(x) { return x.label; });
+    el.textContent = n.length <= 3 ? n.join(', ') : n.slice(0,3).join(', ') + ' +' + (n.length-3) + ' more';
+    el.style.color = 'var(--text)'; el.style.fontWeight = '400';
+  }
+}
+
+function updateTierTags(tid) {
+  var w = $('tierTags' + tid); w.innerHTML = '';
+  tierRegionsMap[tid].forEach(function(r) {
+    var t = document.createElement('span'); t.className = 'dropdown-tag';
+    t.innerHTML = r.label + ' <span class="dropdown-tag-remove" data-value="' + r.value + '" data-tid="' + tid + '">×</span>';
+    w.appendChild(t);
+  });
+  w.querySelectorAll('.dropdown-tag-remove').forEach(function(b) {
+    b.addEventListener('click', function(e) {
+      var v = e.target.dataset.value, s = parseInt(e.target.dataset.tid);
+      tierRegionsMap[s] = tierRegionsMap[s].filter(function(r) { return r.value !== v; });
+      updateTierDisplay(s); updateTierTags(s);
+    });
+  });
+}
+
+function removeTier(tid) {
+  var b = $('tierBlock' + tid); if (b) b.remove();
+  delete tierRegionsMap[tid];
+  renumberTiers();
+}
+
+function renumberTiers() {
+  $('tierList').querySelectorAll('.tier-block').forEach(function(b, i) {
+    var lbl = b.querySelector('[id^="tierLabel"]');
+    if (lbl) lbl.textContent = 'Tier ' + (i + 1);
+  });
+}
+
+function collectTierData() {
+  var tiers = [];
+  Object.keys(tierRegionsMap).forEach(function(tid) {
+    var regions = tierRegionsMap[tid];
+    if (regions.length > 0) {
+      tiers.push(regions.map(function(r) { return r.value; }).join(', '));
+    }
+  });
+  return {
+    tiers: tiers,
+    crossRegion: crossRegionEnabled,
+    summary: tiers.length > 0
+      ? tiers.map(function(t, i) { return 'Tier ' + (i+1) + ': ' + t; }).join(' | ') + (crossRegionEnabled ? ' (Cross Region: Shared)' : ' (Separate per Tier)')
+      : ''
+  };
+}
+
+// ── Key checkbox ──────────────────────────────────────────────────────────────
+$('keyCheck').addEventListener('change', function() {
+  $('keyToggleRow').classList.toggle('active', this.checked);
+  $('denomRowsWrap').classList.toggle('locked', this.checked);
+  this.checked ? show('keyNote') : hide('keyNote');
+});
+
+// ── Apply All ─────────────────────────────────────────────────────────────────
+$('applyAllCheck').addEventListener('change', function() {
+  if (!this.checked) { window._applyAllPT = ''; window._applyAllDS = ''; return; }
+  var firstRow = document.querySelector('#denomList .denom-row');
+  if (!firstRow) { this.checked = false; return; }
+  var firstPT = firstRow.querySelector('[id^="denomPT"]');
+  var ptValue = firstPT ? firstPT.value : '';
+  var firstDSCell = firstRow.querySelector('[id^="denomDSCell"]');
+  var firstDSEl = firstDSCell ? firstDSCell.querySelector('select, input') : null;
+  var dsValue = firstDSEl ? firstDSEl.value : '';
+  if (!ptValue || !dsValue) { this.checked = false; showError('Please select Product Type and Dataset in the first row first.'); return; }
+  window._applyAllPT = ptValue; window._applyAllDS = dsValue;
+  syncAllRows();
+});
+
+function syncAllRows() {
+  if (!$('applyAllCheck').checked || !window._applyAllPT) return;
+  var ptValue = window._applyAllPT, dsValue = window._applyAllDS;
+  document.querySelectorAll('#denomList .denom-row').forEach(function(row) {
+    var pt = row.querySelector('[id^="denomPT"]');
+    if (pt && pt.value !== ptValue) { pt.value = ptValue; pt.dispatchEvent(new Event('change')); }
+    setTimeout(function() {
+      var dsCell = row.querySelector('[id^="denomDSCell"]');
+      var ds = dsCell ? dsCell.querySelector('select, input') : null;
+      if (ds && ds.value !== dsValue) ds.value = dsValue;
+    }, 50);
+  });
+}
+
+// ── Denominations ─────────────────────────────────────────────────────────────
+function buildDenom() {
+  denomCount = 0; $('denomList').innerHTML = '';
+  $('keyCheck').checked = false; $('keyToggleRow').classList.remove('active');
+  $('denomRowsWrap').classList.remove('locked'); $('applyAllCheck').checked = false;
+  hide('keyNote'); addDenom();
+}
+
+$('addDenomBtn').addEventListener('click', addDenom);
+
+function addDenom() {
+  denomCount++; var n = denomCount;
+  var row = document.createElement('div'); row.className = 'denom-row'; row.id = 'denomRow' + n;
+  var ptWrap = document.createElement('div'); ptWrap.className = 'denom-sel-wrap';
+  var ptSel = document.createElement('select'); ptSel.id = 'denomPT' + n;
+  [['','— Select —'],['Currency','Currency'],['Duration','Duration'],['Game Currency','Game Currency'],['Others','Others']].forEach(function(pair) {
+    var o = document.createElement('option'); o.value = pair[0]; o.textContent = pair[1]; ptSel.appendChild(o);
+  });
+  ptWrap.appendChild(ptSel);
+  var dsCell = document.createElement('div'); dsCell.id = 'denomDSCell' + n; renderDatasetField(n, '', dsCell);
+  var amtInput = document.createElement('input'); amtInput.type = 'text'; amtInput.className = 'denom-amt'; amtInput.id = 'denomAmt' + n;
+  var rmBtn = document.createElement('button'); rmBtn.type = 'button'; rmBtn.className = 'btn-remove'; rmBtn.textContent = '×';
+  rmBtn.onclick = function() { if ($('denomList').children.length > 1) row.remove(); };
+  row.appendChild(ptWrap); row.appendChild(dsCell); row.appendChild(amtInput); row.appendChild(rmBtn);
+  $('denomList').appendChild(row);
+  ptSel.addEventListener('change', function() { renderDatasetField(n, ptSel.value, $('denomDSCell' + n)); });
+  if ($('applyAllCheck').checked && window._applyAllPT) {
+    setTimeout(function() {
+      ptSel.value = window._applyAllPT; ptSel.dispatchEvent(new Event('change'));
+      setTimeout(function() { var ds = $('denomDS' + n); if (ds) ds.value = window._applyAllDS; }, 50);
+    }, 0);
+  }
+}
+
+function renderDatasetField(n, ptValue, cell) {
+  cell.innerHTML = '';
+  if (ptValue === 'Others') {
+    var inp = document.createElement('input'); inp.type = 'text'; inp.className = 'denom-ds-text'; inp.id = 'denomDS' + n; cell.appendChild(inp);
+  } else {
+    var opts = datasetMap[ptValue]; var sel = document.createElement('select'); sel.id = 'denomDS' + n;
+    var ph = document.createElement('option'); ph.value = ''; ph.textContent = '— Select —'; sel.appendChild(ph);
+    (opts || []).forEach(function(opt) { var o = document.createElement('option'); o.value = opt; o.textContent = opt; sel.appendChild(o); });
+    cell.style.cssText = 'position:relative;'; cell.className = 'denom-sel-wrap'; cell.appendChild(sel);
+  }
+}
+
+function collectDenomData() {
+  if ($('keyCheck').checked) return { isKey: true, summary: 'Key' };
+  var parts = [];
+  $('denomList').querySelectorAll('.denom-row').forEach(function(row) {
+    var pt  = row.querySelector('[id^="denomPT"]');  var ptV  = (pt && pt.value) ? pt.value.trim()  : '';
+    var ds = row.querySelector('select[id^="denomDS"], input[id^="denomDS"]');  var dsV  = (ds && ds.value) ? ds.value.trim()  : '';
+    var amt = row.querySelector('[id^="denomAmt"]'); var amtV = (amt && amt.value) ? amt.value.trim() : '';
+    // Format: "ProductType:Dataset:Amount" e.g. "Game Currency:Diamonds:100"
+    // All three segments recorded; empty segments kept as empty string so spreadsheet columns stay aligned
+    if (amtV) {
+      var seg = [];
+      seg.push(ptV  || '');
+      seg.push(dsV  || '');
+      seg.push(amtV);
+      parts.push(seg.join(':'));
+    }
+  });
+  return { isKey: false, summary: parts.join(' | ') };
+}
+
+// ── Region dropdown ───────────────────────────────────────────────────────────
+function initRegionDropdown() {
+  var dd = $('regionDropdown'), list = $('regionList'), si = $('regionSearch');
+  var items = list.querySelectorAll('.dropdown-item');
+  dd.addEventListener('click', function() {
+    list.classList.toggle('active');
+    if (list.classList.contains('active')) { si.focus(); si.value = ''; items.forEach(function(i){ i.classList.remove('hidden'); }); }
+  });
+  si.addEventListener('input', function(e) {
+    var t = e.target.value.toLowerCase();
+    items.forEach(function(i){ i.classList.toggle('hidden', !i.textContent.toLowerCase().includes(t)); });
+  });
+  si.addEventListener('click', function(e){ e.stopPropagation(); });
+  list.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('dropdown-item')) return;
+    var val = e.target.dataset.value;
+    if (!selectedRegions.find(function(r){ return r.value === val; })) {
+      selectedRegions.push({ value: val, label: e.target.textContent.trim() });
+      updateRegionDisplay(); updateRegionTags();
+    }
+    list.classList.remove('active');
+  });
+  document.addEventListener('click', function(e) { if (!dd.contains(e.target) && !list.contains(e.target)) list.classList.remove('active'); });
+}
+
+function updateRegionDisplay() {
+  var d = $('regionSelected');
+  if (!selectedRegions.length) { d.textContent = 'Select regions...'; d.style.color = 'var(--muted)'; d.style.fontWeight = '300'; }
+  else { var n = selectedRegions.map(function(r){ return r.label; }); d.textContent = n.length <= 3 ? n.join(', ') : n.slice(0,3).join(', ') + ' +' + (n.length-3) + ' more'; d.style.color = 'var(--text)'; d.style.fontWeight = '400'; }
+}
+
+function updateRegionTags() {
+  var w = $('regionTags'); w.innerHTML = '';
+  selectedRegions.forEach(function(r) {
+    var t = document.createElement('span'); t.className = 'dropdown-tag';
+    t.innerHTML = r.label + ' <span class="dropdown-tag-remove" data-value="' + r.value + '">×</span>';
+    w.appendChild(t);
+  });
+  w.querySelectorAll('.dropdown-tag-remove').forEach(function(b) {
+    b.addEventListener('click', function(e) {
+      selectedRegions = selectedRegions.filter(function(r){ return r.value !== e.target.dataset.value; });
+      updateRegionDisplay(); updateRegionTags();
+    });
+  });
+}
+
+// ── Entry / MTU Fields ────────────────────────────────────────────────────────
+function initEntryFields() { $('addEntryFieldBtn').addEventListener('click', addEntryField); }
+function addEntryField() {
+  entryFieldCount++;
+  var r = document.createElement('div'); r.className = 'entry-field-row'; r.id = 'entryFieldRow' + entryFieldCount;
+  r.innerHTML = '<label class="field-label">Field ' + entryFieldCount + ' — Label <span class="optional-tag">optional</span></label><input type="text" id="entryField' + entryFieldCount + '" placeholder="e.g. Additional information"><button type="button" class="btn-remove" onclick="removeEntryField(' + entryFieldCount + ')" style="margin-left:8px;padding:4px 8px;font-size:12px;">×</button>';
+  $('entryFieldsContainer').appendChild(r);
+}
+function removeEntryField(n) { var r = $('entryFieldRow' + n); if (r && document.querySelectorAll('#entryFieldsContainer .entry-field-row').length > 2) { r.remove(); } }
+function initMtuFields() { $('addMtuFieldBtn').addEventListener('click', addMtuField); }
+function addMtuField() {
+  mtuFieldCount++;
+  var r = document.createElement('div'); r.className = 'mtu-field-row'; r.id = 'mtuFieldRow' + mtuFieldCount;
+  r.innerHTML = '<label class="field-label">Field ' + mtuFieldCount + ' Label <span class="optional-tag">optional</span></label><input type="text" id="mtuField' + mtuFieldCount + '" placeholder="Additional login information"><button type="button" class="btn-remove" onclick="removeMtuField(' + mtuFieldCount + ')" style="margin-left:8px;padding:4px 8px;font-size:12px;">×</button>';
+  $('mtuFieldsContainer').appendChild(r);
+}
+function removeMtuField(n) { var r = $('mtuFieldRow' + n); if (r && document.querySelectorAll('#mtuFieldsContainer .mtu-field-row').length > 2) { r.remove(); } }
+
+// ── Category & Delivery ───────────────────────────────────────────────────────
+$('categoryGroup').addEventListener('change', function(e) {
+  currentCategory = e.target.value; currentDelivery = '';
+  syncSelected($('categoryGroup'));
+  currentCategory === 'Others' ? show('categoryOtherWrap') : hide('categoryOtherWrap');
+  resetFrom('delivery'); buildDelivery(currentCategory); show('cardDelivery');
+});
+
+function buildDelivery(cat) {
+  var g = $('deliveryGroup'); g.innerHTML = '';
+  (deliveryOptions[cat] || []).forEach(function(opt) {
+    var l = document.createElement('label'); l.className = 'option';
+    l.innerHTML = '<input type="radio" name="delivery" value="' + opt + '"> ' + opt;
+    g.appendChild(l);
+  });
+}
+
+$('deliveryGroup').addEventListener('change', function(e) {
+  currentDelivery = e.target.value; syncSelected($('deliveryGroup')); resetFrom('afterDelivery');
+  currentDelivery === 'Others' ? show('deliveryOtherWrap') : hide('deliveryOtherWrap');
+  if (currentDelivery === 'Account') show('cardAccountType');
+  if (currentDelivery === 'Direct Top Up' || currentDelivery === 'Others') show('cardEntryFields');
+  if (currentDelivery === 'Manual Top Up') show('cardMTU');
+  if (currentCategory === 'Games' && currentDelivery === 'Digital Pin') show('cardPlatform');
+  buildDenom(); show('cardDenom'); show('cardLink');
+});
+
+$('platformGroup').addEventListener('change', function() {
+  syncSelected($('platformGroup'));
+  var pc = document.querySelector('input[name="platform"][value="PC"]');
+  if (pc && pc.checked) show('pcSubPlatform');
+  else { hide('pcSubPlatform'); document.querySelectorAll('input[name="pcPlatform"]').forEach(function(i){ i.checked = false; }); }
+});
+$('accountTypeGroup').addEventListener('change', function(){ syncSelected($('accountTypeGroup')); });
+
+function resetFrom(level) {
+  if (level === 'delivery') { hide('cardDelivery'); $('deliveryGroup').innerHTML = ''; hide('deliveryOtherWrap'); currentDelivery = ''; }
+  if (level === 'delivery' || level === 'afterDelivery') {
+    hide('cardAccountType');
+    $('accountTypeGroup').querySelectorAll('input').forEach(function(i){ i.checked = false; });
+    $('accountTypeGroup').querySelectorAll('.option').forEach(function(o){ o.classList.remove('selected'); });
+    hide('cardEntryFields'); $('entryField1').value = ''; $('entryField2').value = '';
+    hide('cardMTU'); $('mtuField1').value = ''; $('mtuField2').value = '';
+    document.querySelectorAll('input[name="platform"]').forEach(function(i){ i.checked = false; });
+    document.querySelectorAll('input[name="pcPlatform"]').forEach(function(i){ i.checked = false; });
+    if ($('crossPlatformCheck')) $('crossPlatformCheck').checked = false;
+    hide('pcSubPlatform'); $('platformGroup').querySelectorAll('.option').forEach(function(o){ o.classList.remove('selected'); });
+    hide('cardDenom'); $('denomList').innerHTML = ''; denomCount = 0;
+    hide('cardLink'); hide('deliveryOtherWrap');
+  }
+}
+
+// ── Reference URLs ────────────────────────────────────────────────────────────
+function refUrlKey(e) {
+  if (e.key === 'Enter') { e.preventDefault(); commitRefUrl(); }
+}
+
+function clearRefUrlErr() {
+  $('refUrlErr').style.display = 'none';
+  $('refUrlInput').classList.remove('error');
+  $('refUrlRequiredHint').style.display = 'none';
+}
+
+// As user types, silently prefix https:// if they haven't started with it
+function onRefUrlInput() {
+  clearRefUrlErr();
+  var inp = $('refUrlInput');
+  var val = inp.value;
+  // If they've typed something that looks like a domain start (e.g. "www." or "game.") without a scheme, prepend https://
+  if (val && !val.startsWith('https://') && !val.startsWith('http://') && val.indexOf(' ') === -1 && val.indexOf('://') === -1) {
+    // Only auto-prefix once they've typed past the "h" ambiguity — we'll let paste handle the immediate case
+  }
+}
+
+// On paste: immediately clean up and add the URL without requiring Enter
+function handleRefUrlPaste(e) {
+  e.preventDefault();
+  var pasted = (e.clipboardData || window.clipboardData).getData('text').trim();
+  if (!pasted) return;
+
+  // Handle multiple URLs pasted at once (newline or space separated)
+  var lines = pasted.split(/[\n\r\s]+/).map(function(u) { return u.trim(); }).filter(Boolean);
+
+  var added = 0;
+  lines.forEach(function(raw) {
+    var url = normaliseUrl(raw);
+    if (url && !refUrls.includes(url) && refUrls.length < 5) {
+      refUrls.push(url);
+      added++;
+    }
+  });
+
+  if (added) {
+    clearRefUrlErr();
+    $('refUrlInput').value = '';
+    renderRefUrls();
+  } else if (lines.length) {
+    // Single URL that failed normalisation — put it in the input for manual correction
+    $('refUrlInput').value = lines[0];
+    $('refUrlInput').classList.add('error');
+    $('refUrlErr').style.display = 'block';
+  }
+}
+
+// Normalise a raw string into a valid https:// URL, returns null if it can't
+function normaliseUrl(raw) {
+  if (!raw) return null;
+  var url = raw;
+  // Strip leading/trailing punctuation sometimes picked up in pastes
+  url = url.replace(/^['"<>]+|['">,]+$/g, '').trim();
+  // Already has a scheme
+  if (url.startsWith('https://')) return url.length > 9 ? url : null;
+  if (url.startsWith('http://'))  return 'https://' + url.slice(7);
+  // No scheme — prepend https://
+  if (url.indexOf('.') > 0) return 'https://' + url;
+  return null;
+}
+
+// Commit whatever is currently in the input field (Enter key path)
+function commitRefUrl() {
+  var inp = $('refUrlInput');
+  var raw = inp.value.trim();
+  if (!raw) return;
+  var url = normaliseUrl(raw);
+  if (!url) {
+    inp.classList.add('error');
+    $('refUrlErr').style.display = 'block';
+    return;
+  }
+  if (refUrls.includes(url)) { inp.value = ''; return; }
+  if (refUrls.length >= 5) return;
+  refUrls.push(url);
+  inp.value = '';
+  clearRefUrlErr();
+  renderRefUrls();
+}
+
+// Keep addRefUrl as alias so existing callers (submit validation) still work
+function addRefUrl() { commitRefUrl(); }
+
+function removeRefUrl(i) { refUrls.splice(i, 1); renderRefUrls(); }
+
+function renderRefUrls() {
+  var list = $('refUrlList'), inputRow = $('refUrlInputRow'), addMoreBtn = $('refAddMoreBtn');
+  list.innerHTML = '';
+  refUrls.forEach(function(u, i) {
+    var domain = ''; try { domain = new URL(u).hostname; } catch(e) { domain = u; }
+    var d = document.createElement('div'); d.className = 'ref-url-pill';
+    d.innerHTML = '<svg style="flex-shrink:0;width:13px;height:13px;" viewBox="0 0 16 16" fill="none" stroke="#185FA5" stroke-width="1.5" stroke-linecap="round"><path d="M6 10l4-4M9 4h3v3M13 9v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1h3"/></svg><span class="ref-url-pill-text"></span><span class="ref-url-pill-domain"></span><button type="button" class="ref-url-pill-rm">×</button>';
+    var textSpan = d.querySelector('.ref-url-pill-text'); textSpan.title = u; textSpan.textContent = u;
+    d.querySelector('.ref-url-pill-domain').textContent = domain;
+    d.querySelector('.ref-url-pill-rm').onclick = function() { removeRefUrl(i); };
+    list.appendChild(d);
+  });
+  // Always keep input visible so they can keep adding (up to 5)
+  inputRow.style.display = refUrls.length >= 5 ? 'none' : 'flex';
+  addMoreBtn.style.display = 'none';
+  if (refUrls.length >= 5) {
+    var hint = document.createElement('div');
+    hint.style.cssText = 'font-size:11px;color:var(--muted);margin-top:4px;';
+    hint.textContent = 'Maximum 5 URLs reached.';
+    list.appendChild(hint);
+  }
+}
+
+function showRefUrlInput() { $('refUrlInputRow').style.display = 'flex'; $('refAddMoreBtn').style.display = 'none'; $('refUrlInput').focus(); }
+
+// ── Reference Images ──────────────────────────────────────────────────────────
+function handleRefFiles(files) {
+  Array.from(files).forEach(function(f) {
+    if (!f.type.startsWith('image/')) return;
+    if (f.size > 10 * 1024 * 1024) { showError('Image "' + f.name + '" exceeds the 10 MB limit and was skipped.'); return; }
+    var r = new FileReader();
+    r.onload = function(ev) { refImgs.push({ name: f.name, size: f.size, src: ev.target.result }); renderRefImgs(); };
+    r.readAsDataURL(f);
+  });
+}
+function removeRefImg(i) { refImgs.splice(i, 1); renderRefImgs(); }
+function renderRefImgs() {
+  var g = $('refImgGrid'); g.innerHTML = '';
+  refImgs.forEach(function(f, i) {
+    var size = f.size > 1048576 ? (f.size/1048576).toFixed(1) + ' MB' : Math.round(f.size/1024) + ' KB';
+    var d = document.createElement('div'); d.className = 'ref-img-item';
+    d.innerHTML = '<img src="" alt=""><button type="button" class="ref-img-item-rm">×</button><div class="ref-img-meta"><div class="ref-img-name"></div><div class="ref-img-size"></div></div>';
+    var img = d.querySelector('img'); img.src = f.src; img.alt = f.name;
+    d.querySelector('.ref-img-item-rm').onclick = function() { removeRefImg(i); };
+    d.querySelector('.ref-img-name').textContent = f.name;
+    d.querySelector('.ref-img-size').textContent = size;
+    g.appendChild(d);
+  });
+}
+var refZone = $('refUploadZone');
+refZone.addEventListener('dragover', function(e){ e.preventDefault(); refZone.classList.add('drag'); });
+refZone.addEventListener('dragleave', function(){ refZone.classList.remove('drag'); });
+refZone.addEventListener('drop', function(e){ e.preventDefault(); refZone.classList.remove('drag'); handleRefFiles(e.dataTransfer.files); });
+
+// ── Submit ────────────────────────────────────────────────────────────────────
+$('mainForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  hide('errorMsg'); hide('successMsg');
+  var username = $('sellerUsername').value.trim();
+  var email = $('sellerEmail').value.trim();
+  var brand = $('brandName').value.trim();
+  var hasRegion = selectedRegions.length > 0;
+  if (!username) { $('sellerUsername').classList.add('field-error'); $('usernameErr').style.display = 'block'; showError('Please enter your G2G username.'); return; }
+  var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRe.test(email)) { $('sellerEmail').classList.add('field-error'); $('emailErr').style.display = 'block'; showError('Please enter a valid email address.'); return; }
+  if (!brand || !hasRegion || !currentCategory || !currentDelivery) { showError('Please complete all required fields.'); return; }
+  if (refUrls.length === 0) { $('refUrlRequiredHint').style.display = 'block'; $('cardLink').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); showError('Please add at least one reference URL (https://).'); return; }
+
+// Skip denom amount check for delivery types where it's not meaningful
+var denomRequiredDeliveries = ['Digital Pin', 'Account', 'Activation Link (URL)'];
+if (!$('keyCheck').checked && denomRequiredDeliveries.includes(currentDelivery)) {
+    var denomRows = $('denomList').querySelectorAll('.denom-row');
+    var hasAmt = false;
+    denomRows.forEach(function(row) { var a = row.querySelector('[id^="denomAmt"]'); if (a && a.value.trim()) hasAmt = true; });
+    if (!hasAmt) { showError('Please enter at least one denomination amount.'); return; }
+}
+
+  var tierData = collectTierData();
+  var plat = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(function(i){ return i.value; }).join(', ');
+  var pcpl = Array.from(document.querySelectorAll('input[name="pcPlatform"]:checked')).map(function(i){ return i.value; }).join(', ');
+  var fp = pcpl ? plat.replace('PC', 'PC (' + pcpl + ')') : plat;
+  var cross = $('crossPlatformCheck') ? $('crossPlatformCheck').checked : false;
+  var pi = cross ? fp + ' (Cross Platform: Shared Key)' : fp + ' (Separate Key per Platform)';
+  var denom = collectDenomData();
+  var isMTU = currentDelivery === 'Manual Top Up';
+
+  var payload = {
+    submissionId: resubmitId || ('G2G-' + Date.now()),
+    isResubmit: !!resubmitId,
+    timestamp: new Date().toISOString(),
+    sellerUsername: username,
+    sellerEmail: email,
+    brand: brand,
+    productVariation: $('productVariation').value.trim(),
+    region: selectedRegions.map(function(r){ return r.value; }).join(', '),
+    customRegionSets: tierData.summary,
+    category: currentCategory === 'Others' ? 'Others: ' + $('categoryOther').value.trim() : currentCategory,
+    deliveryMethod: currentDelivery === 'Others' ? 'Others: ' + $('deliveryOther').value.trim() : currentDelivery,
+    accountType: (document.querySelector('input[name="accountType"]:checked') || {}).value || '',
+    platforms: pi,
+    crossPlatformEnabled: cross,
+    isKey: denom.isKey,
+    denominations: denom.summary,
+    entryField1: isMTU ? ($('mtuField1').value.trim() || 'Login Information') : $('entryField1').value.trim(),
+    entryField2: isMTU ? ($('mtuField2').value.trim() || 'Password') : $('entryField2').value.trim(),
+    entryField3: isMTU ? ($('mtuField3') ? $('mtuField3').value.trim() : '') : ($('entryField3') ? $('entryField3').value.trim() : ''),
+    entryField4: isMTU ? ($('mtuField4') ? $('mtuField4').value.trim() : '') : ($('entryField4') ? $('entryField4').value.trim() : ''),
+    entryField5: isMTU ? ($('mtuField5') ? $('mtuField5').value.trim() : '') : ($('entryField5') ? $('entryField5').value.trim() : ''),
+    refLink: refUrls.join(' | '),
+    refImages: refImgs.map(function(f){ return f.name; }).join(', ')
+  };
+
+  var btn = $('submitBtn'); btn.disabled = true; btn.textContent = 'Submitting...';
+  try {
+    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    var successEl = $('successMsg');
+    if (resubmitId) {
+      successEl.innerHTML = '✅ Resubmission received! Your updated request for <strong></strong> has been sent back to the BD team for review.';
+      successEl.querySelector('strong').textContent = brand;
+    } else {
+      successEl.innerHTML = '✅ Request submitted! The BD team will review your listing request for <strong></strong> and contact you at <strong></strong> if any changes are needed.';
+      var strongs = successEl.querySelectorAll('strong');
+      strongs[0].textContent = brand; strongs[1].textContent = email;
+    }
+    show('successMsg');
+    $('mainForm').reset();
+    resetFrom('delivery');
+    $('categoryGroup').querySelectorAll('input').forEach(function(i){ i.checked = false; });
+    $('categoryGroup').querySelectorAll('.option').forEach(function(o){ o.classList.remove('selected'); });
+    currentCategory = ''; hide('categoryOtherWrap');
+    selectedRegions = []; updateRegionDisplay(); updateRegionTags();
+    $('tierList').innerHTML = ''; tierCount = 0; tierRegionsMap = {};
+    $('crossRegionCheck').checked = false; crossRegionEnabled = false;
+    $('crossRegionToggle').classList.remove('active'); hide('crossRegionNote');
+    refUrls = []; refImgs = []; renderRefUrls(); renderRefImgs();
+    resubmitId = null; hide('resubmitBanner');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch(err) {
+    showError('Submission failed. Please check your connection and try again.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Submit Request';
+  }
+});
+
+function showError(msg) {
+  var el = $('errorMsg'); el.textContent = msg; show('errorMsg');
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 20, behavior: 'smooth' });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+initRegionDropdown();
+initEntryFields();
+initMtuFields();
+$('sellerUsername').addEventListener('input', function(){ this.classList.remove('field-error'); $('usernameErr').style.display = 'none'; });
+$('sellerEmail').addEventListener('input', function(){ this.classList.remove('field-error'); $('emailErr').style.display = 'none'; });
+</script>
+</body>
+</html>
