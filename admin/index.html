@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BD Review Panel — G2G Internal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f0f1f5;--white:#fff;--border:#e2e4eb;
+    --accent:#e3001b;--accent-hover:#c40017;--accent-light:#fff0f0;
+    --text:#14142a;--muted:#8a8fa8;--label:#4a4f6a;
+    --success:#00a86b;--success-light:#f0fdf4;--success-border:#bbf7d0;
+    --info:#185FA5;--info-light:#eff6ff;--info-border:#bfdbfe;
+    --warn:#d97706;--warn-light:#fffbeb;--warn-border:#fde68a;
+    --needinfo:#7c3aed;--needinfo-light:#f5f3ff;--needinfo-border:#ddd6fe;
+    --radius:10px;
+    --shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+    --shadow-md:0 4px 16px rgba(0,0,0,.09);
+    --shadow-lg:0 12px 40px rgba(0,0,0,.14);
+    --font:'DM Sans',sans-serif;
+    --mono:'DM Mono',monospace;
+  }
+  html.dark{
+    --bg:#0f1117;--white:#1a1d27;--border:#2a2d3a;
+    --accent:#e3001b;--accent-hover:#c40017;--accent-light:rgba(227,0,27,.12);
+    --text:#e8eaf0;--muted:#5a607a;--label:#9aa0bc;
+    --success:#00a86b;--success-light:rgba(0,168,107,.1);--success-border:rgba(0,168,107,.25);
+    --info:#3b82f6;--info-light:rgba(59,130,246,.1);--info-border:rgba(59,130,246,.25);
+    --warn:#d97706;--warn-light:rgba(217,119,6,.1);--warn-border:rgba(217,119,6,.25);
+    --needinfo:#7c3aed;--needinfo-light:rgba(124,58,237,.1);--needinfo-border:rgba(124,58,237,.25);
+    --shadow:0 1px 3px rgba(0,0,0,.3),0 1px 2px rgba(0,0,0,.2);
+    --shadow-md:0 4px 16px rgba(0,0,0,.4);
+    --shadow-lg:0 12px 40px rgba(0,0,0,.6);
+  }
+  *{transition:background-color .2s ease,border-color .2s ease,color .15s ease;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh;}
+  .hidden{display:none!important;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+  @keyframes slideUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ── TOAST ── */
+  .toast{position:fixed;bottom:28px;right:28px;padding:13px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(12px);transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:340px;line-height:1.5;display:flex;align-items:flex-start;gap:10px;box-shadow:var(--shadow-lg);}
+  .toast.show{opacity:1;transform:translateY(0);}
+  .toast.success{background:#14532d;color:#fff;}
+  .toast.error{background:#7f1d1d;color:#fff;}
+  .toast.info{background:#1e1b4b;color:#fff;}
+  .toast.warn{background:#78350f;color:#fff;}
+
+  /* ── LOGIN ── */
+  .login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%);}
+  .login-card{background:rgba(255,255,255,.04);backdrop-filter:blur(20px);border-radius:20px;border:1px solid rgba(255,255,255,.1);padding:44px 48px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,.4);text-align:center;}
+  .login-logo{width:60px;height:60px;background:var(--accent);border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:22px;margin:0 auto 22px;box-shadow:0 8px 24px rgba(227,0,27,.4);}
+  .login-title{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;letter-spacing:-.3px;}
+  .login-sub{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:32px;line-height:1.6;}
+  .login-field{margin-bottom:14px;text-align:left;}
+  .login-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;}
+  .login-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-family:var(--font);font-size:14px;padding:12px 16px;outline:none;transition:border-color .15s,box-shadow .15s;}
+  .login-input:focus{border-color:rgba(227,0,27,.7);box-shadow:0 0 0 3px rgba(227,0,27,.15);}
+  .login-input::placeholder{color:rgba(255,255,255,.25);}
+  .login-input.error{border-color:var(--accent);}
+  .remember-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;text-align:left;}
+  .remember-row input[type="checkbox"]{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
+  .remember-row label{font-size:12px;color:rgba(255,255,255,.45);cursor:pointer;user-select:none;}
+  .login-err{font-size:12px;color:#fca5a5;margin-top:10px;display:none;background:rgba(227,0,27,.15);border:1px solid rgba(227,0,27,.3);border-radius:8px;padding:8px 12px;text-align:left;}
+  .login-btn{width:100%;background:var(--accent);color:#fff;font-family:var(--font);font-size:14px;font-weight:700;border:none;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;margin-top:6px;box-shadow:0 4px 16px rgba(227,0,27,.3);}
+  .login-btn:hover{background:var(--accent-hover);box-shadow:0 6px 20px rgba(227,0,27,.4);transform:translateY(-1px);}
+  .login-note{font-size:11px;color:rgba(255,255,255,.3);margin-top:18px;line-height:1.6;}
+
+  /* ── TOPNAV ── */
+  .topnav{background:#14142a;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 rgba(255,255,255,.06),0 2px 12px rgba(0,0,0,.2);}
+  .topnav-left{display:flex;align-items:center;gap:14px;}
+  .topnav-logo{width:36px;height:36px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;box-shadow:0 2px 8px rgba(227,0,27,.35);}
+  .topnav-title{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.2px;}
+  .topnav-badge{font-size:9px;font-weight:700;background:rgba(227,0,27,.2);color:#fca5a5;border-radius:4px;padding:2px 8px;border:1px solid rgba(227,0,27,.3);letter-spacing:.8px;}
+  .topnav-right{display:flex;align-items:center;gap:14px;}
+  .topnav-user{font-size:12px;color:rgba(255,255,255,.45);}
+  .topnav-user strong{color:rgba(255,255,255,.8);font-weight:600;}
+  .logout-btn{font-size:12px;font-weight:600;color:rgba(255,255,255,.5);background:none;border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:6px 14px;cursor:pointer;transition:all .15s;font-family:var(--font);}
+  .logout-btn:hover{color:#fff;border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.06);}
+
+  /* ── APP SHELL ── */
+  .app-shell{display:flex;height:calc(100vh - 58px);}
+
+  /* ── SIDEBAR ── */
+  :root{
+    --sidebar-bg:#14142a;
+    --sidebar-border:rgba(255,255,255,.06);
+    --sidebar-text:rgba(255,255,255,.45);
+    --sidebar-text-hover:rgba(255,255,255,.8);
+    --sidebar-text-active:#fff;
+    --sidebar-section:rgba(255,255,255,.25);
+    --sidebar-item-hover:rgba(255,255,255,.06);
+    --sidebar-item-active:rgba(227,0,27,.15);
+    --sidebar-divider:rgba(255,255,255,.06);
+    --sidebar-user-bg:rgba(255,255,255,.04);
+    --sidebar-user-border:rgba(255,255,255,.06);
+    --sidebar-user-name:rgba(255,255,255,.7);
+    --sidebar-user-role:rgba(255,255,255,.3);
+    --sidebar-signout-border:rgba(255,255,255,.08);
+    --sidebar-signout-color:rgba(255,255,255,.4);
+    --sidebar-soon-color:rgba(255,255,255,.2);
+    --sidebar-soon-bg:rgba(255,255,255,.04);
+  }
+  html.dark{
+    --sidebar-bg:#0a0b10;
+    --sidebar-border:rgba(255,255,255,.04);
+  }
+  /* Light mode sidebar gets a proper light palette */
+  html:not(.dark){
+    --sidebar-bg:#1e1f2e;
+    --sidebar-border:rgba(0,0,0,.08);
+    --sidebar-text:rgba(255,255,255,.5);
+    --sidebar-text-hover:rgba(255,255,255,.9);
+    --sidebar-text-active:#fff;
+    --sidebar-section:rgba(255,255,255,.3);
+    --sidebar-item-hover:rgba(255,255,255,.08);
+    --sidebar-item-active:rgba(227,0,27,.2);
+    --sidebar-divider:rgba(255,255,255,.08);
+    --sidebar-user-bg:rgba(255,255,255,.06);
+    --sidebar-user-border:rgba(255,255,255,.08);
+    --sidebar-user-name:rgba(255,255,255,.8);
+    --sidebar-user-role:rgba(255,255,255,.4);
+    --sidebar-signout-border:rgba(255,255,255,.12);
+    --sidebar-signout-color:rgba(255,255,255,.5);
+    --sidebar-soon-color:rgba(255,255,255,.3);
+    --sidebar-soon-bg:rgba(255,255,255,.06);
+  }
+  .sidebar{width:220px;flex-shrink:0;background:var(--sidebar-bg);display:flex;flex-direction:column;border-right:1px solid var(--sidebar-border);position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto;}
+  .sidebar-section{padding:18px 12px 6px;font-size:10px;font-weight:700;color:var(--sidebar-section);text-transform:uppercase;letter-spacing:.8px;}
+  .sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 14px;margin:1px 8px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--sidebar-text);transition:all .15s;text-decoration:none;user-select:none;border:none;background:none;font-family:var(--font);width:calc(100% - 16px);}
+  .sidebar-item:hover{background:var(--sidebar-item-hover);color:var(--sidebar-text-hover);}
+  .sidebar-item.active{background:var(--sidebar-item-active);color:var(--sidebar-text-active);font-weight:600;}
+  .sidebar-item.active .si-icon{opacity:1;}
+  .si-icon{font-size:15px;opacity:.6;flex-shrink:0;}
+  .si-label{flex:1;}
+  .si-badge{font-size:10px;font-weight:700;background:rgba(227,0,27,.3);color:#fca5a5;border-radius:10px;padding:1px 7px;min-width:18px;text-align:center;}
+  .si-badge.warn{background:rgba(217,119,6,.3);color:#fcd34d;}
+  .si-badge.purple{background:rgba(124,58,237,.3);color:#c4b5fd;}
+  .sidebar-divider{border:none;border-top:1px solid var(--sidebar-divider);margin:8px 14px;}
+  .sidebar-bottom{margin-top:auto;padding:12px 8px;}
+  .sidebar-user{padding:10px 14px;border-radius:8px;background:var(--sidebar-user-bg);border:1px solid var(--sidebar-user-border);margin:0 0 6px;}
+  .sidebar-user-name{font-size:12px;font-weight:600;color:var(--sidebar-user-name);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .sidebar-user-role{font-size:10px;color:var(--sidebar-user-role);}
+  .sidebar-sign-out{display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:1px solid var(--sidebar-signout-border);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--sidebar-signout-color);font-family:var(--font);transition:all .15s;}
+  .sidebar-sign-out:hover{color:var(--sidebar-text-active);border-color:rgba(255,255,255,.2);background:var(--sidebar-item-hover);}
+  .sidebar-coming-soon{font-size:10px;font-weight:600;color:var(--sidebar-soon-color);background:var(--sidebar-soon-bg);border-radius:4px;padding:1px 6px;margin-left:auto;}
+
+  /* ── CONTENT AREA ── */
+  .content-area{flex:1;overflow-y:auto;}
+  .main{max-width:1060px;margin:0 auto;padding:28px 20px 100px;}
+
+  /* ── STATS ── */
+  .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:26px;}
+  .stat-card{background:var(--white);border-radius:var(--radius);padding:16px 18px;border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
+  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0;}
+  .stat-card.all::before{background:var(--text);}
+  .stat-card.pending-card::before{background:var(--warn);}
+  .stat-card.needinfo-card::before{background:var(--needinfo);}
+  .stat-card.approved-card::before{background:var(--success);}
+  .stat-card.rejected-card::before{background:var(--accent);}
+  .stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+  .stat-card.active-stat{box-shadow:var(--shadow-md);}
+  .stat-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
+  .stat-val{font-size:28px;font-weight:800;line-height:1;font-family:var(--mono);}
+  .stat-val.all{color:var(--text);}
+  .stat-val.pending{color:var(--warn);}
+  .stat-val.needinfo{color:var(--needinfo);}
+  .stat-val.approved{color:var(--success);}
+  .stat-val.rejected{color:var(--accent);}
+
+  /* ── TOOLBAR ── */
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+  .filter-tabs{display:flex;gap:3px;background:var(--white);border:1px solid var(--border);border-radius:9px;padding:3px;}
+  .ftab{padding:6px 16px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;transition:all .15s;font-family:var(--font);white-space:nowrap;}
+  .ftab.active{background:var(--text);color:#fff;}
+  .ftab.active.f-pending{background:var(--warn);}
+  .ftab.active.f-needinfo{background:var(--needinfo);}
+  .ftab.active.f-approved{background:var(--success);}
+  .ftab.active.f-rejected{background:var(--accent);}
+  .ftab:not(.active):hover{color:var(--text);background:var(--bg);}
+  .toolbar-right{display:flex;align-items:center;gap:8px;}
+  .search-wrap{position:relative;}
+  .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--muted);pointer-events:none;}
+  .search-input{width:240px;background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:13px;padding:8px 12px 8px 32px;outline:none;transition:border-color .15s,box-shadow .15s;}
+  .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(227,0,27,.08);}
+  .search-input::placeholder{color:var(--muted);}
+  .refresh-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--white);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--label);cursor:pointer;transition:all .15s;font-family:var(--font);}
+  .refresh-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .refresh-btn.spinning svg{animation:spin .6s linear infinite;}
+
+  /* ── DATE FILTER ── */
+  .date-filter-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+  .date-presets{display:flex;gap:3px;background:var(--white);border:1px solid var(--border);border-radius:9px;padding:3px;}
+  .dpre{padding:5px 13px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;transition:all .15s;font-family:var(--font);white-space:nowrap;}
+  .dpre.active{background:var(--text);color:#fff;}
+  .dpre:not(.active):hover{color:var(--text);}
+  .date-range{display:flex;align-items:center;gap:8px;}
+  .date-range span{font-size:12px;color:var(--muted);}
+  .date-input{background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:12px;padding:6px 10px;outline:none;transition:border-color .15s;cursor:pointer;}
+  .date-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(227,0,27,.08);}
+  .date-clear{background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;font-family:var(--font);font-weight:600;padding:0 4px;}
+  .date-clear:hover{color:var(--accent);}
+
+  /* ── CARDS ── */
+  .req-list{display:flex;flex-direction:column;gap:10px;}
+  .req-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .15s;animation:slideUp .2s ease both;}
+  .req-card:hover{box-shadow:var(--shadow-md);}
+  .req-card.status-pending  {border-left:3px solid var(--warn);}
+  .req-card.status-approved {border-left:3px solid var(--success);}
+  .req-card.status-rejected {border-left:3px solid var(--accent);}
+  .req-card.status-needinfo {border-left:3px solid var(--needinfo);}
+
+  /* CARD HEADER */
+  .req-card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;gap:12px;flex-wrap:wrap;}
+  .req-card-header:hover{background:#fafafa;}
+  .req-header-left{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;flex:1;}
+  .req-id{font-size:11px;font-weight:500;color:var(--muted);font-family:var(--mono);background:var(--bg);padding:3px 8px;border-radius:4px;white-space:nowrap;margin-top:2px;}
+  .req-header-info{flex:1;}
+  .req-title-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .req-brand{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px;}
+  .req-variation{font-size:13px;color:var(--muted);}
+  .version-tag{font-size:10px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-family:var(--mono);}
+  .req-meta-row{font-size:11px;color:var(--muted);margin-top:3px;}
+  .req-dataset-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:6px;}
+  .ds-pill{font-size:10px;font-weight:600;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:2px 8px;color:var(--label);white-space:nowrap;}
+  .ds-pill.key{background:#fff9e6;border-color:#fde68a;color:#92640a;}
+  .ds-group-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-right:2px;}
+  .ds-divider{width:1px;height:14px;background:var(--border);margin:0 4px;flex-shrink:0;}
+  .req-header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+  .status-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;white-space:nowrap;}
+  .status-badge.pending  {background:var(--warn-light);color:#92640a;}
+  .status-badge.approved {background:var(--success-light);color:#166534;}
+  .status-badge.rejected {background:var(--accent-light);color:#991b1b;}
+  .status-badge.needinfo {background:var(--needinfo-light);color:#5b21b6;}
+  .expand-icon{font-size:11px;color:var(--muted);transition:transform .2s;}
+  .req-card.expanded .expand-icon{transform:rotate(180deg);}
+
+  /* CARD BODY */
+  .req-card-body{display:none;padding:18px;border-top:1px solid var(--border);animation:fadeIn .15s ease;}
+  .req-card.expanded .req-card-body{display:block;}
+
+  /* SELLER ROW */
+  .seller-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--info-light);border-radius:8px;border:1px solid var(--info-border);margin-bottom:14px;}
+  .seller-avatar{width:34px;height:34px;border-radius:50%;background:var(--info);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+  .seller-name{font-size:13px;font-weight:600;color:#0c447c;}
+  .seller-email{font-size:11px;color:var(--info);}
+
+  /* REVIEW FIELDS */
+  .review-fields{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+  .rfield{display:flex;align-items:flex-start;gap:10px;padding:8px 11px;background:var(--bg);border-radius:7px;border:1px solid transparent;}
+  .rfield.flagged{background:#fefce8;border-color:#fde68a;}
+  .rfield-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;width:140px;flex-shrink:0;padding-top:2px;}
+  .rfield.flagged .rfield-label{color:#92640a;}
+  .rfield-val{font-size:12px;color:var(--text);font-weight:500;flex:1;line-height:1.5;}
+  .rfield-val.empty{color:var(--muted);font-style:italic;font-weight:400;}
+  .key-badge{display:inline-block;background:#fff9e6;color:#92640a;border:1px solid #fde68a;border-radius:5px;font-size:11px;font-weight:700;padding:2px 9px;}
+  .flag-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#92640a;background:#fef3c7;border:1px solid #fde68a;border-radius:4px;padding:1px 6px;margin-left:6px;}
+
+  /* CHECKABLE ITEMS */
+  .check-list{display:flex;flex-direction:column;gap:4px;}
+  .check-item{display:flex;align-items:center;gap:9px;padding:6px 10px;background:var(--white);border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;transition:background .1s;user-select:none;}
+  .check-item:hover{background:#f9fafb;}
+  .check-item input[type="checkbox"]{width:15px;height:15px;accent-color:var(--success);flex-shrink:0;cursor:pointer;pointer-events:none;}
+  .check-item.checked{background:var(--success-light);border-color:var(--success-border);}
+  .check-item.checked .ci-label{color:#166534;font-weight:600;}
+  .ci-label{flex:1;}
+
+  /* DENOM GROUP */
+  .denom-group-header{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;padding:5px 2px 3px;}
+  .denom-group-divider{border:none;border-top:1px solid var(--border);margin:4px 0;}
+
+  /* REF / NOTES */
+  .ref-section{margin-bottom:14px;}
+  .ref-section-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;}
+  .ref-url-chip{display:inline-flex;align-items:center;gap:6px;background:var(--info-light);border:1px solid var(--info-border);border-radius:6px;padding:5px 10px;margin-right:6px;margin-bottom:4px;font-size:12px;color:var(--info);text-decoration:none;}
+  .ref-url-chip:hover{background:#dbeafe;}
+  .reviewer-notes-row{margin-bottom:14px;padding:10px 12px;background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;font-size:12px;color:#7f1d1d;line-height:1.6;}
+  .reviewer-notes-row.needinfo-notes{background:var(--needinfo-light);border-color:var(--needinfo);color:#4c1d95;}
+  .reviewer-notes-label{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
+  .reviewer-notes-row.needinfo-notes .reviewer-notes-label{color:var(--needinfo);}
+
+  /* RESUBMISSION HISTORY */
+  .history-badge{display:inline-flex;align-items:center;gap:5px;background:var(--needinfo-light);border:1px solid var(--needinfo-border);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--needinfo);margin-bottom:14px;}
+
+  /* ACTION BUTTONS */
+  .action-row{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;}
+  .action-row .reviewed-info{font-size:11px;color:var(--muted);flex:1;}
+  .btn-approve  {padding:9px 20px;background:var(--success-light);color:#166534;border:1px solid var(--success-border);border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;}
+  .btn-approve:hover  {background:#dcfce7;box-shadow:0 2px 8px rgba(0,168,107,.2);}
+  .btn-needinfo {padding:9px 20px;background:var(--needinfo-light);color:#5b21b6;border:1px solid var(--needinfo-border);border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;}
+  .btn-needinfo:hover {background:#ede9fe;}
+  .btn-reject   {padding:9px 20px;background:var(--accent-light);color:var(--accent);border:1px solid #fecaca;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;}
+  .btn-reject:hover   {background:#fee2e2;border-color:var(--accent);}
+  .btn-unapprove{padding:9px 20px;background:var(--warn-light);color:#92640a;border:1px solid var(--warn-border);border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;}
+  .btn-unapprove:hover{background:#fef3c7;}
+
+  /* EMPTY / LOADING */
+  .empty-state{text-align:center;padding:70px 20px;color:var(--muted);}
+  .empty-icon{font-size:40px;margin-bottom:14px;}
+  .empty-title{font-size:15px;font-weight:700;color:var(--label);margin-bottom:5px;}
+  .empty-sub{font-size:13px;}
+  .loading-state{text-align:center;padding:70px 20px;}
+  .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px;}
+  .loading-text{font-size:13px;color:var(--muted);}
+
+  /* ── MODALS ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;backdrop-filter:blur(4px);}
+  .modal-box{background:var(--white);border-radius:16px;padding:32px;max-width:520px;width:100%;box-shadow:var(--shadow-lg);animation:modalIn .2s ease;}
+  .modal-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:20px;}
+  .modal-header-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .modal-header-icon.reject-icon{background:var(--accent-light);}
+  .modal-header-icon.needinfo-icon{background:var(--needinfo-light);}
+  .modal-title{font-size:17px;font-weight:800;color:var(--text);margin-bottom:3px;letter-spacing:-.2px;}
+  .modal-sub{font-size:12px;color:var(--muted);line-height:1.5;}
+  .modal-label{font-size:12px;font-weight:700;color:var(--label);margin-bottom:6px;display:block;}
+  .modal-textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;resize:vertical;min-height:100px;transition:border-color .15s;background:var(--white);}
+  .modal-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(227,0,27,.08);}
+  .modal-textarea::placeholder{color:var(--muted);}
+  .modal-textarea.error{border-color:var(--accent);}
+  .modal-err{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+  .email-preview{margin-top:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .email-preview-header{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border-bottom:1px solid var(--border);}
+  .email-preview-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .email-preview-to{font-size:11px;color:var(--label);margin-left:auto;}
+  .email-preview-body{padding:14px 16px;font-size:12px;color:var(--text);line-height:1.9;background:var(--white);}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+
+  /* approve modal */
+  .approve-modal-box{background:var(--white);border-radius:16px;padding:36px;max-width:460px;width:100%;box-shadow:var(--shadow-lg);animation:modalIn .2s ease;text-align:center;}
+  .approve-icon{width:52px;height:52px;border-radius:14px;background:var(--success-light);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 18px;}
+  .approve-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.3px;}
+  .approve-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+  .approve-detail{background:var(--bg);border-radius:8px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:var(--label);line-height:1.7;text-align:left;}
+  .approve-detail strong{color:var(--text);}
+
+  .btn-cancel{padding:10px 20px;background:var(--bg);color:var(--label);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s;}
+  .btn-cancel:hover{border-color:var(--muted);}
+  .btn-send-reject{padding:10px 22px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:background .15s;}
+  .btn-send-reject:hover{background:var(--accent-hover);}
+  .btn-send-reject:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-send-needinfo{padding:10px 22px;background:var(--needinfo);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:background .15s;}
+  .btn-send-needinfo:hover{background:#6d28d9;}
+  .btn-send-needinfo:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-approve-confirm{padding:10px 22px;background:var(--success);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:background .15s;}
+  .btn-approve-confirm:hover{background:#008f5a;}
+  .btn-approve-confirm:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* flagged fields checklist in needinfo modal */
+  .flag-field-list{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;}
+  .flag-field-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;user-select:none;transition:background .1s;}
+  .flag-field-item:hover{background:#fefce8;}
+  .flag-field-item input[type="checkbox"]{width:14px;height:14px;accent-color:var(--needinfo);flex-shrink:0;pointer-events:none;}
+  .flag-field-item.flagged{background:#fefce8;border-color:#fde68a;}
+  .flag-field-item .ffi-label{flex:1;color:var(--label);}
+  .flag-field-item.flagged .ffi-label{color:#92640a;font-weight:600;}
+  .flag-section-label{font-size:11px;font-weight:700;color:var(--label);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;display:block;}
+
+  @media(max-width:700px){
+    .stats-row{grid-template-columns:repeat(3,1fr);}
+    .login-card{padding:28px 24px;}
+    .modal-box,.approve-modal-box{padding:24px;}
+    .search-input{width:160px;}
+    .sidebar{width:56px;}
+    .si-label,.sidebar-section,.sidebar-coming-soon,.si-badge,.sidebar-user-name,.sidebar-user-role{display:none;}
+    .sidebar-item{justify-content:center;padding:10px;}
+    .sidebar-sign-out{justify-content:center;}
+    .sidebar-sign-out span:last-child{display:none;}
+  }
+  @media(max-width:480px){
+    .stats-row{grid-template-columns:repeat(2,1fr);}
+  }
+
+  /* ── DARK MODE OVERRIDES ── */
+  html.dark .check-item:hover{background:#1f2233;}
+  html.dark .check-item.checked{background:rgba(0,168,107,.08);border-color:rgba(0,168,107,.25);}
+  html.dark .rfield.flagged{background:rgba(217,119,6,.08);border-color:rgba(217,119,6,.25);}
+  html.dark .flag-field-item:hover{background:rgba(217,119,6,.06);}
+  html.dark .flag-field-item.flagged{background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.3);}
+  html.dark .flag-field-item.flagged .ffi-label{color:#fbbf24;}
+  html.dark .rfield.flagged .rfield-label{color:#fbbf24;}
+  html.dark .seller-name{color:#93c5fd;}
+  html.dark .seller-email{color:var(--info);}
+  html.dark .ds-pill.key{background:rgba(217,119,6,.12);border-color:rgba(217,119,6,.3);color:#fbbf24;}
+  html.dark .key-badge{background:rgba(217,119,6,.12);border-color:rgba(217,119,6,.3);color:#fbbf24;}
+  html.dark .email-preview-body{background:var(--white);}
+  html.dark .date-input{color-scheme:dark;}
+  html.dark .topnav{background:#0a0b10;box-shadow:0 1px 0 rgba(255,255,255,.04),0 2px 12px rgba(0,0,0,.4);}
+
+  .sidebar-item.coming-soon-item{opacity:.5;}
+  .sidebar-item.coming-soon-item:hover{opacity:.75;}
+
+  /* ── COMING SOON PAGE ── */
+  .coming-soon-page{display:none;flex:1;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:60px 24px;text-align:center;}
+  .coming-soon-page.visible{display:flex;}
+  .cs-icon{font-size:52px;margin-bottom:4px;}
+  .cs-title{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.3px;}
+  .cs-sub{font-size:13px;color:var(--muted);max-width:320px;line-height:1.7;}
+  .cs-badge{font-size:11px;font-weight:700;background:var(--needinfo-light);color:var(--needinfo);border:1px solid var(--needinfo-border);border-radius:20px;padding:4px 14px;}
+  .cs-back{margin-top:8px;padding:9px 20px;background:var(--white);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;color:var(--label);cursor:pointer;font-family:var(--font);transition:all .15s;}
+  .cs-back:hover{border-color:var(--accent);color:var(--accent);}
+
+  /* ── ANALYTICS PAGE ── */
+  .analytics-page{display:flex;flex-direction:column;gap:24px;padding:32px 36px;max-width:900px;width:100%;margin:0 auto;}
+  .analytics-header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .analytics-title{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.3px;}
+  .analytics-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+  .analytics-controls{display:flex;align-items:center;gap:8px;}
+  .analytics-month-select{background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:13px;font-weight:600;padding:8px 12px;outline:none;cursor:pointer;transition:border-color .15s;}
+  .analytics-month-select:focus{border-color:var(--accent);}
+  .analytics-refresh-btn{padding:8px 16px;background:var(--white);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;color:var(--label);cursor:pointer;font-family:var(--font);transition:all .15s;}
+  .analytics-refresh-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .analytics-body{display:flex;gap:32px;align-items:center;flex-wrap:wrap;}
+  .analytics-chart-wrap{position:relative;flex-shrink:0;}
+  .analytics-total-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+  .analytics-total-num{font-size:26px;font-weight:800;color:var(--text);font-family:var(--mono);line-height:1;}
+  .analytics-total-txt{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
+  .analytics-legend{display:flex;flex-direction:column;gap:10px;flex:1;min-width:200px;}
+  .legend-item{display:flex;align-items:center;gap:10px;}
+  .legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+  .legend-label{font-size:13px;color:var(--text);flex:1;font-weight:500;}
+  .legend-pct{font-size:13px;font-weight:700;color:var(--text);font-family:var(--mono);}
+  .legend-count{font-size:11px;color:var(--muted);font-family:var(--mono);}
+  .analytics-table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  .analytics-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .analytics-table thead{background:var(--bg);}
+  .analytics-table th{padding:10px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
+  .analytics-table th:not(:first-child){text-align:right;}
+  .analytics-table td{padding:11px 16px;border-bottom:1px solid var(--border);color:var(--text);}
+  .analytics-table td:not(:first-child){text-align:right;font-family:var(--mono);font-size:12px;}
+  .analytics-table tbody tr:last-child td{border-bottom:none;}
+  .analytics-table tbody tr:hover td{background:var(--bg);}
+  .analytics-cat-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:8px;flex-shrink:0;}
+  .analytics-empty{padding:40px;text-align:center;color:var(--muted);font-size:13px;}
+
+  /* theme toggle button */
+  .theme-toggle{display:flex;align-items:center;gap:7px;padding:6px 12px;background:none;border:1px solid rgba(255,255,255,.12);border-radius:7px;cursor:pointer;font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,.55);transition:all .15s;}
+  .theme-toggle:hover{color:#fff;border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.06);}
+  .theme-toggle .tt-icon{font-size:14px;line-height:1;}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="loginPage">
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-logo">G2G</div>
+      <div class="login-title">BD Review Panel</div>
+      <div class="login-sub">Internal use only. Sign in with your G2G team credentials to access product request reviews.</div>
+      <div class="login-field">
+        <label class="login-label">Team Email</label>
+        <input type="email" class="login-input" id="loginEmail" placeholder="yourname@g2g.com" onkeydown="loginKey(event)">
+      </div>
+      <div class="login-field">
+        <label class="login-label">Password</label>
+        <input type="password" class="login-input" id="loginPassword" placeholder="Enter password" onkeydown="loginKey(event)">
+      </div>
+      <div class="remember-row">
+        <input type="checkbox" id="rememberMe">
+        <label for="rememberMe">Remember me on this device</label>
+      </div>
+      <div class="login-err" id="loginErr">⚠ Incorrect email or password. Please try again.</div>
+      <button class="login-btn" onclick="doLogin()">Sign In</button>
+      <div class="login-note">Access is restricted to authorised G2G BD team members only. Contact your manager if you need access.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADMIN PANEL ═══ -->
+<div id="adminPanel" class="hidden">
+  <div class="topnav">
+    <div class="topnav-left">
+      <div class="topnav-logo">G2G</div>
+      <div class="topnav-title">BD Review Panel</div>
+      <span class="topnav-badge">INTERNAL</span>
+    </div>
+    <div class="topnav-right">
+      <span class="topnav-user">Signed in as <strong id="loggedInUser"></strong></span>
+      <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()">
+        <span class="tt-icon" id="themeIcon">🌙</span>
+        <span id="themeLabel">Dark</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sidebar-section">Dashboards</div>
+      <button class="sidebar-item active" onclick="navTo('bd-review',this)">
+        <span class="si-icon">📋</span>
+        <span class="si-label">BD Review</span>
+        <span class="si-badge" id="sidebarPendingBadge">0</span>
+      </button>
+      <button class="sidebar-item" onclick="navTo('analytics',this)">
+        <span class="si-icon">📊</span>
+        <span class="si-label">Analytics</span>
+      </button>
+      <button class="sidebar-item coming-soon-item" onclick="navTo('sellers',this)">
+        <span class="si-icon">👤</span>
+        <span class="si-label">Sellers</span>
+        <span class="sidebar-coming-soon">Soon</span>
+      </button>
+      <button class="sidebar-item coming-soon-item" onclick="navTo('listings',this)">
+        <span class="si-icon">🗂️</span>
+        <span class="si-label">Listings</span>
+        <span class="sidebar-coming-soon">Soon</span>
+      </button>
+      <hr class="sidebar-divider">
+      <div class="sidebar-section">Tools</div>
+      <button class="sidebar-item coming-soon-item" onclick="navTo('settings',this)">
+        <span class="si-icon">⚙️</span>
+        <span class="si-label">Settings</span>
+        <span class="sidebar-coming-soon">Soon</span>
+      </button>
+      <div class="sidebar-bottom">
+        <div class="sidebar-user">
+          <div class="sidebar-user-name" id="sidebarUserName">—</div>
+          <div class="sidebar-user-role">BD Team</div>
+        </div>
+        <button class="sidebar-sign-out" onclick="doLogout()">
+          <span>🚪</span><span>Sign Out</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="content-area">
+      <div class="main">
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card all" onclick="setFilter('all',null)">
+        <div class="stat-label">Total</div>
+        <div class="stat-val all" id="statTotal">—</div>
+      </div>
+      <div class="stat-card pending-card" onclick="setFilter('Pending',null)">
+        <div class="stat-label">Pending</div>
+        <div class="stat-val pending" id="statPending">—</div>
+      </div>
+      <div class="stat-card needinfo-card" onclick="setFilter('Need Info',null)">
+        <div class="stat-label">Need Info</div>
+        <div class="stat-val needinfo" id="statNeedInfo">—</div>
+      </div>
+      <div class="stat-card approved-card" onclick="setFilter('Approved',null)">
+        <div class="stat-label">Approved</div>
+        <div class="stat-val approved" id="statApproved">—</div>
+      </div>
+      <div class="stat-card rejected-card" onclick="setFilter('Rejected',null)">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-val rejected" id="statRejected">—</div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="filter-tabs">
+        <button class="ftab active"              onclick="setFilter('all',this)">All</button>
+        <button class="ftab f-pending"           onclick="setFilter('Pending',this)">Pending</button>
+        <button class="ftab f-needinfo"          onclick="setFilter('Need Info',this)">Need Info</button>
+        <button class="ftab f-approved"          onclick="setFilter('Approved',this)">Approved</button>
+        <button class="ftab f-rejected"          onclick="setFilter('Rejected',this)">Rejected</button>
+      </div>
+      <div class="toolbar-right">
+        <div class="search-wrap">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5l2.5 2.5"/></svg>
+          <input type="text" class="search-input" id="searchInput" placeholder="Search brand, seller, ID…" oninput="renderList()">
+        </div>
+        <button class="refresh-btn" id="refreshBtn" onclick="loadRequests()">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M13.5 8A5.5 5.5 0 1 1 8 2.5c1.8 0 3.4.87 4.4 2.2"/><path d="M13.5 2v3h-3"/></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- DATE FILTER -->
+    <div class="date-filter-row">
+      <div class="date-presets">
+        <button class="dpre active" onclick="setDatePreset('all',this)">All Time</button>
+        <button class="dpre" onclick="setDatePreset('today',this)">Today</button>
+        <button class="dpre" onclick="setDatePreset('week',this)">This Week</button>
+        <button class="dpre" onclick="setDatePreset('month',this)">This Month</button>
+      </div>
+      <div class="date-range">
+        <input type="date" class="date-input" id="dateFrom" onchange="onDateRangeChange()">
+        <span>—</span>
+        <input type="date" class="date-input" id="dateTo" onchange="onDateRangeChange()">
+        <button class="date-clear hidden" id="dateClearBtn" onclick="clearDateRange()">✕ Clear</button>
+      </div>
+    </div>
+
+    <div id="listWrap"></div>
+  </div><!-- /main -->
+
+  <!-- COMING SOON PAGES -->
+  <!-- ANALYTICS PAGE -->
+  <div class="coming-soon-page" id="csPage-analytics" style="align-items:stretch;justify-content:flex-start;padding:0;">
+    <div class="analytics-page">
+      <!-- Header -->
+      <div class="analytics-header">
+        <div>
+          <div class="analytics-title">📊 Analytics</div>
+          <div class="analytics-sub">Requests by category — refreshed per month</div>
+        </div>
+        <div class="analytics-controls">
+          <select class="analytics-month-select" id="analyticsMonthSelect" onchange="renderAnalytics()">
+          </select>
+          <button class="analytics-refresh-btn" onclick="renderAnalytics()">↺ Refresh</button>
+        </div>
+      </div>
+
+      <!-- Chart + Legend row -->
+      <div class="analytics-body">
+        <div class="analytics-chart-wrap">
+          <canvas id="pieCanvas" width="280" height="280"></canvas>
+          <div class="analytics-total-label" id="analyticsTotalLabel"></div>
+        </div>
+        <div class="analytics-legend" id="analyticsLegend"></div>
+      </div>
+
+      <!-- Table -->
+      <div class="analytics-table-wrap">
+        <table class="analytics-table" id="analyticsTable">
+          <thead><tr><th>Category</th><th>Requests</th><th>%</th><th>Approved</th><th>Rejected</th><th>Pending / NI</th></tr></thead>
+          <tbody id="analyticsTableBody"></tbody>
+        </table>
+        <div class="analytics-empty hidden" id="analyticsEmpty">No data for this month.</div>
+      </div>
+    </div>
+  </div>
+  <div class="coming-soon-page" id="csPage-sellers">
+    <div class="cs-icon">👤</div>
+    <div class="cs-badge">Coming Soon</div>
+    <div class="cs-title">Sellers</div>
+    <div class="cs-sub">Manage seller profiles, view submission history, and track account status.</div>
+    <button class="cs-back" onclick="navTo('bd-review',null)">← Back to BD Review</button>
+  </div>
+  <div class="coming-soon-page" id="csPage-listings">
+    <div class="cs-icon">🗂️</div>
+    <div class="cs-badge">Coming Soon</div>
+    <div class="cs-title">Listings</div>
+    <div class="cs-sub">Browse all approved product listings and track OPT team progress.</div>
+    <button class="cs-back" onclick="navTo('bd-review',null)">← Back to BD Review</button>
+  </div>
+  <div class="coming-soon-page" id="csPage-settings">
+    <div class="cs-icon">⚙️</div>
+    <div class="cs-badge">Coming Soon</div>
+    <div class="cs-title">Settings</div>
+    <div class="cs-sub">Configure credentials, email templates, and panel preferences.</div>
+    <button class="cs-back" onclick="navTo('bd-review',null)">← Back to BD Review</button>
+  </div>
+
+  </div><!-- /content-area -->
+  </div><!-- /app-shell -->
+</div><!-- /adminPanel -->
+
+<!-- ═══ REJECT MODAL ═══ -->
+<div class="modal-overlay hidden" id="rejectModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-icon reject-icon">❌</div>
+      <div>
+        <div class="modal-title">Reject Request</div>
+        <div class="modal-sub" id="rejectModalSub"></div>
+      </div>
+    </div>
+    <label class="modal-label">Reason for rejection <span style="color:var(--accent)">*</span></label>
+    <textarea class="modal-textarea" id="rejectReasonInput" placeholder="e.g. Region is too broad — please specify individual countries." oninput="updateEmailPreview()"></textarea>
+    <div class="modal-err" id="rejectReasonErr">Please provide a reason before sending.</div>
+    <div class="email-preview">
+      <div class="email-preview-header">
+        <span class="email-preview-label">📧 Email Preview</span>
+        <span class="email-preview-to" id="emailPreviewTo"></span>
+      </div>
+      <div class="email-preview-body" id="emailPreviewBody"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeRejectModal()">Cancel</button>
+      <button class="btn-send-reject" id="sendRejectBtn" onclick="confirmReject()">Send &amp; Reject</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APPROVE MODAL ═══ -->
+<div class="modal-overlay hidden" id="approveModal">
+  <div class="approve-modal-box">
+    <div class="approve-icon">✅</div>
+    <div class="approve-title">Approve This Request?</div>
+    <div class="approve-sub">The seller will receive an email confirming their product listing request has been approved.</div>
+    <div class="approve-detail" id="approveDetail"></div>
+    <div class="modal-actions" style="justify-content:center;">
+      <button class="btn-cancel" onclick="closeApproveModal()">Cancel</button>
+      <button class="btn-approve-confirm" id="confirmApproveBtn" onclick="confirmApprove()">Confirm Approval</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NEED INFO MODAL ═══ -->
+<div class="modal-overlay hidden" id="needInfoModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-icon needinfo-icon">🔍</div>
+      <div>
+        <div class="modal-title">Request More Information</div>
+        <div class="modal-sub" id="needInfoModalSub"></div>
+      </div>
+    </div>
+
+    <!-- Flag which fields need attention -->
+    <span class="flag-section-label">Flag fields that need correction (optional)</span>
+    <div class="flag-field-list" id="flagFieldList"></div>
+
+    <label class="modal-label" style="margin-top:4px;">Additional message to seller <span style="color:var(--accent)">*</span></label>
+    <textarea class="modal-textarea" id="needInfoReasonInput" placeholder="e.g. Please confirm which specific countries this listing covers." oninput="updateNeedInfoPreview()"></textarea>
+    <div class="modal-err" id="needInfoReasonErr">Please describe what information you need.</div>
+    <div class="email-preview">
+      <div class="email-preview-header">
+        <span class="email-preview-label">📧 Email Preview</span>
+        <span class="email-preview-to" id="needInfoPreviewTo"></span>
+      </div>
+      <div class="email-preview-body" id="needInfoPreviewBody"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeNeedInfoModal()">Cancel</button>
+      <button class="btn-send-needinfo" id="sendNeedInfoBtn" onclick="confirmNeedInfo()">Send &amp; Request Info</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════════
+// CONFIG — update these before deploying
+// ══════════════════════════════════════════════════════════════════════════════
+var SCRIPT_URL      = 'https://script.google.com/macros/s/AKfycbzWMRr34s08mgfRliKfFUKwvp6QiHSmewYTapN63Z7Ok64TKe1pDUNkTdoYkLCNVKgceg/exec';
+var SELLER_FORM_URL = 'https://fightiger23.github.io/Product_request/'; // ← hosted URL of the product creation form
+
+// Passwords stored as SHA-256 hashes — no plain text passwords in this file.
+// To generate a new hash: https://emn178.github.io/online-tools/sha256.html
+var ADMIN_CREDENTIALS = [
+  { email:'bd@g2g.com',    hash:'f64fae4aec05b835f79c07715ba3d36fcd7ae25388bf202833f67c9d026ddd63', name:'BD Team'  },
+  { email:'admin@g2g.com', hash:'879ffd211a49e236e638f7125fb535a89ef3d058c17d6bc7a60ae7b3d4f5da18', name:'Admin'    }
+];
+
+async function sha256(str){
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════════════════
+var SAVED_KEY         = 'g2g_bd_saved_creds';
+var SESSION_KEY       = 'g2g_bd_session';
+var currentFilter     = 'all';
+var allRequests       = [];
+var currentRejectId   = null;
+var currentApproveId  = null;
+var currentNeedInfoId = null;
+var loggedInName      = '';
+
+// ══════════════════════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════════════════════
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtDate(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function pad(n){ return String(n).padStart(2,'0'); }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// REMEMBER ME
+// ══════════════════════════════════════════════════════════════════════════════
+function loadSavedCreds(){
+  try{
+    var s=localStorage.getItem(SAVED_KEY);
+    if(s){ var c=JSON.parse(s); $('loginEmail').value=c.email||''; $('loginPassword').value=c.password||''; $('rememberMe').checked=true; }
+  }catch(e){}
+}
+function saveCredsIfNeeded(email,pw){
+  try{
+    if($('rememberMe').checked){ localStorage.setItem(SAVED_KEY,JSON.stringify({email:email,password:pw})); }
+    else{ localStorage.removeItem(SAVED_KEY); }
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// LOGIN / LOGOUT
+// ══════════════════════════════════════════════════════════════════════════════
+function loginKey(e){ if(e.key==='Enter') doLogin(); }
+function doLogin(){
+  var email=$('loginEmail').value.trim().toLowerCase();
+  var pw=$('loginPassword').value;
+  var candidate=ADMIN_CREDENTIALS.find(function(c){ return c.email===email; });
+  if(!candidate){ $('loginErr').style.display='block'; $('loginPassword').classList.add('error'); return; }
+  sha256(pw).then(function(hashed){
+    if(hashed!==candidate.hash){ $('loginErr').style.display='block'; $('loginPassword').classList.add('error'); return; }
+    saveCredsIfNeeded($('loginEmail').value.trim(),pw);
+    try{ localStorage.setItem(SESSION_KEY,JSON.stringify({email:candidate.email,name:candidate.name})); }catch(e){}
+    activatePanel(candidate);
+    loadRequests();
+  });
+}
+function activatePanel(match){
+  loggedInName=match.name;
+  $('loggedInUser').textContent=match.email;
+  if($('sidebarUserName')) $('sidebarUserName').textContent=match.email;
+  $('loginPage').classList.add('hidden');
+  $('adminPanel').classList.remove('hidden');
+}
+function doLogout(){
+  try{ localStorage.removeItem(SESSION_KEY); }catch(e){}
+  $('adminPanel').classList.add('hidden');
+  $('loginPage').classList.remove('hidden');
+  if(!$('rememberMe').checked){ $('loginEmail').value=''; $('loginPassword').value=''; }
+  $('loginErr').style.display='none';
+  $('loginPassword').classList.remove('error');
+  allRequests=[];
+}
+function restoreSession(){
+  try{
+    var s=localStorage.getItem(SESSION_KEY);
+    if(!s) return false;
+    var sess=JSON.parse(s);
+    var match=ADMIN_CREDENTIALS.find(function(c){ return c.email===sess.email; });
+    if(!match) return false;
+    activatePanel(match);
+    return true;
+  }catch(e){ return false; }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// LOAD REQUESTS
+// ══════════════════════════════════════════════════════════════════════════════
+function loadRequests(){
+  var btn=$('refreshBtn'); btn.classList.add('spinning');
+  $('listWrap').innerHTML='<div class="loading-state"><div class="spinner"></div><div class="loading-text">Loading requests…</div></div>';
+  fetch(SCRIPT_URL+'?action=getRequests',{method:'GET',redirect:'follow'})
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var raw=data.requests||[];
+      var seen={};
+      var merged=[];
+      raw.forEach(function(r){
+        r.submissionId=(r.submissionId||'').trim();
+        if(!seen[r.submissionId]){
+          seen[r.submissionId]=merged.length;
+          r.denominations=Array.isArray(r.denominations)?r.denominations:[];
+          merged.push(r);
+        } else {
+          var ex=merged[seen[r.submissionId]];
+          if(Array.isArray(r.denominations)){
+            r.denominations.forEach(function(d){ if(d.amount) ex.denominations.push(d); });
+          }
+        }
+      });
+      allRequests=merged;
+      updateStats(); renderList(); btn.classList.remove('spinning');
+    })
+    .catch(function(err){
+      console.error('Load error:',err);
+      btn.classList.remove('spinning');
+      $('listWrap').innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Could not load requests</div><div class="empty-sub">Check your Apps Script URL and deployment, then refresh.</div></div>';
+    });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════════════════════════════════════
+function updateStats(){
+  var pending=allRequests.filter(function(r){ return r.status==='Pending'; }).length;
+  var needinfo=allRequests.filter(function(r){ return r.status==='Need Info'; }).length;
+  $('statTotal').textContent    = allRequests.length;
+  $('statPending').textContent  = pending;
+  $('statNeedInfo').textContent = needinfo;
+  $('statApproved').textContent = allRequests.filter(function(r){ return r.status==='Approved'; }).length;
+  $('statRejected').textContent = allRequests.filter(function(r){ return r.status==='Rejected'; }).length;
+  var sb=$('sidebarPendingBadge');
+  if(sb){ var tot=pending+needinfo; sb.textContent=tot; sb.style.display=tot?'':'none'; }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FILTER & RENDER
+// ══════════════════════════════════════════════════════════════════════════════
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.ftab').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  renderList();
+}
+function renderList(){
+  var search=($('searchInput').value||'').toLowerCase().trim();
+  var filtered=allRequests.filter(function(r){
+    var mf=currentFilter==='all'||r.status===currentFilter;
+    var ms=!search
+      ||(r.submissionId   ||'').toLowerCase().includes(search)
+      ||(r.brand          ||'').toLowerCase().includes(search)
+      ||(r.sellerUsername ||'').toLowerCase().includes(search)
+      ||(r.sellerEmail    ||'').toLowerCase().includes(search)
+      ||(r.category       ||'').toLowerCase().includes(search)
+      ||(r.productVariation||'').toLowerCase().includes(search);
+    return mf&&ms&&matchesDateFilter(r);
+  });
+  if(!filtered.length){
+    $('listWrap').innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No requests found</div><div class="empty-sub">Try a different filter or search term.</div></div>';
+    return;
+  }
+  var html='<div class="req-list">';
+  filtered.forEach(function(r,i){ html+=buildCardHTML(r,i); });
+  html+='</div>';
+  $('listWrap').innerHTML=html;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CARD BUILDER
+// ══════════════════════════════════════════════════════════════════════════════
+function buildCardHTML(r,idx){
+  var rawStatus=r.status||'Pending';
+  var statusClass=rawStatus.toLowerCase().replace(/\s+/g,'');
+  var sid=(r.submissionId||'').replace(/[^a-zA-Z0-9]/g,'_');
+  var initials=(r.sellerUsername||'XX').replace(/seller_/i,'').substring(0,2).toUpperCase();
+  var isKey=r.isKey==='Yes'||r.isKey===true;
+  var flaggedFields=r.flaggedFields?r.flaggedFields.split('|').map(function(x){return x.trim();}).filter(Boolean):[];
+
+  // Denomination parsing — handles array from Apps Script
+var denomArray=Array.isArray(r.denominations)?r.denominations:[];
+var denomGroups={},denomGroupOrder=[];
+denomArray.forEach(function(d){
+  var type=d.productType||'';
+  var amount=(d.dataset?d.dataset+' · ':'')+d.amount;
+  if(!denomGroups[type]){denomGroups[type]=[];denomGroupOrder.push(type);}
+  if(d.amount) denomGroups[type].push(amount);
+});
+
+  // Header pills
+  var regionTokens=(r.region||r.customRegionSets||'').split(/[,|]/).map(function(x){return x.trim();}).filter(Boolean);
+  var platforms=(r.platforms||'').split(/[,|]/).map(function(x){return x.trim();}).filter(Boolean).join(' / ');
+  var pillsHtml='';
+  if(regionTokens.length) pillsHtml+='<span class="ds-pill">'+esc(regionTokens.join(' / '))+'</span>';
+  if(isKey){
+    pillsHtml+='<span class="ds-pill key">Key</span>';
+  }
+
+  // Action buttons by status
+  var actionBtns='';
+  if(rawStatus==='Pending'||rawStatus==='Need Info'){
+    actionBtns=
+      '<button class="btn-approve"   onclick="openApproveModal(\''+r.submissionId+'\');event.stopPropagation();">✅ Approve</button>'
+     +'<button class="btn-needinfo"  onclick="openNeedInfoModal(\''+r.submissionId+'\');event.stopPropagation();">🔍 Need Info</button>'
+     +'<button class="btn-reject"    onclick="openRejectModal(\''+r.submissionId+'\');event.stopPropagation();">❌ Reject</button>';
+  } else if(rawStatus==='Approved'){
+    actionBtns=
+      '<button class="btn-unapprove" onclick="confirmUnapprove(\''+r.submissionId+'\');event.stopPropagation();">↩ Unapprove</button>'
+     +'<button class="btn-needinfo"  onclick="openNeedInfoModal(\''+r.submissionId+'\');event.stopPropagation();">🔍 Need Info</button>'
+     +'<button class="btn-reject"    onclick="openRejectModal(\''+r.submissionId+'\');event.stopPropagation();">❌ Reject</button>';
+  } else {
+    actionBtns=
+      '<button class="btn-unapprove" onclick="confirmUnapprove(\''+r.submissionId+'\');event.stopPropagation();">↩ Reopen</button>'
+     +'<button class="btn-needinfo"  onclick="openNeedInfoModal(\''+r.submissionId+'\');event.stopPropagation();">🔍 Need Info</button>';
+  }
+
+  // Reviewer notes
+  var notesHtml='';
+  if(r.reviewerNotes&&rawStatus==='Rejected'){
+    notesHtml='<div class="reviewer-notes-row"><div class="reviewer-notes-label">Rejection Reason</div>'+esc(r.reviewerNotes)+'</div>';
+  } else if(r.reviewerNotes&&rawStatus==='Need Info'){
+    notesHtml='<div class="reviewer-notes-row needinfo-notes"><div class="reviewer-notes-label">Info Requested</div>'+esc(r.reviewerNotes)+'</div>';
+  } else if(r.reviewerNotes){
+    notesHtml='<div class="reviewer-notes-row"><div class="reviewer-notes-label">Notes</div>'+esc(r.reviewerNotes)+'</div>';
+  }
+
+  // Resubmission history badge
+  var historyHtml='';
+  if(r.version&&r.version>1){
+    historyHtml='<div class="history-badge">🔄 Resubmission — version '+esc(r.version)+' (original: '+esc(r.submissionId)+')</div>';
+  }
+
+  // Region body
+  var regionHtml=regionTokens.length>1
+    ?rfieldChecklist('Region',regionTokens,sid+'_reg',flaggedFields)
+    :rfield('Region',regionTokens[0]||'',!regionTokens.length,null,flaggedFields);
+
+  // Denomination body
+  var denomHtml;
+  if(isKey){
+    denomHtml=rfield('Denominations','',false,'<span class="key-badge">Key — no denominations</span>',flaggedFields);
+  } else if(denomGroupOrder.length===0){
+    denomHtml=rfield('Denominations','',true,null,flaggedFields);
+  } else {
+    var dBodyHtml='<div class="check-list">';
+    dBodyHtml+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:4px 10px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);margin-bottom:4px;">'
+      +'<span>Product Type</span><span>Dataset</span><span>Amount</span></div>';
+    var denomsToShow=Array.isArray(r.denominations)?r.denominations:[];
+    denomsToShow.forEach(function(d,i){
+      if(!d.amount) return;
+      var cid='ci_'+sid+'_den_'+i;
+      dBodyHtml+='<div class="check-item" id="wrap_'+cid+'" onclick="toggleCheckItem(\''+cid+'\')\" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">'
+        +'<input type="checkbox" id="'+cid+'" style="display:none;">'
+        +'<span class="ci-label">'+esc(d.productType||'—')+'</span>'
+        +'<span class="ci-label">'+esc(d.dataset||'—')+'</span>'
+        +'<span class="ci-label">'+esc(d.amount||'—')+'</span>'
+        +'</div>';
+    });
+    dBodyHtml+='</div>';
+    var isFlagged=flaggedFields.indexOf('Denominations')>-1;
+    denomHtml='<div class="rfield'+(isFlagged?' flagged':'')+'"><div class="rfield-label">Denominations'+(isFlagged?'<span class="flag-pill">⚑ Flagged</span>':'')+'</div><div class="rfield-val">'+dBodyHtml+'</div></div>';
+  }
+
+  // Entry fields
+  var ef1=r.entryField1||'',ef2=r.entryField2||'',ef3=r.entryField3||'',ef4=r.entryField4||'',ef5=r.entryField5||'';
+  var entryHtml='';
+  if(ef1) entryHtml+=rfieldCheck('Entry Field 1',ef1,sid+'_ef1',flaggedFields);
+  if(ef2) entryHtml+=rfieldCheck('Entry Field 2',ef2,sid+'_ef2',flaggedFields);
+  if(ef3) entryHtml+=rfieldCheck('Entry Field 3',ef3,sid+'_ef3',flaggedFields);
+  if(ef4) entryHtml+=rfieldCheck('Entry Field 4',ef4,sid+'_ef4',flaggedFields);
+  if(ef5) entryHtml+=rfieldCheck('Entry Field 5',ef5,sid+'_ef5',flaggedFields);
+  if(!ef1&&!ef2&&!ef3&&!ef4&&!ef5) entryHtml=rfield('Entry Fields','',true,null,flaggedFields);
+
+  var acctHtml=r.accountType?rfieldCheck('Account Type',r.accountType,sid+'_acct',flaggedFields):'';
+  var crossHtml=r.crossPlatform==='Yes'?rfield('Cross-Platform','',false,'<span class="key-badge" style="background:#eff6ff;border-color:#bfdbfe;color:#0c447c;">Yes</span>',flaggedFields):'';
+  var keyHtml=isKey?rfield('Key','',false,'<span class="key-badge">Yes — digital key product</span>',flaggedFields):'';
+  var reviewedInfo=r.reviewedBy?'Reviewed by '+r.reviewedBy+(r.reviewedAt?' · '+r.reviewedAt:''):'';
+
+  var urls=(r.refLink||'').split('|').map(function(u){return u.trim();}).filter(Boolean);
+  var urlChips=urls.map(function(u){
+    var d=''; try{d=new URL(u).hostname;}catch(e){d=u;}
+    return '<a href="'+u+'" target="_blank" class="ref-url-chip">🔗 '+esc(u)+'</a>';
+  }).join('');
+
+  return '<div class="req-card status-'+statusClass+'" id="card-'+r.submissionId+'" style="animation-delay:'+(idx*0.04)+'s">'
+    +'<div class="req-card-header" onclick="toggleCard(\''+r.submissionId+'\')">'
+      +'<div class="req-header-left">'
+        +'<span class="req-id">'+esc(r.submissionId||'')+'</span>'
+        +'<div class="req-header-info">'
+          +'<div class="req-title-row">'
+            +'<span class="req-brand">'+esc(r.brand||'')+'</span>'
+            +(r.productVariation?'<span class="req-variation">— '+esc(r.productVariation)+'</span>':'')
+          +'</div>'
+          +'<div class="req-meta-row">'+esc(r.deliveryMethod||'')+' · '+esc(r.timestamp?String(r.timestamp).substring(0,16).replace('T',' '):'')+(r.sellerUsername?'<span style="margin-left:6px;color:var(--info)">@'+esc(r.sellerUsername)+'</span>':'')+(r.sellerEmail?'<span style="margin-left:4px;color:var(--muted)"> · '+esc(r.sellerEmail)+'</span>':'')+'</div>'
+          +(pillsHtml?'<div class="req-dataset-row">'+pillsHtml+'</div>':'')
+        +'</div>'
+      +'</div>'
+      +'<div class="req-header-right">'
+        +'<span class="status-badge '+statusClass+'">'+esc(rawStatus)+'</span>'
+        +'<span class="expand-icon">▼</span>'
+      +'</div>'
+    +'</div>'
+    +'<div class="req-card-body">'
+      +historyHtml
+      +'<div class="seller-row"><div class="seller-avatar">'+initials+'</div>'
+        +'<div><div class="seller-name">@'+esc(r.sellerUsername||'')+'</div>'
+        +'<div class="seller-email">'+esc(r.sellerEmail||'')+'</div></div></div>'
+      +'<div class="review-fields">'
+        +rfield('Game Name',r.brand||'',!r.brand,null,flaggedFields)
+        +rfield('Series / Variation',r.productVariation||'',!r.productVariation,null,flaggedFields)
+        +regionHtml
+        +rfield('Delivery Method',r.deliveryMethod||'',!r.deliveryMethod,null,flaggedFields)
+        +denomHtml
+        +entryHtml
+        +acctHtml
+        +rfield('Platform',platforms||'',!platforms,null,flaggedFields)
+        +crossHtml
+        +keyHtml
+      +'</div>'
+      +(urlChips?'<div class="ref-section"><div class="ref-section-label">Reference URLs</div>'+urlChips+'</div>':'')
+      +(r.refImages?'<div class="ref-section"><div class="ref-section-label">Reference Images</div><span style="font-size:12px;color:var(--label);">'+esc(r.refImages)+'</span></div>':'')
+      +notesHtml
+      +'<div class="action-row">'+(reviewedInfo?'<span class="reviewed-info">'+esc(reviewedInfo)+'</span>':'')+actionBtns+'</div>'
+    +'</div>'
+  +'</div>';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FIELD HELPERS
+// ══════════════════════════════════════════════════════════════════════════════
+function isFlaggedField(label,flaggedFields){
+  return flaggedFields&&flaggedFields.some(function(f){return f.toLowerCase()===label.toLowerCase();});
+}
+function rfield(label,val,empty,customHtml,flaggedFields){
+  var flagged=isFlaggedField(label,flaggedFields);
+  return '<div class="rfield'+(flagged?' flagged':'')+'"><div class="rfield-label">'+esc(label)+(flagged?'<span class="flag-pill">⚑ Flagged</span>':'')+'</div>'
+    +'<div class="rfield-val'+(empty?' empty':'')+'">'+( customHtml?customHtml:(empty?'—':esc(val)))+'</div></div>';
+}
+function rfieldChecklist(label,items,baseId,flaggedFields){
+  var flagged=isFlaggedField(label,flaggedFields);
+  var html=items.map(function(item,i){
+    var cid='ci_'+baseId+'_'+i;
+    return '<div class="check-item" id="wrap_'+cid+'" onclick="toggleCheckItem(\''+cid+'\')">'
+      +'<input type="checkbox" id="'+cid+'"><span class="ci-label">'+esc(item)+'</span></div>';
+  }).join('');
+  return '<div class="rfield'+(flagged?' flagged':'')+'"><div class="rfield-label">'+esc(label)+(flagged?'<span class="flag-pill">⚑ Flagged</span>':'')+'</div><div class="rfield-val"><div class="check-list">'+html+'</div></div></div>';
+}
+function rfieldCheck(label,val,baseId,flaggedFields){
+  var flagged=isFlaggedField(label,flaggedFields);
+  var cid='ci_'+baseId;
+  return '<div class="rfield'+(flagged?' flagged':'')+'"><div class="rfield-label">'+esc(label)+(flagged?'<span class="flag-pill">⚑ Flagged</span>':'')+'</div><div class="rfield-val">'
+    +'<div class="check-item" id="wrap_'+cid+'" onclick="toggleCheckItem(\''+cid+'\')">'
+    +'<input type="checkbox" id="'+cid+'"><span class="ci-label">'+esc(val)+'</span></div></div></div>';
+}
+function toggleCheckItem(cid){
+  var cb=document.getElementById(cid),wrap=document.getElementById('wrap_'+cid);
+  if(!cb||!wrap) return;
+  cb.checked=!cb.checked; wrap.classList.toggle('checked',cb.checked);
+}
+function toggleCard(id){ var c=document.getElementById('card-'+id); if(c) c.classList.toggle('expanded'); }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// APPROVE
+// ══════════════════════════════════════════════════════════════════════════════
+function openApproveModal(id){
+  var r=allRequests.find(function(x){return x.submissionId===id;}); if(!r) return;
+  currentApproveId=id;
+  $('approveDetail').innerHTML='<strong>'+esc(r.brand)+'</strong>'+(r.productVariation?' — '+esc(r.productVariation):'')+'<br>Seller: @'+esc(r.sellerUsername)+' · '+esc(r.sellerEmail)+'<br>Category: '+esc(r.category)+' · '+esc(r.deliveryMethod);
+  $('approveModal').classList.remove('hidden');
+}
+function closeApproveModal(){ $('approveModal').classList.add('hidden'); currentApproveId=null; }
+function confirmApprove(){
+  var r=allRequests.find(function(x){return x.submissionId===currentApproveId;}); if(!r) return;
+  $('confirmApproveBtn').disabled=true; $('confirmApproveBtn').textContent='Approving…';
+  fetch(SCRIPT_URL+'?action=approve&id='+encodeURIComponent(currentApproveId)+'&reviewer='+encodeURIComponent(loggedInName),{method:'GET',redirect:'follow'})
+    .then(function(res){return res.json();})
+    .then(function(data){
+      if(data.status==='success'){
+        r.status='Approved'; r.reviewedBy=loggedInName; r.reviewedAt=new Date().toLocaleDateString();
+        updateStats(); renderList();
+        showToast('✅ Approved — '+r.brand+'. Seller notified at '+r.sellerEmail,'success');
+      } else { showToast('Error: '+(data.message||'Could not approve.'),'error'); }
+    })
+    .catch(function(){showToast('Network error. Please try again.','error');})
+    .finally(function(){closeApproveModal(); $('confirmApproveBtn').disabled=false; $('confirmApproveBtn').textContent='Confirm Approval';});
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// REJECT
+// ══════════════════════════════════════════════════════════════════════════════
+function openRejectModal(id){
+  var r=allRequests.find(function(x){return x.submissionId===id;}); if(!r) return;
+  currentRejectId=id;
+  $('rejectModalSub').textContent='Rejecting: '+r.brand+' ('+id+') — seller notified at '+r.sellerEmail;
+  $('emailPreviewTo').textContent='To: '+r.sellerEmail;
+  $('rejectReasonInput').value='';
+  $('rejectReasonInput').classList.remove('error'); $('rejectReasonErr').style.display='none';
+  updateEmailPreview(); $('rejectModal').classList.remove('hidden');
+}
+function closeRejectModal(){ $('rejectModal').classList.add('hidden'); currentRejectId=null; }
+function updateEmailPreview(){
+  var r=allRequests.find(function(x){return x.submissionId===currentRejectId;}); if(!r) return;
+  var reason=$('rejectReasonInput').value.trim()||'[Your reason here]';
+  $('emailPreviewBody').innerHTML='Hi <strong>'+esc(r.sellerUsername)+'</strong>,<br><br>'
+    +'Thank you for submitting your product listing request for <strong>'+esc(r.brand)+'</strong>.<br><br>'
+    +'After review, we are unable to approve this request for the following reason:<br><br>'
+    +'<span style="background:#fff0f0;padding:6px 10px;border-radius:4px;border-left:3px solid #e3001b;display:block;margin:4px 0;white-space:pre-wrap;">'+esc(reason)+'</span><br>'
+    +'If you believe this is an error or have further queries, please contact the G2G BD team.<br><br>'
+    +'— G2G BD Team';
+}
+function confirmReject(){
+  var reason=$('rejectReasonInput').value.trim();
+  if(!reason){ $('rejectReasonInput').classList.add('error'); $('rejectReasonErr').style.display='block'; return; }
+  var r=allRequests.find(function(x){return x.submissionId===currentRejectId;}); if(!r) return;
+  $('sendRejectBtn').disabled=true; $('sendRejectBtn').textContent='Sending…';
+  fetch(SCRIPT_URL+'?action=reject&id='+encodeURIComponent(currentRejectId)+'&reason='+encodeURIComponent(reason)+'&reviewer='+encodeURIComponent(loggedInName),{method:'GET',redirect:'follow'})
+    .then(function(res){return res.json();})
+    .then(function(data){
+      if(data.status==='success'){
+        r.status='Rejected'; r.reviewerNotes=reason; r.reviewedBy=loggedInName; r.reviewedAt=new Date().toLocaleDateString();
+        updateStats(); renderList();
+        showToast('❌ Rejected — '+r.brand+'. Seller notified.','error');
+      } else { showToast('Error: '+(data.message||'Could not reject.'),'error'); }
+    })
+    .catch(function(){showToast('Network error. Please try again.','error');})
+    .finally(function(){closeRejectModal(); $('sendRejectBtn').disabled=false; $('sendRejectBtn').textContent='Send & Reject';});
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// NEED INFO  — with flagged fields checklist
+// ══════════════════════════════════════════════════════════════════════════════
+var ALL_REVIEWABLE_FIELDS=['Game Name','Series / Variation','Region','Delivery Method','Denominations','Entry Field 1','Entry Field 2','Entry Field 3','Entry Field 4','Entry Field 5','Account Type','Platform','Cross-Platform','Reference URLs'];
+
+function openNeedInfoModal(id){
+  var r=allRequests.find(function(x){return x.submissionId===id;}); if(!r) return;
+  currentNeedInfoId=id;
+  $('needInfoModalSub').textContent=r.brand+' ('+id+') — seller: '+r.sellerEmail;
+  $('needInfoPreviewTo').textContent='To: '+r.sellerEmail;
+  $('needInfoReasonInput').value='';
+  $('needInfoReasonInput').classList.remove('error'); $('needInfoReasonErr').style.display='none';
+
+  // Build flagged fields checklist
+  var listHtml=ALL_REVIEWABLE_FIELDS.map(function(f,i){
+    var fid='ff_'+i;
+    return '<div class="flag-field-item" id="ffi_'+fid+'" onclick="toggleFlagField(\''+fid+'\',\''+esc(f)+'\')">'
+      +'<input type="checkbox" id="'+fid+'"><span class="ffi-label">'+esc(f)+'</span></div>';
+  }).join('');
+  $('flagFieldList').innerHTML=listHtml;
+
+  updateNeedInfoPreview();
+  $('needInfoModal').classList.remove('hidden');
+}
+function toggleFlagField(fid,label){
+  var cb=document.getElementById(fid),wrap=document.getElementById('ffi_'+fid);
+  if(!cb||!wrap) return;
+  cb.checked=!cb.checked;
+  wrap.classList.toggle('flagged',cb.checked);
+  updateNeedInfoPreview();
+}
+function getCheckedFlagFields(){
+  var checked=[];
+  ALL_REVIEWABLE_FIELDS.forEach(function(f,i){
+    var cb=document.getElementById('ff_'+i);
+    if(cb&&cb.checked) checked.push(f);
+  });
+  return checked;
+}
+function closeNeedInfoModal(){ $('needInfoModal').classList.add('hidden'); currentNeedInfoId=null; }
+function updateNeedInfoPreview(){
+  var r=allRequests.find(function(x){return x.submissionId===currentNeedInfoId;}); if(!r) return;
+  var q=$('needInfoReasonInput').value.trim()||'[Your question here]';
+  var flagged=getCheckedFlagFields();
+  var flagHtml='';
+  if(flagged.length){
+    flagHtml='The following fields need your attention:<br>'
+      +'<span style="background:#fefce8;padding:6px 10px;border-radius:4px;border-left:3px solid #d97706;display:block;margin:4px 0;">'+flagged.map(function(f){return '• '+f;}).join('<br>')+'</span><br>';
+  }
+  // Build resubmit link with flagged fields encoded
+  var resubmitLink=SELLER_FORM_URL+'?resubmit='+encodeURIComponent(r.submissionId)+'&flagged='+encodeURIComponent(flagged.join('|'));
+  $('needInfoPreviewBody').innerHTML='Hi <strong>'+esc(r.sellerUsername)+'</strong>,<br><br>'
+    +'Thank you for submitting your product listing request for <strong>'+esc(r.brand)+'</strong>.<br><br>'
+    +'We need some additional clarification before we can proceed:<br><br>'
+    +(flagHtml)
+    +'<span style="background:#f5f3ff;padding:6px 10px;border-radius:4px;border-left:3px solid #7c3aed;display:block;margin:4px 0;white-space:pre-wrap;">'+esc(q)+'</span><br>'
+    +'Please use the link below to update and resubmit your request. Your flagged fields will be highlighted for easy editing:<br>'
+    +'<a href="'+resubmitLink+'" style="color:#7c3aed;font-weight:600;">'+esc(SELLER_FORM_URL)+'</a><br><br>'
+    +'— G2G BD Team';
+}
+function confirmNeedInfo(){
+  var q=$('needInfoReasonInput').value.trim();
+  if(!q){ $('needInfoReasonInput').classList.add('error'); $('needInfoReasonErr').style.display='block'; return; }
+  var r=allRequests.find(function(x){return x.submissionId===currentNeedInfoId;}); if(!r) return;
+  var flagged=getCheckedFlagFields();
+  $('sendNeedInfoBtn').disabled=true; $('sendNeedInfoBtn').textContent='Sending…';
+  var params='?action=needinfo'
+    +'&id='+encodeURIComponent(currentNeedInfoId)
+    +'&reason='+encodeURIComponent(q)
+    +'&flagged='+encodeURIComponent(flagged.join('|'))
+    +'&reviewer='+encodeURIComponent(loggedInName);
+  fetch(SCRIPT_URL+params,{method:'GET',redirect:'follow'})
+    .then(function(res){return res.json();})
+    .then(function(data){
+      if(data.status==='success'){
+        r.status='Need Info'; r.reviewerNotes=q; r.flaggedFields=flagged.join('|');
+        r.reviewedBy=loggedInName; r.reviewedAt=new Date().toLocaleDateString();
+        updateStats(); renderList();
+        showToast('🔍 Info requested — '+r.brand+'. Seller notified.','info');
+      } else { showToast('Error: '+(data.message||'Could not send.'),'error'); }
+    })
+    .catch(function(){showToast('Network error. Please try again.','error');})
+    .finally(function(){closeNeedInfoModal(); $('sendNeedInfoBtn').disabled=false; $('sendNeedInfoBtn').textContent='Send & Request Info';});
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// UNAPPROVE / REOPEN
+// ══════════════════════════════════════════════════════════════════════════════
+function confirmUnapprove(id){
+  var r=allRequests.find(function(x){return x.submissionId===id;}); if(!r) return;
+  if(!confirm('Revert "'+r.brand+'" back to Pending?')) return;
+  // Optimistic update immediately so UI feels instant
+  r.status='Pending'; r.reviewedBy=''; r.reviewedAt=''; r.reviewerNotes='';
+  updateStats(); renderList();
+  showToast('↩ '+r.brand+' reverted to Pending.','info');
+  // Sync to backend (action=reopen)
+  fetch(SCRIPT_URL+'?action=reopen&id='+encodeURIComponent(id)+'&reviewer='+encodeURIComponent(loggedInName),{method:'GET',redirect:'follow'})
+    .then(function(res){return res.json();})
+    .then(function(data){
+      if(data.status!=='success') showToast('⚠ Revert saved locally but server sync failed: '+(data.message||''),'warn');
+    })
+    .catch(function(){ /* already updated locally, silently ignore network errors */ });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════════════════════
+function showToast(msg,type){
+  var t=$('toast'); t.textContent=msg; t.className='toast '+(type||'info'); t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},4500);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DATE FILTER
+// ══════════════════════════════════════════════════════════════════════════════
+var currentDatePreset='all';
+function setDatePreset(preset,btn){
+  currentDatePreset=preset;
+  document.querySelectorAll('.dpre').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  var today=new Date();
+  if(preset==='today'){ var d=fmtDate(today); $('dateFrom').value=d; $('dateTo').value=d; $('dateClearBtn').classList.remove('hidden'); }
+  else if(preset==='week'){ var day=today.getDay(),diff=today.getDate()-day+(day===0?-6:1); var mon=new Date(new Date().setDate(diff)); $('dateFrom').value=fmtDate(mon); $('dateTo').value=fmtDate(new Date()); $('dateClearBtn').classList.remove('hidden'); }
+  else if(preset==='month'){ $('dateFrom').value=fmtDate(new Date(today.getFullYear(),today.getMonth(),1)); $('dateTo').value=fmtDate(new Date()); $('dateClearBtn').classList.remove('hidden'); }
+  else{ $('dateFrom').value=''; $('dateTo').value=''; $('dateClearBtn').classList.add('hidden'); }
+  renderList();
+}
+function onDateRangeChange(){
+  currentDatePreset='custom';
+  document.querySelectorAll('.dpre').forEach(function(b){b.classList.remove('active');});
+  var show=$('dateFrom').value||$('dateTo').value; $('dateClearBtn').classList.toggle('hidden',!show); renderList();
+}
+function clearDateRange(){
+  $('dateFrom').value=''; $('dateTo').value=''; $('dateClearBtn').classList.add('hidden'); currentDatePreset='all';
+  document.querySelectorAll('.dpre').forEach(function(b,i){b.classList.toggle('active',i===0);}); renderList();
+}
+function matchesDateFilter(r){
+  var from=$('dateFrom').value,to=$('dateTo').value; if(!from&&!to) return true;
+  var ts=r.timestamp?r.timestamp.substring(0,10):''; if(!ts) return true;
+  if(from&&ts<from) return false; if(to&&ts>to) return false; return true;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// THEME TOGGLE
+// ══════════════════════════════════════════════════════════════════════════════
+var THEME_KEY='g2g_bd_theme';
+function initTheme(){
+  var saved=localStorage.getItem(THEME_KEY)||'light';
+  applyTheme(saved);
+}
+function applyTheme(mode){
+  if(mode==='dark'){
+    document.documentElement.classList.add('dark');
+    var icon=$('themeIcon'),label=$('themeLabel');
+    if(icon) icon.textContent='☀️';
+    if(label) label.textContent='Light mode';
+  } else {
+    document.documentElement.classList.remove('dark');
+    var icon=$('themeIcon'),label=$('themeLabel');
+    if(icon) icon.textContent='🌙';
+    if(label) label.textContent='Dark mode';
+  }
+  try{localStorage.setItem(THEME_KEY,mode);}catch(e){}
+}
+function toggleTheme(){
+  var isDark=document.documentElement.classList.contains('dark');
+  applyTheme(isDark?'light':'dark');
+  // Redraw pie so donut hole colour matches new theme
+  setTimeout(renderAnalytics, 50);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ANALYTICS — PIE CHART
+// ══════════════════════════════════════════════════════════════════════════════
+var PIE_COLORS=['#e3001b','#7c3aed','#185FA5','#00a86b','#d97706','#0891b2','#be185d','#4f46e5','#059669','#b45309','#7c3aed','#dc2626','#0284c7','#16a34a','#ca8a04'];
+
+function populateMonthSelect(){
+  var sel=$('analyticsMonthSelect'); if(!sel) return;
+  var months={};
+  allRequests.forEach(function(r){
+    if(!r.timestamp) return;
+    var d=r.timestamp.substring(0,7); // "YYYY-MM"
+    months[d]=true;
+  });
+  var keys=Object.keys(months).sort().reverse();
+  var now=new Date();
+  var thisMonth=now.getFullYear()+'-'+pad(now.getMonth()+1);
+  if(!months[thisMonth]) keys.unshift(thisMonth);
+  sel.innerHTML='';
+  keys.forEach(function(k){
+    var parts=k.split('-');
+    var label=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1).toLocaleString('default',{month:'long',year:'numeric'});
+    var opt=document.createElement('option');
+    opt.value=k; opt.textContent=label;
+    sel.appendChild(opt);
+  });
+  if(keys.length) sel.value=keys[0];
+}
+
+function renderAnalytics(){
+  var sel=$('analyticsMonthSelect'); if(!sel) return;
+  var month=sel.value; // "YYYY-MM"
+
+  // Filter requests for this month
+  var filtered=allRequests.filter(function(r){
+    return r.timestamp&&r.timestamp.substring(0,7)===month;
+  });
+
+  // Aggregate by category
+  var cats={};
+  filtered.forEach(function(r){
+    var cat=(r.category||'Uncategorised').trim()||'Uncategorised';
+    if(!cats[cat]) cats[cat]={total:0,approved:0,rejected:0,other:0};
+    cats[cat].total++;
+    if(r.status==='Approved') cats[cat].approved++;
+    else if(r.status==='Rejected') cats[cat].rejected++;
+    else cats[cat].other++;
+  });
+
+  var catKeys=Object.keys(cats).sort(function(a,b){return cats[b].total-cats[a].total;});
+  var total=filtered.length;
+
+  // Empty state
+  var emptyEl=$('analyticsEmpty'),tableEl=$('analyticsTable');
+  if(!total){
+    if(emptyEl) emptyEl.classList.remove('hidden');
+    if(tableEl) tableEl.style.display='none';
+    clearPie();
+    $('analyticsLegend').innerHTML='';
+    $('analyticsTotalLabel').innerHTML='';
+    return;
+  }
+  if(emptyEl) emptyEl.classList.add('hidden');
+  if(tableEl) tableEl.style.display='';
+
+  // Draw pie
+  drawPie(catKeys,cats,total);
+
+  // Legend
+  var legendHtml='';
+  catKeys.forEach(function(cat,i){
+    var pct=Math.round(cats[cat].total/total*100);
+    legendHtml+='<div class="legend-item">'
+      +'<div class="legend-dot" style="background:'+PIE_COLORS[i%PIE_COLORS.length]+'"></div>'
+      +'<div class="legend-label">'+esc(cat)+'</div>'
+      +'<div class="legend-count">'+cats[cat].total+'</div>'
+      +'<div class="legend-pct" style="color:'+PIE_COLORS[i%PIE_COLORS.length]+'">'+pct+'%</div>'
+      +'</div>';
+  });
+  $('analyticsLegend').innerHTML=legendHtml;
+
+  // Total label inside donut
+  $('analyticsTotalLabel').innerHTML='<div class="analytics-total-num">'+total+'</div><div class="analytics-total-txt">Requests</div>';
+
+  // Table
+  var tbody=$('analyticsTableBody'); if(!tbody) return;
+  tbody.innerHTML='';
+  catKeys.forEach(function(cat,i){
+    var d=cats[cat];
+    var pct=(d.total/total*100).toFixed(1);
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><span class="analytics-cat-dot" style="background:'+PIE_COLORS[i%PIE_COLORS.length]+'"></span>'+esc(cat)+'</td>'
+      +'<td>'+d.total+'</td>'
+      +'<td>'+pct+'%</td>'
+      +'<td style="color:var(--success)">'+d.approved+'</td>'
+      +'<td style="color:var(--accent)">'+d.rejected+'</td>'
+      +'<td style="color:var(--warn)">'+d.other+'</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function drawPie(catKeys,cats,total){
+  var canvas=$('pieCanvas'); if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=W/2-10,ir=r*0.58;
+  ctx.clearRect(0,0,W,H);
+  var startAngle=-Math.PI/2;
+  var isDark=document.documentElement.classList.contains('dark');
+  var gapAngle=catKeys.length>1?0.015:0;
+
+  catKeys.forEach(function(cat,i){
+    var slice=cats[cat].total/total;
+    var endAngle=startAngle+slice*Math.PI*2-gapAngle;
+    var color=PIE_COLORS[i%PIE_COLORS.length];
+
+    // Shadow
+    ctx.save();
+    ctx.shadowColor='rgba(0,0,0,0.15)';
+    ctx.shadowBlur=8;
+
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,startAngle,endAngle);
+    ctx.closePath();
+    ctx.fillStyle=color;
+    ctx.fill();
+    ctx.restore();
+
+    // Donut hole
+    ctx.beginPath();
+    ctx.arc(cx,cy,ir,0,Math.PI*2);
+    ctx.fillStyle=isDark?'#1a1d27':'#fff';
+    ctx.fill();
+
+    startAngle=endAngle+gapAngle;
+  });
+
+  // Subtle ring border
+  ctx.beginPath();
+  ctx.arc(cx,cy,ir,0,Math.PI*2);
+  ctx.strokeStyle=isDark?'rgba(255,255,255,.04)':'rgba(0,0,0,.04)';
+  ctx.lineWidth=1;
+  ctx.stroke();
+}
+
+function clearPie(){
+  var canvas=$('pieCanvas'); if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=W/2-10;
+  ctx.clearRect(0,0,W,H);
+  ctx.beginPath();
+  ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.fillStyle=document.documentElement.classList.contains('dark')?'#2a2d3a':'#e2e4eb';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(cx,cy,r*0.58,0,Math.PI*2);
+  ctx.fillStyle=document.documentElement.classList.contains('dark')?'#1a1d27':'#fff';
+  ctx.fill();
+  $('analyticsTotalLabel').innerHTML='<div class="analytics-total-num" style="color:var(--muted)">0</div><div class="analytics-total-txt">Requests</div>';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SIDEBAR NAV
+// ══════════════════════════════════════════════════════════════════════════════
+var CS_PAGES=['analytics','sellers','listings','settings'];
+function navTo(page, el){
+  // Update active sidebar item
+  document.querySelectorAll('.sidebar-item').forEach(function(b){b.classList.remove('active');});
+  if(el){
+    el.classList.add('active');
+  } else {
+    // Called from "Back" button — reactivate bd-review
+    document.querySelectorAll('.sidebar-item').forEach(function(b){
+      if((b.getAttribute('onclick')||'').indexOf("'bd-review'")>-1) b.classList.add('active');
+    });
+  }
+  // Hide all coming-soon pages
+  CS_PAGES.forEach(function(p){
+    var pg=document.getElementById('csPage-'+p);
+    if(pg) pg.classList.remove('visible');
+  });
+  // Show/hide main
+  var mainEl=document.querySelector('.main');
+  if(page==='bd-review'){
+    if(mainEl) mainEl.style.display='';
+  } else {
+    if(mainEl) mainEl.style.display='none';
+    var pg=document.getElementById('csPage-'+page);
+    if(pg) pg.classList.add('visible');
+    // Render analytics when navigating to it
+    if(page==='analytics'){ populateMonthSelect(); renderAnalytics(); }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// MODAL OVERLAY CLOSE
+// ══════════════════════════════════════════════════════════════════════════════
+$('rejectModal').addEventListener('click',   function(e){if(e.target===this) closeRejectModal();});
+$('approveModal').addEventListener('click',  function(e){if(e.target===this) closeApproveModal();});
+$('needInfoModal').addEventListener('click', function(e){if(e.target===this) closeNeedInfoModal();});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════════════════
+initTheme();
+loadSavedCreds();
+// Restore session on page refresh — if valid session found, skip login
+if(restoreSession()){ loadRequests(); }
+</script>
+</body>
+</html>
