@@ -1,0 +1,246 @@
+{
+  "meta": {
+    "version": 1,
+    "lastPublished": "2026-06-18",
+    "variants": ["main-market", "secondary-market", "gpgc"],
+    "defaultVariant": "main-market",
+    "repo": "fightiger23/Product_request",
+    "configPath": "config.json"
+  },
+
+  "cards": [
+
+    {
+      "id": "sellerIdentity",
+      "type": "identity",
+      "title": "Seller Identity",
+      "description": "Enter your G2G registered details. We'll use these to contact you if amendments are needed.",
+      "required": true,
+      "showWhen": "always",
+      "fields": [
+        { "id": "sellerUsername", "label": "G2G Username", "placeholder": "e.g. seller_abc123", "required": true },
+        { "id": "sellerEmail",    "label": "Registered Email", "placeholder": "e.g. seller@email.com", "required": true, "type": "email" }
+      ]
+    },
+
+    {
+      "id": "category",
+      "type": "radio",
+      "title": "Category",
+      "description": "Select the product category",
+      "required": true,
+      "showWhen": "always",
+      "options": [
+        { "value": "Games",          "label": "🎮 Games" },
+        { "value": "Software & Apps","label": "💻 Software & Apps" },
+        { "value": "Gift Cards",     "label": "🎁 Gift Cards" },
+        { "value": "Payment Card",   "label": "💳 Payment Card" },
+        { "value": "Telco",          "label": "📱 Telco" },
+        { "value": "Others",         "label": "➕ Others", "allowCustomInput": true }
+      ]
+    },
+
+    {
+      "id": "region",
+      "type": "region",
+      "title": "Supported Region",
+      "description": "Region(s) where this product is available",
+      "required": true,
+      "showWhen": "always",
+      "regionGroups": [
+        { "value": "GLOBAL",     "label": "Global" },
+        { "value": "AF-REGION",  "label": "Africa (AF)" },
+        { "value": "AS-REGION",  "label": "Asia (AS)" },
+        { "value": "CIS",        "label": "Commonwealth of Independent States (CIS)" },
+        { "value": "EU",         "label": "Europe (EU)" },
+        { "value": "EMEA",       "label": "Europe, Middle East and Africa (EMEA)" },
+        { "value": "LATAM",      "label": "Latin America (LATAM)" },
+        { "value": "MENA",       "label": "Middle East and North Africa (MENA)" },
+        { "value": "NA-REGION",  "label": "North America (NA)" },
+        { "value": "SEA",        "label": "South East Asia (SEA)" }
+      ],
+      "features": {
+        "sharedRegionToggle": true,
+        "tieredRegion": true
+      }
+    },
+
+    {
+      "id": "brand",
+      "type": "text",
+      "title": "Brand Name",
+      "description": "The brand name for the product (e.g. Discord, Netflix, Steam)",
+      "required": true,
+      "showWhen": "always",
+      "fields": [
+        { "id": "brandName",        "label": "Brand Name", "placeholder": "Enter brand name", "required": true },
+        { "id": "productVariation", "label": "Product Variation", "placeholder": "Example: Series, Variety and etc", "required": false }
+      ]
+    },
+
+    {
+      "id": "delivery",
+      "type": "radio",
+      "title": "Delivery Method",
+      "description": "How this product will be delivered to the buyer",
+      "required": true,
+      "showWhen": {
+        "card": "category",
+        "operator": "any"
+      },
+      "optionsByTrigger": {
+        "Games":          ["Digital Pin", "Direct Top Up", "Manual Top Up", "Others"],
+        "Software & Apps":["Digital Pin", "Account", "Direct Top Up", "Manual Top Up", "Platform Engagement", "Activation Link (URL)", "Others"],
+        "Gift Cards":     ["Digital Pin", "Others"],
+        "Payment Card":   ["Digital Pin", "Others"],
+        "Telco":          ["Digital Pin", "Direct Top Up", "Manual Top Up", "Others"],
+        "Others":         ["Digital Pin", "Account", "Direct Top Up", "Manual Top Up", "Platform Engagement", "Activation Link (URL)", "Others"]
+      },
+      "options": [],
+      "allowCustomInput": true,
+      "customTriggerValue": "Others"
+    },
+
+    {
+      "id": "accountType",
+      "type": "radio",
+      "title": "Account Type",
+      "description": "Select the account sharing type",
+      "required": true,
+      "showWhen": {
+        "card": "delivery",
+        "operator": "equals",
+        "value": "Account"
+      },
+      "options": [
+        { "value": "Private", "label": "🔒 Private" },
+        { "value": "Shared",  "label": "👥 Shared" }
+      ]
+    },
+
+    {
+      "id": "entryFields",
+      "type": "entry-fields",
+      "title": "Entry Fields Required",
+      "description": "What information does the buyer need to provide for delivery?",
+      "required": false,
+      "showWhen": {
+        "card": "delivery",
+        "operator": "in",
+        "value": ["Direct Top Up", "Others"]
+      },
+      "defaultFields": [
+        { "label": "Field 1 — Label", "placeholder": "e.g. Player ID / UID / User Email", "required": true },
+        { "label": "Field 2 — Label", "placeholder": "e.g. Server / Region",               "required": false }
+      ],
+      "allowAddMore": true
+    },
+
+    {
+      "id": "manualTopUp",
+      "type": "entry-fields",
+      "title": "Login Information Required",
+      "description": "Define the login credentials the seller must provide.",
+      "required": true,
+      "showWhen": {
+        "card": "delivery",
+        "operator": "equals",
+        "value": "Manual Top Up"
+      },
+      "defaultFields": [
+        { "label": "Field 1 Label", "placeholder": "Login Information", "required": true },
+        { "label": "Field 2 Label", "placeholder": "Password",          "required": true }
+      ],
+      "allowAddMore": true
+    },
+
+    {
+      "id": "platform",
+      "type": "platform",
+      "title": "Platform",
+      "description": "Select all applicable platforms for this game",
+      "required": true,
+      "showWhen": {
+        "card": "delivery",
+        "operator": "equals",
+        "value": "Digital Pin",
+        "also": {
+          "card": "category",
+          "operator": "equals",
+          "value": "Games"
+        }
+      },
+      "options": [
+        { "value": "PC",       "label": "🖥️ PC", "subOptions": ["Steam", "Epic Games"] },
+        { "value": "Xbox",     "label": "🎮 Xbox" },
+        { "value": "PS",       "label": "🎮 PS" },
+        { "value": "Nintendo", "label": "🕹️ Nintendo" }
+      ],
+      "features": {
+        "crossPlatformToggle": true
+      }
+    },
+
+    {
+      "id": "denominations",
+      "type": "denom",
+      "title": "Denominations",
+      "description": "List each denomination. Check Key if no denomination details apply.",
+      "required": true,
+      "showWhen": {
+        "card": "delivery",
+        "operator": "any"
+      },
+      "features": {
+        "keyToggle": true,
+        "applyAll": true
+      },
+      "productTypes": ["Currency", "Duration", "Game Currency", "Others"],
+      "datasetMap": {
+        "Currency":      ["AUD","BRL","CAD","CHF","CNY","EUR","GBP","IDR","INR","JPY","KRW","MYR","PHP","SGD","THB","USD","VND","AED","HKD","TWD"],
+        "Duration":      ["Days","Months","Years"],
+        "Game Currency": ["Gold","Coins","Gems","Diamonds","Crystals","Oneiric Shard","VP","Points","Credits","Tokens","V-Bucks","Robux"],
+        "Others":        null
+      }
+    },
+
+    {
+      "id": "reference",
+      "type": "reference",
+      "title": "Reference Link / Image",
+      "description": "Provide a product page URL (required) and upload reference images",
+      "required": true,
+      "showWhen": {
+        "card": "delivery",
+        "operator": "any"
+      },
+      "features": {
+        "urlInput": { "required": true, "max": 5 },
+        "imageUpload": { "required": false, "maxSizeMB": 10, "accept": ["image/png","image/jpeg","image/webp","image/gif"] }
+      }
+    }
+
+  ],
+
+  "variants": {
+
+    "main-market": {
+      "label": "Main Market",
+      "description": "Default form — no overrides",
+      "cardOverrides": {}
+    },
+
+    "secondary-market": {
+      "label": "Secondary Market",
+      "description": "Secondary market sellers",
+      "cardOverrides": {}
+    },
+
+    "gpgc": {
+      "label": "GPGC",
+      "description": "GPGC sellers",
+      "cardOverrides": {}
+    }
+
+  }
+}
