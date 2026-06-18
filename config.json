@@ -16,19 +16,8 @@
       "required": true,
       "showWhen": "always",
       "fields": [
-        {
-          "id": "sellerUsername",
-          "label": "G2G Username",
-          "placeholder": "e.g. seller_abc123",
-          "required": true
-        },
-        {
-          "id": "sellerEmail",
-          "label": "Registered Email",
-          "placeholder": "e.g. seller@email.com",
-          "required": true,
-          "type": "email"
-        }
+        { "id": "sellerUsername", "label": "G2G Username",       "placeholder": "e.g. seller_abc123",      "required": true  },
+        { "id": "sellerEmail",    "label": "Registered Email",   "placeholder": "e.g. seller@email.com",   "required": true, "inputType": "email" }
       ]
     },
 
@@ -40,11 +29,11 @@
       "required": true,
       "showWhen": "always",
       "options": [
-        { "value": "Games",           "label": "🎮 Games" },
+        { "value": "Games",           "label": "🎮 Games"           },
         { "value": "Software & Apps", "label": "💻 Software & Apps" },
-        { "value": "Gift Cards",      "label": "🎁 Gift Cards" },
-        { "value": "Payment Card",    "label": "💳 Payment Card" },
-        { "value": "Telco",           "label": "📱 Telco" },
+        { "value": "Gift Cards",      "label": "🎁 Gift Cards"      },
+        { "value": "Payment Card",    "label": "💳 Payment Card"    },
+        { "value": "Telco",           "label": "📱 Telco"           },
         { "value": "Others",          "label": "➕ Others", "allowCustomInput": true }
       ]
     },
@@ -57,16 +46,16 @@
       "required": true,
       "showWhen": "always",
       "regionGroups": [
-        { "value": "GLOBAL",    "label": "Global" },
-        { "value": "AF-REGION", "label": "Africa (AF)" },
-        { "value": "AS-REGION", "label": "Asia (AS)" },
-        { "value": "CIS",       "label": "Commonwealth of Independent States (CIS)" },
-        { "value": "EU",        "label": "Europe (EU)" },
-        { "value": "EMEA",      "label": "Europe, Middle East and Africa (EMEA)" },
-        { "value": "LATAM",     "label": "Latin America (LATAM)" },
-        { "value": "MENA",      "label": "Middle East and North Africa (MENA)" },
-        { "value": "NA-REGION", "label": "North America (NA)" },
-        { "value": "SEA",       "label": "South East Asia (SEA)" }
+        { "value": "GLOBAL",    "label": "Global"                                        },
+        { "value": "AF-REGION", "label": "Africa (AF)"                                   },
+        { "value": "AS-REGION", "label": "Asia (AS)"                                     },
+        { "value": "CIS",       "label": "Commonwealth of Independent States (CIS)"      },
+        { "value": "EU",        "label": "Europe (EU)"                                   },
+        { "value": "EMEA",      "label": "Europe, Middle East and Africa (EMEA)"         },
+        { "value": "LATAM",     "label": "Latin America (LATAM)"                         },
+        { "value": "MENA",      "label": "Middle East and North Africa (MENA)"           },
+        { "value": "NA-REGION", "label": "North America (NA)"                            },
+        { "value": "SEA",       "label": "South East Asia (SEA)"                         }
       ],
       "features": {
         "sharedRegionToggle": true,
@@ -82,18 +71,8 @@
       "required": true,
       "showWhen": "always",
       "fields": [
-        {
-          "id": "brandName",
-          "label": "Brand Name",
-          "placeholder": "Enter brand name",
-          "required": true
-        },
-        {
-          "id": "productVariation",
-          "label": "Product Variation",
-          "placeholder": "Example: Series, Variety and etc",
-          "required": false
-        }
+        { "id": "brandName",        "label": "Brand Name",        "placeholder": "Enter brand name",                    "required": true  },
+        { "id": "productVariation", "label": "Product Variation", "placeholder": "Example: Series, Variety and etc",   "required": false }
       ]
     },
 
@@ -132,7 +111,7 @@
       },
       "options": [
         { "value": "Private", "label": "🔒 Private" },
-        { "value": "Shared",  "label": "👥 Shared" }
+        { "value": "Shared",  "label": "👥 Shared"  }
       ]
     },
 
@@ -148,8 +127,8 @@
         "value": ["Direct Top Up", "Others"]
       },
       "defaultFields": [
-        { "label": "Field 1 — Label", "placeholder": "e.g. Player ID / UID / User Email", "required": true },
-        { "label": "Field 2 — Label", "placeholder": "e.g. Server / Region",               "required": false }
+        { "label": "Field 1 — Label", "placeholder": "e.g. Player ID / UID / User Email", "required": true  },
+        { "label": "Field 2 — Label", "placeholder": "e.g. Server / Region",              "required": false }
       ],
       "allowAddMore": true
     },
@@ -189,10 +168,10 @@
         }
       },
       "options": [
-        { "value": "PC",       "label": "🖥️ PC", "subOptions": ["Steam", "Epic Games"] },
-        { "value": "Xbox",     "label": "🎮 Xbox" },
-        { "value": "PS",       "label": "🎮 PS" },
-        { "value": "Nintendo", "label": "🕹️ Nintendo" }
+        { "value": "PC",       "label": "🖥️ PC",       "subOptions": ["Steam", "Epic Games"] },
+        { "value": "Xbox",     "label": "🎮 Xbox"                                             },
+        { "value": "PS",       "label": "🎮 PS"                                               },
+        { "value": "Nintendo", "label": "🕹️ Nintendo"                                         }
       ],
       "features": {
         "crossPlatformToggle": true
