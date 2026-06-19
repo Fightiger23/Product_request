@@ -395,6 +395,28 @@
   .pat-remember{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:14px;cursor:pointer;}
   .pat-remember input{accent-color:var(--accent);}
 
+
+  /* ── FORM PREVIEW PANEL ── */
+  .fb-body{display:grid;grid-template-columns:240px 1fr 300px;height:calc(100vh - 120px);overflow:hidden;}
+  .fb-preview{border-left:1px solid var(--border);background:var(--bg);overflow-y:auto;display:flex;flex-direction:column;}
+  .fb-preview-header{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;}
+  .fb-preview-header-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .fb-preview-market{font-size:11px;color:var(--accent);font-weight:600;}
+  .fb-preview-scroll{flex:1;padding:12px;overflow-y:auto;}
+  .fp-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;transition:border-color .15s;cursor:pointer;}
+  .fp-card:hover{border-color:var(--accent);}
+  .fp-card.active-prev{border-color:var(--accent);box-shadow:0 0 0 2px rgba(227,0,27,.1);}
+  .fp-card.hidden-card{opacity:.35;border-style:dashed;}
+  .fp-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;display:flex;align-items:center;gap:6px;}
+  .fp-card-title .fp-required{color:var(--accent);font-size:12px;}
+  .fp-card-title .fp-hidden-badge{font-size:10px;background:var(--border);color:var(--muted);border-radius:4px;padding:1px 6px;font-weight:500;}
+  .fp-card-desc{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.4;}
+  .fp-card-type{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;}
+  .fp-options{display:flex;flex-wrap:wrap;gap:4px;}
+  .fp-option{font-size:11px;padding:3px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--label);}
+  .fp-engine{font-size:11px;color:var(--muted);font-style:italic;}
+  .fp-locked-badge{font-size:10px;background:var(--warn-light);color:#92640a;border:1px solid var(--warn-border);border-radius:4px;padding:1px 6px;margin-left:4px;}
+
 </style>
 </head>
 <body>
@@ -562,6 +584,17 @@
               <div class="fb-editor-empty-icon">&#128072;</div>
               <div class="fb-editor-empty-title">Select a card to edit</div>
               <div class="fb-editor-empty-sub">Click any card on the left to start configuring</div>
+            </div>
+          </div>
+
+          <!-- Live preview panel -->
+          <div class="fb-preview" id="fbPreviewPanel">
+            <div class="fb-preview-header">
+              <span class="fb-preview-header-title">&#128065; Live Preview</span>
+              <span class="fb-preview-market" id="fbPreviewMarketLabel">Main Market</span>
+            </div>
+            <div class="fb-preview-scroll" id="fbPreviewScroll">
+              <div style="text-align:center;padding:24px 12px;color:var(--muted);font-size:12px;">Loading preview&hellip;</div>
             </div>
           </div>
 
@@ -1102,6 +1135,7 @@ function loadConfig(){
         'gpgc':{label:'GPGC',cards:getDefaultCards_FB()}
       }};
       renderFbSidebar_FB();
+      renderFbPreview();
       showToast('Could not load config - using defaults','warn');
     });
 }
@@ -1117,6 +1151,7 @@ function switchMarket(market,btn){
   document.querySelectorAll('.fb-market-tab').forEach(function(b){b.classList.remove('active');});
   if(btn)btn.classList.add('active');
   renderFbSidebar_FB();
+  renderFbPreview();
   var ed=$('fbEditor');
   if(ed)ed.innerHTML='<div class="fb-editor-empty"><div class="fb-editor-empty-icon">&#128072;</div><div class="fb-editor-empty-title">Select a card to edit</div><div class="fb-editor-empty-sub">Editing '+getMarketLabel_FB(market)+'</div></div>';
 }
@@ -1170,7 +1205,7 @@ function toggleCardVis_FB(id,e){
   e.stopPropagation();
   var c=getCard_FB(id);if(!c)return;
   c.visible=c.visible===false?true:false;
-  renderFbSidebar_FB();
+  renderFbSidebar_FB();renderFbPreview();
   if(activeCardId===id)openFbCard_FB(id);
 }
 
@@ -1180,7 +1215,7 @@ function getCard_FB(id){
 }
 
 function openFbCard_FB(id){
-  activeCardId=id;renderFbSidebar_FB();
+  activeCardId=id;renderFbSidebar_FB();renderFbPreview();
   var card=getCard_FB(id);if(!card)return;
   var locked=LOCKED_FB.indexOf(id)>-1;
   var ed=$('fbEditor');if(!ed)return;
@@ -1301,7 +1336,7 @@ function fbSwitchTab_FB(btn,tab){
   });
 }
 
-function fbUpdateTitle_FB(id,v){var c=getCard_FB(id);if(c){c.title=v;renderFbSidebar_FB();}}
+function fbUpdateTitle_FB(id,v){var c=getCard_FB(id);if(c){c.title=v;renderFbSidebar_FB();renderFbPreview();}}
 function fbUpdateDesc_FB(id,v){var c=getCard_FB(id);if(c)c.description=v;}
 function fbUpdateOpt_FB(id,i,v){var c=getCard_FB(id);if(c&&c.options){c.options[i].label=v;c.options[i].value=v;}}
 function fbAddOpt_FB(id){var c=getCard_FB(id);if(c&&c.options){c.options.push({value:'New Option',label:'New Option'});openFbCard_FB(id);}}
@@ -1321,7 +1356,7 @@ function deleteFbCard_FB(id){
   var cards=getMarketCards_FB();
   var idx=cards.findIndex(function(c){return c.id===id;});
   if(idx>-1){
-    cards.splice(idx,1);activeCardId=null;renderFbSidebar_FB();
+    cards.splice(idx,1);activeCardId=null;renderFbSidebar_FB();renderFbPreview();
     var ed=$('fbEditor');
     if(ed)ed.innerHTML='<div class="fb-editor-empty"><div class="fb-editor-empty-icon">&#128072;</div><div class="fb-editor-empty-title">Card deleted</div><div class="fb-editor-empty-sub">Select another card to continue</div></div>';
   }
@@ -1352,7 +1387,7 @@ function confirmAddCard(){
   if(newCardType==='entry-fields')newCard.defaultFields=[{label:'Field 1',placeholder:'Field 1',required:false}];
   if(newCardType==='text')newCard.fields=[{id:'f1',label:'Label',placeholder:'Placeholder',required:false}];
   getMarketCards_FB().push(newCard);
-  closeAddCardModal();renderFbSidebar_FB();openFbCard_FB(id);
+  closeAddCardModal();renderFbSidebar_FB();renderFbPreview();openFbCard_FB(id);
   showToast('Card added - drag to reorder','success');
 }
 
@@ -1403,6 +1438,81 @@ document.addEventListener('DOMContentLoaded',function(){
     if(btn)btn.disabled=!(this.value.trim()&&newCardType);
   });
 });
+
+
+// ── FORM PREVIEW PANEL ────────────────────────────────────────────────────────
+var TYPE_LABELS_PREVIEW = {
+  identity:'Identity fields',radio:'Radio select',checkbox:'Checkbox',
+  'text':'Text input','entry-fields':'Entry fields',
+  platform:'Platform select',denom:'Denominations',
+  region:'Region select',reference:'URL + Image upload'
+};
+
+function renderFbPreview(){
+  var scroll = document.getElementById('fbPreviewScroll');
+  var marketLbl = document.getElementById('fbPreviewMarketLabel');
+  if(!scroll) return;
+  var cards = getMarketCards_FB();
+  if(!cards||!cards.length){
+    scroll.innerHTML='<div style="text-align:center;padding:24px 12px;color:var(--muted);font-size:12px;">No cards configured</div>';
+    return;
+  }
+  if(marketLbl) marketLbl.textContent = getMarketLabel_FB(activeMarket);
+  var h = '';
+  cards.forEach(function(card){
+    var isLocked = LOCKED_FB.indexOf(card.id) > -1;
+    var isHidden = card.visible === false;
+    h += '<div class="fp-card'+(activeCardId===card.id?' active-prev':'')+(isHidden?' hidden-card':'')+'" onclick="openFbCard_FB(\''+card.id+'\')">';
+    h += '<div class="fp-card-title">'
+      + esc(card.title)
+      + (card.required?'<span class="fp-required">*</span>':'')
+      + (isLocked?'<span class="fp-locked-badge">engine</span>':'')
+      + (isHidden?'<span class="fp-hidden-badge">hidden</span>':'')
+      + '</div>';
+    if(card.description) h += '<div class="fp-card-desc">'+esc(card.description)+'</div>';
+    h += '<div class="fp-card-type">'+(TYPE_LABELS_PREVIEW[card.type]||card.type)+'</div>';
+    // Show options preview
+    if(card.options && card.options.length && card.id !== 'delivery'){
+      h += '<div class="fp-options">';
+      card.options.slice(0,4).forEach(function(o){
+        h += '<span class="fp-option">'+esc(o.label||o.value||'')+'</span>';
+      });
+      if(card.options.length > 4) h += '<span class="fp-option">+' + (card.options.length-4) + ' more</span>';
+      h += '</div>';
+    }
+    if(card.id === 'delivery' && card.optionsByTrigger){
+      h += '<div class="fp-options">';
+      var shown = 0;
+      Object.keys(card.optionsByTrigger).slice(0,2).forEach(function(prod){
+        if(shown > 3) return;
+        h += '<span class="fp-option" style="background:var(--info-light);color:var(--info);">'+esc(prod)+'</span>';
+        shown++;
+      });
+      h += '<span class="fp-option" style="color:var(--muted);">'+Object.keys(card.optionsByTrigger).length+' product types</span>';
+      h += '</div>';
+    }
+    if(card.type === 'entry-fields' && card.defaultFields){
+      h += '<div class="fp-options">';
+      card.defaultFields.forEach(function(f){
+        h += '<span class="fp-option">'+esc(f.label||f.placeholder||'Field')+'</span>';
+      });
+      h += '</div>';
+    }
+    if(card.type === 'text' && card.fields){
+      h += '<div class="fp-options">';
+      card.fields.forEach(function(f){
+        h += '<span class="fp-option">'+esc(f.label||'Field')+'</span>';
+      });
+      h += '</div>';
+    }
+    if(isLocked){
+      h += '<div class="fp-engine">Managed by form engine</div>';
+    }
+    h += '</div>';
+  });
+  scroll.innerHTML = h;
+}
+
 
 </script>
 </body>
