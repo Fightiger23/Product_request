@@ -703,7 +703,7 @@ async function sha256(s){var b=await crypto.subtle.digest('SHA-256',new TextEnco
 var SAVED_KEY='g2g_bd_saved_creds',SESSION_KEY='g2g_bd_session',PAT_KEY='g2g_bd_pat',THEME_KEY='g2g_bd_theme';
 var currentFilter='all',allRequests=[],loggedInName='';
 var currentRejectId=null,currentApproveId=null,currentNeedInfoId=null;
-var liveConfig=null,activeCardId=null;
+var activeCardId=null;
 
 function $(id){return document.getElementById(id);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
