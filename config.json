@@ -1,6 +1,6 @@
 {
   "meta": {
-    "version": 2,
+    "version": 3,
     "lastPublished": "2026-06-19",
     "repo": "fightiger23/Product_request",
     "configPath": "config.json"
@@ -61,6 +61,10 @@
           "value": "Others",
           "label": "➕ Others",
           "allowCustomInput": true
+        },
+        {
+          "value": "Testing",
+          "label": "Testing"
         }
       ]
     },
