@@ -860,7 +860,11 @@ function renderDeliveryFields(idx,method,prod){
     h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',false);
     h+=denomHTML(idx,false);
   } else if(method==='Activation Links'){
-    h+=productNameHTML(idx,'Activation Links');
+    h+='<div style="margin-bottom:14px;">'
+      +'<label class="field-label">Product Name <span class="required">*</span></label>'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Enter the exact product name as it will appear to buyers.</div>'
+      +'<input type="text" id="prodName_'+idx+'" placeholder="e.g. Claude Pro 1 Month, Spotify Premium, Adobe Creative Cloud">'
+      +'</div>';
   } else if(method==='Gift Cards'){
     h+=denomHTMLKeyLocked(idx);
   } else if(method==='Platform Engagement'){
@@ -883,6 +887,13 @@ function renderDeliveryFields(idx,method,prod){
       +'</div>'
       +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addEntryField('+idx+')">+ Add more details</button>'
       +'</div>';
+  } else if(method==='Others'){
+    h+='<div style="margin-bottom:14px;">'
+      +'<label class="field-label">Product Name <span class="required">*</span></label>'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Describe the product being offered.</div>'
+      +'<input type="text" id="prodName_'+idx+'" placeholder="e.g. Custom Top Up Service, Special Bundle">'
+      +'</div>';
+    h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',false,1);
   } else {
     // Game type (Game Account, Boosting etc.) — always show platform + entry + denom
     h+=platformHTML(idx);
