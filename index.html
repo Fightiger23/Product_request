@@ -866,6 +866,24 @@ function renderDeliveryFields(idx,method,prod){
       +'<input type="text" id="prodName_'+idx+'" placeholder="e.g. Claude Pro 1 Month, Spotify Premium, Adobe Creative Cloud">'
       +'</div>';
   } else if(method==='Gift Cards'){
+    h+='<div style="margin-bottom:14px;">'
+      +'<label class="field-label">Platform <span class="required">*</span></label>'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Select the platform this gift card is for.</div>'
+      +'<div class="options-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));" id="gcPlatform_'+idx+'">'
+      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Steam"> Steam</label>'
+      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Epic Games"> Epic Games</label>'
+      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Xbox"> Xbox</label>'
+      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="PlayStation"> PlayStation</label>'
+      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Nintendo"> Nintendo</label>'
+      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Razer Gold"> Razer Gold</label>'
+      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Google Play"> Google Play</label>'
+      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="App Store"> App Store</label>'
+      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Others" onchange="toggleGCOthers('+idx+',this)"> Others</label>'
+      +'</div>'
+      +'<div class="hidden" id="gcOthers_'+idx+'" style="margin-top:8px;">'
+      +'<input type="text" id="gcOthersInput_'+idx+'" placeholder="Enter platform name">'
+      +'</div>'
+      +'</div>';
     h+=denomHTMLKeyLocked(idx);
   } else if(method==='Platform Engagement'){
     h+=productNameHTML(idx,'Platform Engagement');
@@ -939,6 +957,11 @@ function platformHTML(idx){
     +'<div class="cp-note">Enabled: Shared key across all platforms. Disabled: Separate key per platform.</div>'
     +'</div></div>';
 }
+function toggleGCOthers(idx,radio){
+  var wrap=document.getElementById('gcOthers_'+idx);
+  if(wrap)wrap.classList.toggle('hidden', radio.value!=='Others');
+}
+
 function togglePCSub(idx){var cb=document.querySelector('input[name="plat_'+idx+'"][value="PC"]');var sub=$('pcSub_'+idx);if(sub)sub.classList.toggle('hidden',!cb||!cb.checked);}
 
 // Entry Fields
@@ -1103,8 +1126,23 @@ function addDenom(idx){
 
 function renderDSField(idx,n,ptVal,cell){
   cell.innerHTML='';
-  if(ptVal==='Others'){var inp=document.createElement('input');inp.type='text';inp.className='denom-ds-text';inp.id='dDS_'+idx+'_'+n;inp.placeholder='Type dataset';cell.appendChild(inp);}
-  else{var opts=datasetMap[ptVal]||[];var sel=document.createElement('select');sel.id='dDS_'+idx+'_'+n;var ph=document.createElement('option');ph.value='';ph.textContent='— Select —';sel.appendChild(ph);opts.forEach(function(o){var op=document.createElement('option');op.value=o;op.textContent=o;sel.appendChild(op);});cell.style.position='relative';cell.className='denom-sel-wrap';cell.appendChild(sel);}
+  if(ptVal==='Others'){
+    // Others: hide amount col, merge into one product name field spanning full row
+    var row=document.getElementById('dRow_'+idx+'_'+n);
+    var amtEl=document.getElementById('dAmt_'+idx+'_'+n);
+    if(amtEl)amtEl.style.display='none';
+    var inp=document.createElement('input');inp.type='text';inp.className='denom-ds-text';inp.id='dDS_'+idx+'_'+n;
+    inp.placeholder='Product name (e.g. Steam Wallet $50, Spotify 1 Month)';
+    inp.style.gridColumn='span 2';
+    cell.appendChild(inp);
+  } else {
+    var amtEl=document.getElementById('dAmt_'+idx+'_'+n);
+    if(amtEl)amtEl.style.display='';
+    var opts=datasetMap[ptVal]||[];var sel=document.createElement('select');sel.id='dDS_'+idx+'_'+n;
+    var ph=document.createElement('option');ph.value='';ph.textContent='— Select —';sel.appendChild(ph);
+    opts.forEach(function(o){var op=document.createElement('option');op.value=o;op.textContent=o;sel.appendChild(op);});
+    cell.style.position='relative';cell.className='denom-sel-wrap';cell.appendChild(sel);
+  }
 }
 
 // ── Reference URLs per tab ────────────────────────────────────────────────────
@@ -1191,7 +1229,14 @@ function collectTabData(idx){
     });
   }
   var acct=document.querySelector('input[name="acctType_'+idx+'"]:checked');
+  // Gift card platform
+  var gcPlatSel=document.querySelector('input[name="gcPlat_'+idx+'"]:checked');
+  var gcPlat='';
+  if(gcPlatSel){
+    gcPlat=gcPlatSel.value==='Others'?(document.getElementById('gcOthersInput_'+idx)||{}).value||'Others':gcPlatSel.value;
+  }
   var platChecks=Array.from(document.querySelectorAll('input[name="plat_'+idx+'"]:checked')).map(function(i){return i.value;});
+  if(gcPlat&&!platChecks.length)platChecks=[gcPlat]; // Gift card platform
   var pcPlat=Array.from(document.querySelectorAll('input[name="pcPlat_'+idx+'"]:checked')).map(function(i){return i.value;});
   var cross=$('crossPlat_'+idx);
   var plat=pcPlat.length?platChecks.map(function(p){return p==='PC'?'PC ('+pcPlat.join(', ')+')':p;}).join(', '):platChecks.join(', ');
