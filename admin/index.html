@@ -1050,11 +1050,42 @@ if(restoreSession())loadRequests();
 // FORM BUILDER — PRODUCT-CENTRIC
 // ══════════════════════════════════════════════════════════════════════════════
 
-// Market product scope
+// Market product scope — matches seller form TREE exactly
 var MARKET_PRODUCTS = {
-  'main-market': null, // null = all products
+  'main-market': [
+    // Digital Products > Gaming
+    'Game Account','Game Boosting','Game Coins','Game Items','Game Skins','Game Top Up & Gift Cards',
+    // Digital Products > Software & Apps
+    'AI & Tools','Ebooks','Live Streaming & Social','Video & Music',
+    // Digital Products > Retail
+    'Dining & Food','eCommerce','Education','Fashion','Travel & Transport',
+    // Digital Products > Payment & Stable Coins
+    'eWallet & Prepaid',
+    // Digital Products > Telco
+    'Mobile Credit Reload & Plans','Travel eSIM',
+    // Rent Time Services > Gaming
+    'Game Coaching','Game Pal'
+  ],
   'secondary-market': ['Game Account','Game Boosting','Game Coins','Game Items','Game Skins'],
-  'gpgc': ['Game Pal','Game Coaching']
+  'gpgc': ['Game Coaching','Game Pal']
+};
+
+// Group labels for sidebar section headers
+var PRODUCT_GROUPS = {
+  'main-market': [
+    { label:'Gaming (Digital Products)', products:['Game Account','Game Boosting','Game Coins','Game Items','Game Skins','Game Top Up & Gift Cards'] },
+    { label:'Software & Apps', products:['AI & Tools','Ebooks','Live Streaming & Social','Video & Music'] },
+    { label:'Retail', products:['Dining & Food','eCommerce','Education','Fashion','Travel & Transport'] },
+    { label:'Payment & Stable Coins', products:['eWallet & Prepaid'] },
+    { label:'Telco', products:['Mobile Credit Reload & Plans','Travel eSIM'] },
+    { label:'Rent Time Services (Gaming)', products:['Game Coaching','Game Pal'] }
+  ],
+  'secondary-market': [
+    { label:'Gaming (Secondary Market)', products:['Game Account','Game Boosting','Game Coins','Game Items','Game Skins'] }
+  ],
+  'gpgc': [
+    { label:'Rent Time Services (GPGC)', products:['Game Coaching','Game Pal'] }
+  ]
 };
 
 // Default field sets per product type
@@ -1217,27 +1248,30 @@ function loadConfig() {
 function renderFbSidebar_FB() {
   var list = $('fbCardList');
   if(!list) return;
-  var products = getProductList();
-  if(!products.length) {
-    list.innerHTML = '<div class="fb-loading">No products configured</div>';
-    return;
-  }
+  var groups = PRODUCT_GROUPS[activeMarket];
+  if(!groups) { list.innerHTML = '<div class="fb-loading">No products configured</div>'; return; }
   list.innerHTML = '';
   var m = getMarketData();
-  products.forEach(function(prod) {
-    var pdata = m.products[prod] || {};
-    var isHidden = pdata.visible === false;
-    var item = document.createElement('div');
-    item.className = 'fb-card-item' + (prod === activeProduct ? ' active' : '') + (isHidden ? ' disabled-card' : '');
-    item.innerHTML =
-      '<span class="fb-card-icon">' + getProductIcon(prod) + '</span>'
-      + '<div class="fb-card-info">'
-        + '<div class="fb-card-name">' + esc(prod) + '</div>'
-        + '<div class="fb-card-type-lbl">' + getProductFieldCount(prod) + ' fields</div>'
-      + '</div>'
-      + '<button class="fb-card-vis ' + (isHidden ? 'off' : 'on') + '" onclick="toggleProductVis(\'' + esc(prod) + '\',event)" title="Toggle visibility"><div class="fb-card-vis-knob"></div></button>';
-    item.onclick = function() { openProductEditor(prod); };
-    list.appendChild(item);
+  groups.forEach(function(group) {
+    var hdr = document.createElement('div');
+    hdr.style.cssText = 'padding:10px 4px 4px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-top:1px solid var(--border);margin-top:4px;';
+    hdr.textContent = group.label;
+    list.appendChild(hdr);
+    group.products.forEach(function(prod) {
+      var pdata = (m && m.products && m.products[prod]) ? m.products[prod] : {};
+      var isHidden = pdata.visible === false;
+      var item = document.createElement('div');
+      item.className = 'fb-card-item' + (prod === activeProduct ? ' active' : '') + (isHidden ? ' disabled-card' : '');
+      item.innerHTML =
+        '<span class="fb-card-icon">' + getProductIcon(prod) + '</span>'
+        + '<div class="fb-card-info">'
+          + '<div class="fb-card-name">' + esc(prod) + '</div>'
+          + '<div class="fb-card-type-lbl">' + getProductFieldCount(prod) + ' fields</div>'
+        + '</div>'
+        + '<button class="fb-card-vis ' + (isHidden ? 'off' : 'on') + '" onclick="toggleProductVis('' + esc(prod) + '',event)" title="Toggle visibility"><div class="fb-card-vis-knob"></div></button>';
+      item.onclick = function() { openProductEditor(prod); };
+      list.appendChild(item);
+    });
   });
 }
 
