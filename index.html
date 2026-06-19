@@ -366,7 +366,7 @@
 var SCRIPT_URL='https://script.google.com/macros/s/AKfycbzWMRr34s08mgfRliKfFUKwvp6QiHSmewYTapN63Z7Ok64TKe1pDUNkTdoYkLCNVKgceg/exec';
 var CONFIG_URL='https://raw.githubusercontent.com/fightiger23/Product_request/main/config.json';
 
-// ── Category tree ─────────────────────────────────────────────────────────────
+// ── Category tree (loaded from config.json, fallback to defaults) ────────────
 var TREE={
   'Digital Products':{
     'Gaming':['Game Account','Game Boosting','Game Coins','Game Items','Game Skins','Game Top Up & Gift Cards'],
@@ -380,17 +380,16 @@ var TREE={
   }
 };
 
-// Delivery methods per product type
 var DELIVERY_MAP={
-  'Game Account':       {type:'game',    methods:['Game Account']},
-  'Game Boosting':      {type:'game',    methods:['Game Boosting']},
-  'Game Coins':         {type:'game',    methods:['Game Coins']},
-  'Game Items':         {type:'game',    methods:['Game Items']},
-  'Game Skins':         {type:'game',    methods:['Game Skins']},
-  'Game Top Up & Gift Cards':{type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Game Account':       {type:'game',     methods:['Game Account']},
+  'Game Boosting':      {type:'game',     methods:['Game Boosting']},
+  'Game Coins':         {type:'game',     methods:['Game Coins']},
+  'Game Items':         {type:'game',     methods:['Game Items']},
+  'Game Skins':         {type:'game',     methods:['Game Skins']},
+  'Game Top Up & Gift Cards':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'AI & Tools':         {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'Ebooks':             {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Live Streaming & Social':{type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Live Streaming & Social':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'Video & Music':      {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'Dining & Food':      {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'eCommerce':          {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
@@ -398,11 +397,62 @@ var DELIVERY_MAP={
   'Fashion':            {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'Travel & Transport': {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'eWallet & Prepaid':  {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Mobile Credit Reload & Plans':{type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Mobile Credit Reload & Plans':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'Travel eSIM':        {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'Game Coaching':      {type:'renttime', methods:['Game Coaching']},
   'Game Pal':           {type:'renttime', methods:['Game Pal']}
 };
+
+// ── Config state ──────────────────────────────────────────────────────────────
+var formConfig=null;        // loaded from config.json
+var configLoaded=false;     // whether config has been fetched
+
+// Detect market from URL param e.g. ?market=secondary-market
+function getMarketFromUrl(){
+  var params=new URLSearchParams(window.location.search);
+  return params.get('market')||'main-market';
+}
+
+// Load config.json and apply to DELIVERY_MAP
+function loadFormConfig(callback){
+  fetch(CONFIG_URL+'?t='+Date.now())
+    .then(function(r){return r.json();})
+    .then(function(cfg){
+      formConfig=cfg;
+      var market=getMarketFromUrl();
+      // Get cards for this market
+      var cards=null;
+      if(cfg.markets&&cfg.markets[market]){
+        cards=cfg.markets[market].cards;
+      } else if(cfg.cards){
+        cards=cfg.cards; // old flat format
+      }
+      if(cards){
+        // Find delivery card and update DELIVERY_MAP
+        var delivCard=cards.find(function(c){return c.id==='delivery';});
+        if(delivCard&&delivCard.optionsByTrigger){
+          Object.keys(delivCard.optionsByTrigger).forEach(function(prod){
+            if(DELIVERY_MAP[prod]){
+              DELIVERY_MAP[prod].methods=delivCard.optionsByTrigger[prod].slice();
+            }
+          });
+        }
+        // Apply card visibility and title overrides
+        cards.forEach(function(card){
+          // Update any card titles/descriptions that BD has customised
+          // (future enhancement — for now delivery methods are the key thing)
+        });
+      }
+      configLoaded=true;
+      if(callback)callback();
+    })
+    .catch(function(){
+      // Config load failed — use hardcoded defaults, form still works
+      configLoaded=true;
+      if(callback)callback();
+    });
+}
+
 
 var datasetMap={
   'Currency':['AUD','BRL','CAD','CHF','CNY','EUR','GBP','IDR','INR','JPY','KRW','MYR','PHP','SGD','THB','USD','VND','AED','HKD','TWD'],
@@ -498,7 +548,12 @@ function goToStep3(){
   $('progressFill').style.width='60%';
   $('identitySummary').textContent=username+' · '+email;
   activeTab=0;submittedTabs=[];tabStates={};
-  buildTabs();
+  // Load config first, then build tabs — ensures BD changes are reflected
+  if(!configLoaded){
+    loadFormConfig(function(){buildTabs();});
+  } else {
+    buildTabs();
+  }
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -817,7 +872,16 @@ function renderDeliveryFields(idx,method,prod){
     h+=mtuFieldsHTML(idx);
     h+=denomHTML(idx,false,true);
   } else if(method==='Game Coaching'||method==='Game Pal'){
-    h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',false);
+    // Rent time services — only need entry fields (e.g. game name, hours needed)
+    h+='<div style="margin-bottom:14px;">'
+      +'<label class="field-label">Service Details <span class="required">*</span></label>'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Provide details about the service being offered.</div>'
+      +'<div style="display:flex;flex-direction:column;gap:8px;">'
+      +'<input type="text" id="ef1_'+idx+'" placeholder="Game Name (e.g. Mobile Legends, Valorant)">'
+      +'<input type="text" id="ef2_'+idx+'" placeholder="Service details (e.g. hours, rank boost level)">'
+      +'</div>'
+      +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addEntryField('+idx+')">+ Add more details</button>'
+      +'</div>';
   } else {
     // Game type (Game Account, Boosting etc.) — always show platform + entry + denom
     h+=platformHTML(idx);
@@ -1144,6 +1208,9 @@ function backToStep2(){
   $('progressFill').style.width='45%';
   window.scrollTo({top:0,behavior:'smooth'});
 }
+
+// ── Prefetch config on page load ─────────────────────────────────────────────
+loadFormConfig(null); // background load — applies delivery method overrides early
 
 // ── Input cleanup ─────────────────────────────────────────────────────────────
 $('sellerUsername').addEventListener('input',function(){this.classList.remove('field-error');$('usernameErr').style.display='none';});
