@@ -284,6 +284,118 @@
   .pat-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(227,0,27,.08);}.pat-input.error{border-color:var(--accent);}
   .pat-err{font-size:11px;color:var(--accent);margin-bottom:10px;display:none;}
   .pat-remember{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:16px;cursor:pointer;}.pat-remember input{accent-color:var(--accent);}
+
+  /* ═══ FORM BUILDER ENHANCED ═══ */
+  .fb-page{display:none;width:100%;flex-direction:column;height:calc(100vh - 58px);overflow:hidden;}
+  .fb-page.visible{display:flex;}
+  .fb-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--white);flex-shrink:0;gap:12px;flex-wrap:wrap;}
+  .fb-topbar-left h2{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px;}
+  .fb-topbar-left p{font-size:12px;color:var(--muted);}
+  .fb-topbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .fb-market-tabs{display:flex;gap:2px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:3px;}
+  .fb-market-tab{padding:5px 14px;border-radius:6px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;font-family:var(--font);transition:all .15s;white-space:nowrap;}
+  .fb-market-tab.active{background:var(--text);color:#fff;font-weight:600;}
+  html.dark .fb-market-tab.active{background:var(--accent);}
+  .fb-preview-btn{padding:7px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--label);cursor:pointer;font-family:var(--font);text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
+  .fb-preview-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .fb-publish-btn{padding:7px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px;}
+  .fb-publish-btn:hover{background:var(--accent-hover);}
+  .fb-publish-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .fb-publish-meta{font-size:11px;color:var(--muted);}
+  .fb-body{display:grid;grid-template-columns:280px 1fr;flex:1;overflow:hidden;}
+  .fb-sidebar{border-right:1px solid var(--border);background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
+  .fb-sidebar-header{padding:12px 14px 6px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;}
+  .fb-sidebar-scroll{flex:1;overflow-y:auto;padding:0 8px 8px;}
+  .fb-card-item{display:flex;align-items:center;gap:8px;padding:9px 10px;background:var(--white);border:1px solid var(--border);border-radius:8px;cursor:pointer;margin-bottom:4px;transition:all .15s;user-select:none;}
+  .fb-card-item:hover{border-color:var(--muted);}
+  .fb-card-item.active{border-color:var(--accent);background:var(--accent-light);}
+  .fb-card-item.disabled-card{opacity:.45;}
+  .fb-card-drag{color:var(--muted);font-size:14px;cursor:grab;flex-shrink:0;}
+  .fb-card-drag:active{cursor:grabbing;}
+  .fb-card-icon{font-size:14px;flex-shrink:0;}
+  .fb-card-info{flex:1;min-width:0;}
+  .fb-card-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .fb-card-item.active .fb-card-name{color:var(--accent);}
+  .fb-card-type-lbl{font-size:11px;color:var(--muted);}
+  .fb-card-vis{width:30px;height:17px;border-radius:9px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background .2s;}
+  .fb-card-vis.on{background:var(--accent);}
+  .fb-card-vis.off{background:var(--border);}
+  .fb-card-vis-knob{position:absolute;top:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:left .15s;}
+  .fb-card-vis.on .fb-card-vis-knob{left:15px;}
+  .fb-card-vis.off .fb-card-vis-knob{left:2px;}
+  .fb-add-card-row{padding:8px;flex-shrink:0;border-top:1px solid var(--border);}
+  .fb-add-card-btn{width:100%;padding:8px;border:1.5px dashed rgba(227,0,27,.3);border-radius:8px;background:none;color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s;}
+  .fb-add-card-btn:hover{background:var(--accent-light);border-color:var(--accent);}
+  .fb-editor{flex:1;overflow-y:auto;padding:20px;background:var(--white);}
+  .fb-editor-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);text-align:center;gap:8px;}
+  .fb-editor-empty-icon{font-size:32px;}
+  .fb-editor-empty-title{font-size:14px;font-weight:600;color:var(--label);}
+  .fb-editor-empty-sub{font-size:12px;}
+  .fb-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:18px;}
+  .fb-tab{padding:8px 16px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;font-family:var(--font);border-bottom:2px solid transparent;transition:all .15s;}
+  .fb-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+  .fb-section{margin-bottom:20px;}
+  .fb-section-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+  .fb-field{margin-bottom:12px;}
+  .fb-field-label{font-size:12px;font-weight:600;color:var(--label);margin-bottom:5px;display:block;}
+  .fb-input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:var(--font);font-size:13px;color:var(--text);background:var(--white);outline:none;transition:border-color .15s;}
+  .fb-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(227,0,27,.08);}
+  .fb-input::placeholder{color:var(--muted);}
+  .fb-options-list{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--white);margin-bottom:4px;}
+  .fb-option-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);transition:background .1s;}
+  .fb-option-row:hover{background:var(--bg);}
+  .fb-option-row:last-of-type{border-bottom:none;}
+  .fb-option-drag{color:var(--muted);font-size:13px;cursor:grab;}
+  .fb-option-input{flex:1;border:none;background:transparent;font-family:var(--font);font-size:13px;color:var(--text);outline:none;}
+  .fb-option-input::placeholder{color:var(--muted);}
+  .fb-option-rm{background:none;border:none;cursor:pointer;color:var(--muted);font-size:17px;line-height:1;padding:0 2px;flex-shrink:0;}
+  .fb-option-rm:hover{color:var(--accent);}
+  .fb-add-option-btn{width:100%;padding:8px 12px;border:none;background:var(--bg);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);text-align:left;transition:color .15s;}
+  .fb-add-option-btn:hover{color:var(--accent);}
+  .fb-toggle-row{display:flex;align-items:center;gap:10px;}
+  .fb-toggle{width:34px;height:19px;border-radius:10px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background .2s;}
+  .fb-toggle.on{background:var(--accent);} .fb-toggle.off{background:var(--border);}
+  .fb-toggle-knob{position:absolute;top:2.5px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .15s;}
+  .fb-toggle.on .fb-toggle-knob{left:18px;} .fb-toggle.off .fb-toggle-knob{left:2px;}
+  .fb-req-label{font-size:13px;color:var(--text);}
+  .fb-locked-notice{padding:10px 14px;background:var(--warn-light);border:1px solid var(--warn-border);border-radius:8px;font-size:12px;color:#92640a;line-height:1.6;}
+  .fb-engine-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--warn-light);color:#92640a;border:1px solid var(--warn-border);margin-left:6px;vertical-align:middle;}
+  .fb-cat-header{font-size:12px;font-weight:700;color:var(--label);margin:12px 0 6px;padding:6px 10px;background:var(--bg);border-radius:6px;}
+  .fb-loading{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+  .fb-new-card-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;}
+  .fb-new-card-box{background:var(--white);border-radius:14px;padding:24px;max-width:480px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.2);animation:modalIn .2s ease;}
+  .fb-new-card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
+  .fb-new-card-sub{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5;}
+  .fb-card-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+  .fb-card-type-option{padding:12px 14px;border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;}
+  .fb-card-type-option:hover{border-color:var(--accent);background:var(--accent-light);}
+  .fb-card-type-option.selected{border-color:var(--accent);background:var(--accent-light);}
+  .fb-card-type-option-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+  .fb-card-type-option.selected .fb-card-type-option-name{color:var(--accent);}
+  .fb-card-type-option-desc{font-size:11px;color:var(--muted);}
+  .fb-modal-actions{display:flex;gap:8px;justify-content:flex-end;}
+  .fb-btn-cancel{padding:8px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;color:var(--label);cursor:pointer;font-family:var(--font);}
+  .fb-btn-cancel:hover{border-color:var(--muted);}
+  .fb-btn-add{padding:8px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);}
+  .fb-btn-add:hover{background:var(--accent-hover);}
+  .fb-btn-add:disabled{opacity:.4;cursor:not-allowed;}
+  .fb-deliv-section{margin-bottom:12px;}
+  .fb-deliv-cat-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg);border-radius:6px;margin-bottom:4px;cursor:pointer;}
+  .fb-deliv-cat-name{font-size:12px;font-weight:600;color:var(--label);}
+  .fb-deliv-cat-toggle{font-size:11px;color:var(--muted);}
+  .drag-over{border:2px dashed var(--accent)!important;background:var(--accent-light)!important;}
+  .pat-modal-box{background:var(--white);border-radius:16px;padding:28px;max-width:440px;width:100%;box-shadow:var(--shadow-lg);animation:modalIn .2s ease;}
+  .pat-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;}
+  .pat-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;}
+  .pat-note{font-size:11px;color:var(--muted);line-height:1.6;padding:8px 12px;background:var(--bg);border-radius:6px;margin-bottom:12px;}
+  .pat-note a{color:var(--info);}
+  .pat-input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:var(--mono);font-size:13px;color:var(--text);background:var(--white);outline:none;margin-bottom:6px;}
+  .pat-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(227,0,27,.08);}
+  .pat-input.error{border-color:var(--accent);}
+  .pat-err{font-size:11px;color:var(--accent);margin-bottom:8px;display:none;}
+  .pat-remember{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:14px;cursor:pointer;}
+  .pat-remember input{accent-color:var(--accent);}
+
 </style>
 </head>
 <body>
@@ -412,20 +524,81 @@
 
       <!-- FORM BUILDER -->
       <div class="fb-page" id="csPage-settings">
+
+        <!-- Top bar -->
         <div class="fb-topbar">
-          <div class="fb-topbar-left"><h2>&#9881;&#65039; Form Builder</h2><p>Edit the seller form structure &mdash; changes go live after publishing</p></div>
+          <div class="fb-topbar-left">
+            <h2>&#9881;&#65039; Form Builder</h2>
+            <p>Edit the seller form structure per market &mdash; publish to go live in ~30s</p>
+          </div>
           <div class="fb-topbar-right">
-            <a class="fb-preview-btn" href="https://fightiger23.github.io/Product_request/" target="_blank">&#128065; Preview form</a>
+            <div class="fb-market-tabs" id="fbMarketTabs">
+              <button class="fb-market-tab active" onclick="switchMarket('main-market',this)">Main Market</button>
+              <button class="fb-market-tab" onclick="switchMarket('secondary-market',this)">Secondary Market</button>
+              <button class="fb-market-tab" onclick="switchMarket('gpgc',this)">GPGC</button>
+            </div>
+            <span class="fb-publish-meta" id="fbPublishMeta"></span>
+            <a class="fb-preview-btn" href="https://fightiger23.github.io/Product_request/" target="_blank">&#128065; Preview</a>
             <button class="fb-publish-btn" id="fbPublishBtn" onclick="startPublish()"><span>&#128640;</span> Publish</button>
           </div>
         </div>
+
+        <!-- Builder body -->
         <div class="fb-body">
+
+          <!-- Left sidebar: card list -->
           <div class="fb-sidebar">
-            <div class="fb-sidebar-header">Form Cards &mdash; click to edit</div>
-            <div class="fb-card-list" id="fbCardList"><div class="fb-loading">Loading config&hellip;</div></div>
+            <div class="fb-sidebar-header">Form Cards &mdash; drag to reorder</div>
+            <div class="fb-sidebar-scroll" id="fbCardList">
+              <div class="fb-loading">Loading config&hellip;</div>
+            </div>
+            <div class="fb-add-card-row">
+              <button class="fb-add-card-btn" onclick="openAddCardModal()">+ Add new card</button>
+            </div>
           </div>
+
+          <!-- Right: editor panel -->
           <div class="fb-editor" id="fbEditor">
-            <div class="fb-empty"><div class="fb-empty-icon">&#128072;</div><div class="fb-empty-title">Select a card to edit</div><div class="fb-empty-sub">Click any card on the left to configure it</div></div>
+            <div class="fb-editor-empty">
+              <div class="fb-editor-empty-icon">&#128072;</div>
+              <div class="fb-editor-empty-title">Select a card to edit</div>
+              <div class="fb-editor-empty-sub">Click any card on the left to start configuring</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Add Card Modal -->
+      <div class="fb-new-card-modal hidden" id="fbNewCardModal">
+        <div class="fb-new-card-box">
+          <div class="fb-new-card-title">Add a new card</div>
+          <div class="fb-new-card-sub">Choose a card type. It will be added to the bottom of the form and can be dragged into position.</div>
+          <div class="fb-card-type-grid" id="fbCardTypeGrid">
+            <div class="fb-card-type-option" onclick="selectNewCardType(this,'radio')">
+              <div class="fb-card-type-option-name">Radio select</div>
+              <div class="fb-card-type-option-desc">Seller picks one option</div>
+            </div>
+            <div class="fb-card-type-option" onclick="selectNewCardType(this,'checkbox')">
+              <div class="fb-card-type-option-name">Checkbox</div>
+              <div class="fb-card-type-option-desc">Seller picks multiple options</div>
+            </div>
+            <div class="fb-card-type-option" onclick="selectNewCardType(this,'text')">
+              <div class="fb-card-type-option-name">Text input</div>
+              <div class="fb-card-type-option-desc">Free text entry field</div>
+            </div>
+            <div class="fb-card-type-option" onclick="selectNewCardType(this,'entry-fields')">
+              <div class="fb-card-type-option-name">Entry fields</div>
+              <div class="fb-card-type-option-desc">Labelled input rows for buyer info</div>
+            </div>
+          </div>
+          <div class="fb-field">
+            <label class="fb-field-label">Card title</label>
+            <input class="fb-input" id="fbNewCardTitle" placeholder="e.g. Additional Info">
+          </div>
+          <div class="fb-modal-actions">
+            <button class="fb-btn-cancel" onclick="closeAddCardModal()">Cancel</button>
+            <button class="fb-btn-add" id="fbAddCardConfirmBtn" onclick="confirmAddCard()" disabled>Add card</button>
           </div>
         </div>
       </div>
@@ -643,165 +816,6 @@ function updateNeedInfoPreview(){var r=allRequests.find(function(x){return x.sub
 function confirmNeedInfo(){var q=$('needInfoReasonInput').value.trim();if(!q){$('needInfoReasonInput').classList.add('error');$('needInfoReasonErr').style.display='block';return;}var r=allRequests.find(function(x){return x.submissionId===currentNeedInfoId;});if(!r)return;var flagged=getFFChecked();$('sendNeedInfoBtn').disabled=true;$('sendNeedInfoBtn').textContent='Sending\u2026';fetch(SCRIPT_URL+'?action=needinfo&id='+encodeURIComponent(currentNeedInfoId)+'&reason='+encodeURIComponent(q)+'&flagged='+encodeURIComponent(flagged.join('|'))+'&reviewer='+encodeURIComponent(loggedInName),{method:'GET',redirect:'follow'}).then(function(res){return res.json();}).then(function(data){if(data.status==='success'){r.status='Need Info';r.reviewerNotes=q;r.flaggedFields=flagged.join('|');r.reviewedBy=loggedInName;r.reviewedAt=new Date().toLocaleDateString();updateStats();renderList();showToast('\ud83d\udd0d Info requested \u2014 '+r.brand+'. Seller notified.','info');}else showToast('Error: '+(data.message||'Could not send.'),'error');}).catch(function(){showToast('Network error. Please try again.','error');}).finally(function(){closeNeedInfoModal();$('sendNeedInfoBtn').disabled=false;$('sendNeedInfoBtn').textContent='Send & Request Info';});}
 function confirmUnapprove(id){var r=allRequests.find(function(x){return x.submissionId===id;});if(!r)return;if(!confirm('Revert "'+r.brand+'" back to Pending?'))return;r.status='Pending';r.reviewedBy='';r.reviewedAt='';r.reviewerNotes='';updateStats();renderList();showToast('\u21a9 '+r.brand+' reverted to Pending.','info');fetch(SCRIPT_URL+'?action=reopen&id='+encodeURIComponent(id)+'&reviewer='+encodeURIComponent(loggedInName),{method:'GET',redirect:'follow'}).catch(function(){});}
 
-// FORM BUILDER
-var ICONS={sellerIdentity:'\ud83d\udc64',category:'\ud83d\udcc2',region:'\ud83c\udf0d',brand:'\ud83c\udff7\ufe0f',delivery:'\ud83d\udce6',accountType:'\ud83d\udc64',entryFields:'\ud83d\udccb',manualTopUp:'\ud83d\udd10',platform:'\ud83d\udda5\ufe0f',denominations:'\ud83d\uddc2\ufe0f',reference:'\ud83d\udd17'};
-var TYPE_LABELS={identity:'Identity fields',radio:'Radio select',region:'Region select',text:'Text input','entry-fields':'Entry fields',platform:'Platform select',denom:'Denominations',reference:'URL + Image upload'};
-var LOCKED=['sellerIdentity','region','denominations','reference','platform','manualTopUp'];
-
-function loadConfig(){
-  $('fbCardList').innerHTML='<div class="fb-loading">Loading config\u2026</div>';
-  fetch(CONFIG_URL+'?t='+Date.now())
-    .then(function(r){return r.json();})
-    .then(function(cfg){liveConfig=cfg;renderFbSidebar();showToast('Config loaded','success');})
-    .catch(function(){$('fbCardList').innerHTML='<div class="fb-loading" style="color:var(--accent)">Could not load config.json \u2014 check it is uploaded to GitHub</div>';});
-}
-
-function renderFbSidebar(){
-  if(!liveConfig)return;
-  var list=$('fbCardList');list.innerHTML='';
-  liveConfig.cards.forEach(function(card){
-    var item=document.createElement('div');
-    item.className='fb-card-item'+(card.id===activeCardId?' active':'');
-    item.innerHTML='<span class="fb-card-icon">'+(ICONS[card.id]||'\ud83d\udcc4')+'</span><div class="fb-card-info"><div class="fb-card-name">'+esc(card.title)+'</div><div class="fb-card-type-lbl">'+(TYPE_LABELS[card.type]||card.type)+'</div></div>';
-    item.onclick=function(){openFbCard(card.id);};
-    list.appendChild(item);
-  });
-}
-
-function openFbCard(id){
-  activeCardId=id;renderFbSidebar();
-  var card=liveConfig.cards.find(function(c){return c.id===id;});if(!card)return;
-  var locked=LOCKED.indexOf(id)>-1;
-  var h='<div style="max-width:580px;">';
-  h+='<div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;">';
-  h+='<span style="font-size:28px;">'+(ICONS[id]||'\ud83d\udcc4')+'</span>';
-  h+='<div><div style="font-size:16px;font-weight:700;color:var(--text)">'+esc(card.title)+(locked?'<span class="fb-engine-badge">Engine-level</span>':'')+'</div>';
-  h+='<div style="font-size:12px;color:var(--muted)">'+(TYPE_LABELS[card.type]||card.type)+'</div></div></div>';
-
-  if(locked){
-    h+='<div class="fb-locked-notice">\u2699\ufe0f This card is managed by the form engine. Its structure is fixed, but it will always appear in the seller form. No edits needed.</div>';
-  } else {
-    h+='<div class="fb-section"><div class="fb-section-label">Content</div>';
-    h+='<div class="fb-field"><label class="fb-field-label">Card title</label><input class="fb-input" value="'+esc(card.title)+'" oninput="fbUpdateTitle(\''+id+'\',this.value)"></div>';
-    h+='<div class="fb-field"><label class="fb-field-label">Description</label><input class="fb-input" value="'+esc(card.description||'')+'" oninput="fbUpdateDesc(\''+id+'\',this.value)"></div>';
-    h+='</div>';
-
-    if(card.type==='radio'&&card.options&&card.options.length){
-      h+='<div class="fb-section"><div class="fb-section-label">Options</div><div class="fb-options-list" id="fbOpts">';
-      card.options.forEach(function(opt,i){
-        h+='<div class="fb-option-row"><span class="fb-option-drag">\u2807</span><input class="fb-option-input" value="'+esc(opt.label||opt.value||'')+'" placeholder="Option label" oninput="fbUpdateOpt(\''+id+'\','+i+',this.value)"><button class="fb-option-rm" onclick="fbRemoveOpt(\''+id+'\','+i+')">&times;</button></div>';
-      });
-      h+='<button class="fb-add-option-btn" onclick="fbAddOpt(\''+id+'\')">&plus; Add option</button></div></div>';
-    }
-
-    if(id==='delivery'&&card.optionsByTrigger){
-      h+='<div class="fb-section"><div class="fb-section-label">Options per Category</div><p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Each category shows different delivery options. Edit them here.</p>';
-      Object.keys(card.optionsByTrigger).forEach(function(cat){
-        var opts=card.optionsByTrigger[cat];
-        h+='<div class="fb-field"><div class="fb-cat-header">'+esc(cat)+'</div><div class="fb-options-list">';
-        opts.forEach(function(opt,i){
-          h+='<div class="fb-option-row"><span class="fb-option-drag">\u2807</span><input class="fb-option-input" value="'+esc(opt)+'" oninput="fbUpdateDelivOpt(\''+esc(cat)+'\','+i+',this.value)"><button class="fb-option-rm" onclick="fbRemoveDelivOpt(\''+esc(cat)+'\','+i+')">&times;</button></div>';
-        });
-        h+='<button class="fb-add-option-btn" onclick="fbAddDelivOpt(\''+esc(cat)+'\')">+ Add option for '+esc(cat)+'</button></div></div>';
-      });
-      h+='</div>';
-    }
-
-    h+='<div class="fb-section"><div class="fb-section-label">Settings</div>';
-    h+='<div class="fb-field"><label class="fb-field-label">Required</label>';
-    h+='<div class="fb-toggle-row"><button class="fb-toggle '+(card.required?'on':'off')+'" id="fbReqBtn" onclick="fbToggleReq(\''+id+'\')"><div class="fb-toggle-knob"></div></button>';
-    h+='<span class="fb-req-label" id="fbReqLbl">'+(card.required?'Required':'Optional')+'</span></div></div></div>';
-  }
-  h+='</div>';
-  $('fbEditor').innerHTML=h;
-}
-
-function fbUpdateTitle(id,v){var c=liveConfig.cards.find(function(x){return x.id===id;});if(c){c.title=v;renderFbSidebar();}}
-function fbUpdateDesc(id,v){var c=liveConfig.cards.find(function(x){return x.id===id;});if(c)c.description=v;}
-function fbUpdateOpt(id,i,v){var c=liveConfig.cards.find(function(x){return x.id===id;});if(c&&c.options){c.options[i].label=v;c.options[i].value=v;}}
-function fbAddOpt(id){var c=liveConfig.cards.find(function(x){return x.id===id;});if(c&&c.options){c.options.push({value:'New Option',label:'New Option'});openFbCard(id);}}
-function fbRemoveOpt(id,i){var c=liveConfig.cards.find(function(x){return x.id===id;});if(c&&c.options){if(c.options.length<=1){showToast('Need at least one option','warn');return;}c.options.splice(i,1);openFbCard(id);}}
-function fbUpdateDelivOpt(cat,i,v){var c=liveConfig.cards.find(function(x){return x.id==='delivery';});if(c&&c.optionsByTrigger&&c.optionsByTrigger[cat])c.optionsByTrigger[cat][i]=v;}
-function fbAddDelivOpt(cat){var c=liveConfig.cards.find(function(x){return x.id==='delivery';});if(c&&c.optionsByTrigger&&c.optionsByTrigger[cat]){c.optionsByTrigger[cat].push('New Option');openFbCard('delivery');}}
-function fbRemoveDelivOpt(cat,i){var c=liveConfig.cards.find(function(x){return x.id==='delivery';});if(c&&c.optionsByTrigger&&c.optionsByTrigger[cat]){if(c.optionsByTrigger[cat].length<=1){showToast('Need at least one option','warn');return;}c.optionsByTrigger[cat].splice(i,1);openFbCard('delivery');}}
-function fbToggleReq(id){var c=liveConfig.cards.find(function(x){return x.id===id;});if(!c)return;c.required=!c.required;var btn=$('fbReqBtn'),lbl=$('fbReqLbl');if(btn){btn.className='fb-toggle '+(c.required?'on':'off');btn.innerHTML='<div class="fb-toggle-knob"></div>';}if(lbl)lbl.textContent=c.required?'Required':'Optional';}
-
-// PUBLISH
-function startPublish(){
-  if(!liveConfig){showToast('Config not loaded yet \u2014 open Form Builder first','warn');return;}
-  var stored=localStorage.getItem(PAT_KEY);
-  if(stored){doPublishWithToken(stored);return;}
-  $('patInput').value='';$('patErr').style.display='none';$('patInput').classList.remove('error');
-  $('patModal').classList.remove('hidden');
-}
-function closePatModal(){$('patModal').classList.add('hidden');}
-function doPublish(){
-  var t=$('patInput').value.trim();
-  if(!t){$('patInput').classList.add('error');$('patErr').style.display='block';return;}
-  if($('patRemember').checked){try{localStorage.setItem(PAT_KEY,t);}catch(e){}}
-  closePatModal();doPublishWithToken(t);
-}
-async function doPublishWithToken(token){
-  var btn=$('fbPublishBtn');btn.disabled=true;btn.innerHTML='<span>\u23f3</span> Publishing\u2026';
-  try{
-    liveConfig.meta.version=(liveConfig.meta.version||1)+1;
-    liveConfig.meta.lastPublished=new Date().toISOString().substring(0,10);
-    var content=JSON.stringify(liveConfig,null,2);
-    var b64=btoa(unescape(encodeURIComponent(content)));
-    var gr=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+GH_FILE,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
-    var sha='';if(gr.ok){var gd=await gr.json();sha=gd.sha||'';}
-    var body={message:'Form Builder: update config.json (v'+liveConfig.meta.version+')',content:b64,branch:GH_BRANCH};
-    if(sha)body.sha=sha;
-    var pr=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+GH_FILE,{method:'PUT',headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(pr.ok){showToast('\u2705 Published! Seller form updates in ~30 seconds','success');}
-    else{var ed=await pr.json();if(pr.status===401||pr.status===403){localStorage.removeItem(PAT_KEY);showToast('\u274c Token invalid or expired \u2014 please re-enter your GitHub token','error');}else showToast('\u274c Publish failed: '+(ed.message||pr.status),'error');}
-  }catch(err){showToast('\u274c Network error: '+err.message,'error');}
-  finally{btn.disabled=false;btn.innerHTML='<span>\ud83d\ude80</span> Publish';}
-}
-
-// ANALYTICS
-var PIE_COLORS=['#e3001b','#7c3aed','#185FA5','#00a86b','#d97706','#0891b2','#be185d','#4f46e5','#059669','#b45309'];
-function populateMonthSelect(){var sel=$('analyticsMonthSelect');if(!sel)return;var months={};allRequests.forEach(function(r){if(!r.timestamp)return;months[r.timestamp.substring(0,7)]=true;});var keys=Object.keys(months).sort().reverse();var now=new Date(),tm=now.getFullYear()+'-'+pad(now.getMonth()+1);if(!months[tm])keys.unshift(tm);sel.innerHTML='';keys.forEach(function(k){var p=k.split('-');var label=new Date(parseInt(p[0]),parseInt(p[1])-1,1).toLocaleString('default',{month:'long',year:'numeric'});var opt=document.createElement('option');opt.value=k;opt.textContent=label;sel.appendChild(opt);});if(keys.length)sel.value=keys[0];}
-function renderAnalytics(){var sel=$('analyticsMonthSelect');if(!sel)return;var month=sel.value;var filtered=allRequests.filter(function(r){return r.timestamp&&r.timestamp.substring(0,7)===month;});var cats={};filtered.forEach(function(r){var cat=(r.category||'Uncategorised').trim()||'Uncategorised';if(!cats[cat])cats[cat]={total:0,approved:0,rejected:0,other:0};cats[cat].total++;if(r.status==='Approved')cats[cat].approved++;else if(r.status==='Rejected')cats[cat].rejected++;else cats[cat].other++;});var ck=Object.keys(cats).sort(function(a,b){return cats[b].total-cats[a].total;});var total=filtered.length;var emp=$('analyticsEmpty'),tbl=$('analyticsTable');if(!total){if(emp)emp.classList.remove('hidden');if(tbl)tbl.style.display='none';clearPie();$('analyticsLegend').innerHTML='';$('analyticsTotalLabel').innerHTML='';return;}if(emp)emp.classList.add('hidden');if(tbl)tbl.style.display='';drawPie(ck,cats,total);var lh='';ck.forEach(function(cat,i){var pct=Math.round(cats[cat].total/total*100);lh+='<div class="legend-item"><div class="legend-dot" style="background:'+PIE_COLORS[i%PIE_COLORS.length]+'"></div><div class="legend-label">'+esc(cat)+'</div><div class="legend-count">'+cats[cat].total+'</div><div class="legend-pct" style="color:'+PIE_COLORS[i%PIE_COLORS.length]+'">'+pct+'%</div></div>';});$('analyticsLegend').innerHTML=lh;$('analyticsTotalLabel').innerHTML='<div class="analytics-total-num">'+total+'</div><div class="analytics-total-txt">Requests</div>';var tb=$('analyticsTableBody');if(!tb)return;tb.innerHTML='';ck.forEach(function(cat,i){var d=cats[cat];var pct=(d.total/total*100).toFixed(1);var tr=document.createElement('tr');tr.innerHTML='<td><span class="analytics-cat-dot" style="background:'+PIE_COLORS[i%PIE_COLORS.length]+'"></span>'+esc(cat)+'</td><td>'+d.total+'</td><td>'+pct+'%</td><td style="color:var(--success)">'+d.approved+'</td><td style="color:var(--accent)">'+d.rejected+'</td><td style="color:var(--warn)">'+d.other+'</td>';tb.appendChild(tr);});}
-function drawPie(ck,cats,total){var canvas=$('pieCanvas');if(!canvas)return;var ctx=canvas.getContext('2d');var W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=W/2-10,ir=r*0.58;ctx.clearRect(0,0,W,H);var sa=-Math.PI/2,isDark=document.documentElement.classList.contains('dark'),gap=ck.length>1?0.015:0;ck.forEach(function(cat,i){var slice=cats[cat].total/total;var ea=sa+slice*Math.PI*2-gap;ctx.save();ctx.shadowColor='rgba(0,0,0,0.15)';ctx.shadowBlur=8;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,sa,ea);ctx.closePath();ctx.fillStyle=PIE_COLORS[i%PIE_COLORS.length];ctx.fill();ctx.restore();ctx.beginPath();ctx.arc(cx,cy,ir,0,Math.PI*2);ctx.fillStyle=isDark?'#1a1d27':'#fff';ctx.fill();sa=ea+gap;});ctx.beginPath();ctx.arc(cx,cy,ir,0,Math.PI*2);ctx.strokeStyle=isDark?'rgba(255,255,255,.04)':'rgba(0,0,0,.04)';ctx.lineWidth=1;ctx.stroke();}
-function clearPie(){var canvas=$('pieCanvas');if(!canvas)return;var ctx=canvas.getContext('2d');var W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=W/2-10;ctx.clearRect(0,0,W,H);ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle=document.documentElement.classList.contains('dark')?'#2a2d3a':'#e2e4eb';ctx.fill();ctx.beginPath();ctx.arc(cx,cy,r*0.58,0,Math.PI*2);ctx.fillStyle=document.documentElement.classList.contains('dark')?'#1a1d27':'#fff';ctx.fill();}
-
-// DATE FILTER
-var curDP='all';
-function setDatePreset(p,btn){curDP=p;document.querySelectorAll('.dpre').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');var today=new Date();if(p==='today'){var d=fmtDate(today);$('dateFrom').value=d;$('dateTo').value=d;$('dateClearBtn').classList.remove('hidden');}else if(p==='week'){var day=today.getDay(),diff=today.getDate()-day+(day===0?-6:1);var mon=new Date(new Date().setDate(diff));$('dateFrom').value=fmtDate(mon);$('dateTo').value=fmtDate(new Date());$('dateClearBtn').classList.remove('hidden');}else if(p==='month'){$('dateFrom').value=fmtDate(new Date(today.getFullYear(),today.getMonth(),1));$('dateTo').value=fmtDate(new Date());$('dateClearBtn').classList.remove('hidden');}else{$('dateFrom').value='';$('dateTo').value='';$('dateClearBtn').classList.add('hidden');}renderList();}
-function onDateRangeChange(){curDP='custom';document.querySelectorAll('.dpre').forEach(function(b){b.classList.remove('active');});var show=$('dateFrom').value||$('dateTo').value;$('dateClearBtn').classList.toggle('hidden',!show);renderList();}
-function clearDateRange(){$('dateFrom').value='';$('dateTo').value='';$('dateClearBtn').classList.add('hidden');curDP='all';document.querySelectorAll('.dpre').forEach(function(b,i){b.classList.toggle('active',i===0);});renderList();}
-function matchesDateFilter(r){var from=$('dateFrom').value,to=$('dateTo').value;if(!from&&!to)return true;var ts=r.timestamp?r.timestamp.substring(0,10):'';if(!ts)return true;if(from&&ts<from)return false;if(to&&ts>to)return false;return true;}
-
-// NAV
-var CS_PAGES=['analytics','sellers','listings','settings'];
-function navTo(page,el){
-  document.querySelectorAll('.sidebar-item').forEach(function(b){b.classList.remove('active');});
-  if(el)el.classList.add('active');
-  else document.querySelectorAll('.sidebar-item').forEach(function(b){if((b.getAttribute('onclick')||'').indexOf("'bd-review'")>-1)b.classList.add('active');});
-  CS_PAGES.forEach(function(p){var pg=document.getElementById('csPage-'+p);if(pg){pg.classList.remove('visible');if(p==='settings')pg.style.display='none';}});
-  var mr=$('mainReview');
-  if(page==='bd-review'){if(mr)mr.style.display='';}
-  else{
-    if(mr)mr.style.display='none';
-    var pg=document.getElementById('csPage-'+page);
-    if(pg){if(page==='settings')pg.style.display='flex';else pg.classList.add('visible');}
-    if(page==='analytics'){populateMonthSelect();renderAnalytics();}
-    if(page==='settings')loadConfig();
-  }
-}
-
-// THEME
-function initTheme(){var s=localStorage.getItem(THEME_KEY)||'light';applyTheme(s);}
-function applyTheme(mode){if(mode==='dark'){document.documentElement.classList.add('dark');var i=$('themeIcon'),l=$('themeLabel');if(i)i.textContent='\u2600\ufe0f';if(l)l.textContent='Light mode';}else{document.documentElement.classList.remove('dark');var i=$('themeIcon'),l=$('themeLabel');if(i)i.textContent='\ud83c\udf19';if(l)l.textContent='Dark mode';}try{localStorage.setItem(THEME_KEY,mode);}catch(e){}}
-function toggleTheme(){applyTheme(document.documentElement.classList.contains('dark')?'light':'dark');setTimeout(renderAnalytics,50);}
-
-// MODAL CLOSE
-$('rejectModal').addEventListener('click',function(e){if(e.target===this)closeRejectModal();});
-$('approveModal').addEventListener('click',function(e){if(e.target===this)closeApproveModal();});
-$('needInfoModal').addEventListener('click',function(e){if(e.target===this)closeNeedInfoModal();});
-$('patModal').addEventListener('click',function(e){if(e.target===this)closePatModal();});
-
 // TOAST
 function showToast(msg,type){var t=$('toast');t.textContent=msg;t.className='toast '+(type||'info');t.classList.add('show');setTimeout(function(){t.classList.remove('show');},4500);}
 
@@ -809,6 +823,402 @@ function showToast(msg,type){var t=$('toast');t.textContent=msg;t.className='toa
 initTheme();
 loadSavedCreds();
 if(restoreSession())loadRequests();
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FORM BUILDER
+// ══════════════════════════════════════════════════════════════════════════════
+var GH_REPO_FB='fightiger23/Product_request';
+var GH_FILE_FB='config.json';
+var GH_BRANCH_FB='main';
+var CONFIG_URL_FB='https://raw.githubusercontent.com/fightiger23/Product_request/main/config.json';
+var PAT_KEY_FB='g2g_bd_pat';
+var liveConfig=null;
+var activeMarket='main-market';
+var activeCardId=null;
+var newCardType=null;
+
+var CARD_ICONS_FB={sellerIdentity:'👤',category:'📂',region:'🌍',brand:'🏷️',delivery:'📦',accountType:'👤',entryFields:'📋',manualTopUp:'🔐',platform:'🖥️',denominations:'🗂️',reference:'🔗'};
+var TYPE_LABELS_FB={identity:'Identity',radio:'Radio select',checkbox:'Checkbox','text':'Text input','entry-fields':'Entry fields',platform:'Platform',denom:'Denominations',region:'Region',reference:'URL + Image'};
+var LOCKED_FB=['sellerIdentity','region','denominations','reference','platform'];
+
+function getDefaultCards_FB(){
+  return [
+    {id:'sellerIdentity',type:'identity',title:'Seller Identity',description:'Enter your G2G registered details.',required:true,visible:true},
+    {id:'brand',type:'text',title:'Brand Name',description:'The brand name for the product',required:true,visible:true,
+      fields:[{id:'brandName',label:'Brand Name',placeholder:'Enter brand name',required:true},{id:'productVariation',label:'Product Variation',placeholder:'e.g. Series, Variety',required:false}]},
+    {id:'region',type:'region',title:'Supported Region',description:'Region(s) where this product is available',required:true,visible:true},
+    {id:'delivery',type:'radio',title:'Delivery Method',description:'How this product will be delivered',required:true,visible:true,
+      optionsByTrigger:{
+        'Game Top Up & Gift Cards':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'AI & Tools':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'Ebooks':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'Live Streaming & Social':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'Video & Music':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'Dining & Food':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'eCommerce':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'Education':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'Fashion':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'Travel & Transport':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'eWallet & Prepaid':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'Mobile Credit Reload & Plans':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'Travel eSIM':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
+        'Game Account':['Game Account'],'Game Boosting':['Game Boosting'],'Game Coins':['Game Coins'],
+        'Game Items':['Game Items'],'Game Skins':['Game Skins'],'Game Coaching':['Game Coaching'],'Game Pal':['Game Pal']
+      }},
+    {id:'denominations',type:'denom',title:'Denominations',description:'List each denomination.',required:true,visible:true},
+    {id:'reference',type:'reference',title:'Reference Link / Image',description:'Provide a product page URL and reference images',required:true,visible:true}
+  ];
+}
+
+function getMarketLabel_FB(m){
+  if(m==='main-market')return 'Main Market';
+  if(m==='secondary-market')return 'Secondary Market';
+  return 'GPGC';
+}
+
+function getMarketCards_FB(){
+  if(!liveConfig||!liveConfig.markets||!liveConfig.markets[activeMarket])return[];
+  return liveConfig.markets[activeMarket].cards||[];
+}
+
+function loadConfig(){
+  var el=$('fbCardList');
+  if(el)el.innerHTML='<div class="fb-loading">Loading config...</div>';
+  fetch(CONFIG_URL_FB+'?t='+Date.now())
+    .then(function(r){return r.json();})
+    .then(function(cfg){
+      if(cfg.cards&&!cfg.markets){
+        liveConfig={meta:cfg.meta||{},markets:{}};
+        ['main-market','secondary-market','gpgc'].forEach(function(m){
+          liveConfig.markets[m]={label:getMarketLabel_FB(m),cards:JSON.parse(JSON.stringify(cfg.cards))};
+        });
+      } else if(cfg.markets){
+        liveConfig=cfg;
+        ['main-market','secondary-market','gpgc'].forEach(function(m){
+          if(!liveConfig.markets[m]){
+            liveConfig.markets[m]={label:getMarketLabel_FB(m),cards:JSON.parse(JSON.stringify(getDefaultCards_FB()))};
+          }
+        });
+      } else {
+        liveConfig={meta:{version:1},markets:{
+          'main-market':{label:'Main Market',cards:getDefaultCards_FB()},
+          'secondary-market':{label:'Secondary Market',cards:getDefaultCards_FB()},
+          'gpgc':{label:'GPGC',cards:getDefaultCards_FB()}
+        }};
+      }
+      updatePublishMeta_FB();
+      renderFbSidebar_FB();
+      showToast('Config loaded','success');
+    })
+    .catch(function(){
+      liveConfig={meta:{version:1},markets:{
+        'main-market':{label:'Main Market',cards:getDefaultCards_FB()},
+        'secondary-market':{label:'Secondary Market',cards:getDefaultCards_FB()},
+        'gpgc':{label:'GPGC',cards:getDefaultCards_FB()}
+      }};
+      renderFbSidebar_FB();
+      showToast('Could not load config - using defaults','warn');
+    });
+}
+
+function updatePublishMeta_FB(){
+  var meta=$('fbPublishMeta');if(!meta)return;
+  var lp=liveConfig&&liveConfig.meta&&liveConfig.meta.lastPublished;
+  meta.textContent=lp?'Published: '+lp:'Not yet published';
+}
+
+function switchMarket(market,btn){
+  activeMarket=market;activeCardId=null;
+  document.querySelectorAll('.fb-market-tab').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  renderFbSidebar_FB();
+  var ed=$('fbEditor');
+  if(ed)ed.innerHTML='<div class="fb-editor-empty"><div class="fb-editor-empty-icon">&#128072;</div><div class="fb-editor-empty-title">Select a card to edit</div><div class="fb-editor-empty-sub">Editing '+getMarketLabel_FB(market)+'</div></div>';
+}
+
+function renderFbSidebar_FB(){
+  var list=$('fbCardList');if(!list)return;
+  var cards=getMarketCards_FB();
+  if(!cards.length){list.innerHTML='<div class="fb-loading">No cards yet</div>';return;}
+  list.innerHTML='';
+  cards.forEach(function(card,i){
+    var locked=LOCKED_FB.indexOf(card.id)>-1;
+    var item=document.createElement('div');
+    item.className='fb-card-item'+(card.id===activeCardId?' active':'')+(card.visible===false?' disabled-card':'');
+    item.draggable=!locked;
+    item.dataset.idx=i;
+    var visBtn=!locked?'<button class="fb-card-vis '+(card.visible!==false?'on':'off')+'" onclick="toggleCardVis_FB(\''+card.id+'\',event)" title="Toggle visibility"><div class="fb-card-vis-knob"></div></button>':'';
+    var dragHandle=!locked?'<span class="fb-card-drag" title="Drag to reorder">&#8691;</span>':'<span style="width:14px;flex-shrink:0;"></span>';
+    item.innerHTML=dragHandle
+      +'<span class="fb-card-icon">'+(CARD_ICONS_FB[card.id]||'&#128196;')+'</span>'
+      +'<div class="fb-card-info"><div class="fb-card-name">'+esc(card.title)+'</div>'
+      +'<div class="fb-card-type-lbl">'+(TYPE_LABELS_FB[card.type]||card.type)+(locked?'<span class="fb-engine-badge">engine</span>':'')+'</div></div>'
+      +visBtn;
+    item.onclick=function(){openFbCard_FB(card.id);};
+    if(!locked){
+      item.addEventListener('dragstart',function(e){
+        e.dataTransfer.setData('text/plain',String(i));
+        item.style.opacity='.4';
+      });
+      item.addEventListener('dragend',function(){
+        item.style.opacity='';
+        list.querySelectorAll('.fb-card-item').forEach(function(x){x.classList.remove('drag-over');});
+      });
+      item.addEventListener('dragover',function(e){e.preventDefault();item.classList.add('drag-over');});
+      item.addEventListener('dragleave',function(){item.classList.remove('drag-over');});
+      item.addEventListener('drop',function(e){
+        e.preventDefault();item.classList.remove('drag-over');
+        var from=parseInt(e.dataTransfer.getData('text/plain'));
+        var to=parseInt(item.dataset.idx);
+        if(from===to)return;
+        var arr=getMarketCards_FB();
+        var moved=arr.splice(from,1)[0];
+        arr.splice(to,0,moved);
+        renderFbSidebar_FB();
+      });
+    }
+    list.appendChild(item);
+  });
+}
+
+function toggleCardVis_FB(id,e){
+  e.stopPropagation();
+  var c=getCard_FB(id);if(!c)return;
+  c.visible=c.visible===false?true:false;
+  renderFbSidebar_FB();
+  if(activeCardId===id)openFbCard_FB(id);
+}
+
+function getCard_FB(id){
+  var c=getMarketCards_FB();
+  return c.find(function(x){return x.id===id;});
+}
+
+function openFbCard_FB(id){
+  activeCardId=id;renderFbSidebar_FB();
+  var card=getCard_FB(id);if(!card)return;
+  var locked=LOCKED_FB.indexOf(id)>-1;
+  var ed=$('fbEditor');if(!ed)return;
+  var h='<div style="max-width:580px;">';
+
+  // Header row
+  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">'
+    +'<span style="font-size:24px;">'+(CARD_ICONS_FB[id]||'&#128196;')+'</span>'
+    +'<div><div style="font-size:16px;font-weight:700;color:var(--text);">'+esc(card.title)+(locked?'<span class="fb-engine-badge">Engine</span>':'')+'</div>'
+    +'<div style="font-size:12px;color:var(--muted);">'+(TYPE_LABELS_FB[card.type]||card.type)+'</div></div>'
+    +(!locked?'<button onclick="deleteFbCard_FB(\''+id+'\')" style="margin-left:auto;padding:5px 12px;background:var(--accent-light);color:var(--accent);border:1px solid #fecaca;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">Delete</button>':'')
+    +'</div>';
+
+  if(locked){
+    h+='<div class="fb-locked-notice">&#9881; This card is managed by the form engine. Its core behaviour is fixed and it always appears in the seller form.</div>';
+  } else {
+    // Tabs
+    h+='<div class="fb-tabs">'
+      +'<button class="fb-tab active" onclick="fbSwitchTab_FB(this,\'content\')">Content</button>'
+      +'<button class="fb-tab" onclick="fbSwitchTab_FB(this,\'settings\')">Settings</button>'
+      +'</div>';
+
+    // Content tab
+    h+='<div id="fbTabContent_content">';
+    h+='<div class="fb-section"><div class="fb-section-label">Card content</div>'
+      +'<div class="fb-field"><label class="fb-field-label">Card title</label>'
+      +'<input class="fb-input" value="'+esc(card.title)+'" oninput="fbUpdateTitle_FB(\''+id+'\',this.value)"></div>'
+      +'<div class="fb-field"><label class="fb-field-label">Description</label>'
+      +'<input class="fb-input" value="'+esc(card.description||'')+'" oninput="fbUpdateDesc_FB(\''+id+'\',this.value)"></div>'
+      +'</div>';
+
+    // Radio / Checkbox options
+    if((card.type==='radio'||card.type==='checkbox')&&card.options&&id!=='delivery'){
+      h+='<div class="fb-section"><div class="fb-section-label">Options</div><div class="fb-options-list">';
+      card.options.forEach(function(opt,i){
+        h+='<div class="fb-option-row">'
+          +'<span class="fb-option-drag">&#8691;</span>'
+          +'<input class="fb-option-input" value="'+esc(opt.label||opt.value||'')+'" oninput="fbUpdateOpt_FB(\''+id+'\','+i+',this.value)">'
+          +'<button class="fb-option-rm" onclick="fbRemoveOpt_FB(\''+id+'\','+i+')">&#215;</button>'
+          +'</div>';
+      });
+      h+='<button class="fb-add-option-btn" onclick="fbAddOpt_FB(\''+id+'\')">+ Add option</button></div></div>';
+    }
+
+    // Delivery options by trigger
+    if(id==='delivery'&&card.optionsByTrigger){
+      h+='<div class="fb-section"><div class="fb-section-label">Delivery options per product type</div>'
+        +'<p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;">Edit delivery options for each product type. Changes apply to the '+getMarketLabel_FB(activeMarket)+' form only.</p>';
+      Object.keys(card.optionsByTrigger).forEach(function(prod){
+        var opts=card.optionsByTrigger[prod];
+        h+='<div class="fb-deliv-section"><div class="fb-cat-header">'+esc(prod)+'</div><div class="fb-options-list">';
+        opts.forEach(function(opt,i){
+          h+='<div class="fb-option-row">'
+            +'<span class="fb-option-drag">&#8691;</span>'
+            +'<input class="fb-option-input" value="'+esc(opt)+'" oninput="fbUpdateDelivOpt_FB(\''+esc(prod)+'\','+i+',this.value)">'
+            +'<button class="fb-option-rm" onclick="fbRemoveDelivOpt_FB(\''+esc(prod)+'\','+i+')">&#215;</button>'
+            +'</div>';
+        });
+        h+='<button class="fb-add-option-btn" onclick="fbAddDelivOpt_FB(\''+esc(prod)+'\')">+ Add option for '+esc(prod)+'</button></div></div>';
+      });
+      h+='</div>';
+    }
+
+    // Entry fields
+    if(card.type==='entry-fields'&&card.defaultFields){
+      h+='<div class="fb-section"><div class="fb-section-label">Default fields</div><div class="fb-options-list">';
+      card.defaultFields.forEach(function(f,i){
+        h+='<div class="fb-option-row">'
+          +'<span class="fb-option-drag">&#8691;</span>'
+          +'<input class="fb-option-input" value="'+esc(f.placeholder||f.label||'')+'" placeholder="Field placeholder" oninput="fbUpdateEntryField_FB(\''+id+'\','+i+',this.value)">'
+          +'<button class="fb-option-rm" onclick="fbRemoveEntryField_FB(\''+id+'\','+i+')">&#215;</button>'
+          +'</div>';
+      });
+      h+='<button class="fb-add-option-btn" onclick="fbAddEntryField_FB(\''+id+'\')">+ Add field</button></div></div>';
+    }
+
+    // Text fields
+    if(card.type==='text'&&card.fields){
+      h+='<div class="fb-section"><div class="fb-section-label">Fields</div>';
+      card.fields.forEach(function(f,i){
+        h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">'
+          +'<div><label class="fb-field-label">Label</label><input class="fb-input" value="'+esc(f.label||'')+'" oninput="fbUpdateTextField_FB(\''+id+'\','+i+',\'label\',this.value)"></div>'
+          +'<div><label class="fb-field-label">Placeholder</label><input class="fb-input" value="'+esc(f.placeholder||'')+'" oninput="fbUpdateTextField_FB(\''+id+'\','+i+',\'placeholder\',this.value)"></div>'
+          +'</div>';
+      });
+      h+='</div>';
+    }
+
+    h+='</div>'; // end fbTabContent_content
+
+    // Settings tab
+    h+='<div id="fbTabContent_settings" style="display:none;">';
+    h+='<div class="fb-section"><div class="fb-section-label">Required</div>'
+      +'<div class="fb-toggle-row">'
+      +'<button class="fb-toggle '+(card.required?'on':'off')+'" id="fbReqToggle" onclick="fbToggleReq_FB(\''+id+'\')"><div class="fb-toggle-knob"></div></button>'
+      +'<span id="fbReqLbl">'+(card.required?'Required':'Optional')+'</span>'
+      +'</div></div>';
+    h+='<div class="fb-section"><div class="fb-section-label">Visibility</div>'
+      +'<div class="fb-toggle-row">'
+      +'<button class="fb-toggle '+(card.visible!==false?'on':'off')+'" id="fbVisToggle" onclick="fbToggleVis_FB(\''+id+'\')"><div class="fb-toggle-knob"></div></button>'
+      +'<span id="fbVisLbl">'+(card.visible!==false?'Visible':'Hidden')+'</span>'
+      +'</div></div>';
+    h+='<div class="fb-section"><div class="fb-section-label">Card ID</div>'
+      +'<input class="fb-input" value="'+esc(id)+'" readonly style="font-family:var(--mono);font-size:12px;opacity:.6;"></div>';
+    h+='</div>'; // end settings tab
+  }
+
+  h+='</div>';
+  ed.innerHTML=h;
+}
+
+function fbSwitchTab_FB(btn,tab){
+  document.querySelectorAll('.fb-tab').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  ['content','settings'].forEach(function(t){
+    var el=$('fbTabContent_'+t);
+    if(el)el.style.display=t===tab?'block':'none';
+  });
+}
+
+function fbUpdateTitle_FB(id,v){var c=getCard_FB(id);if(c){c.title=v;renderFbSidebar_FB();}}
+function fbUpdateDesc_FB(id,v){var c=getCard_FB(id);if(c)c.description=v;}
+function fbUpdateOpt_FB(id,i,v){var c=getCard_FB(id);if(c&&c.options){c.options[i].label=v;c.options[i].value=v;}}
+function fbAddOpt_FB(id){var c=getCard_FB(id);if(c&&c.options){c.options.push({value:'New Option',label:'New Option'});openFbCard_FB(id);}}
+function fbRemoveOpt_FB(id,i){var c=getCard_FB(id);if(c&&c.options){if(c.options.length<=1){showToast('Need at least one option','warn');return;}c.options.splice(i,1);openFbCard_FB(id);}}
+function fbUpdateDelivOpt_FB(prod,i,v){var c=getCard_FB('delivery');if(c&&c.optionsByTrigger&&c.optionsByTrigger[prod])c.optionsByTrigger[prod][i]=v;}
+function fbAddDelivOpt_FB(prod){var c=getCard_FB('delivery');if(c&&c.optionsByTrigger&&c.optionsByTrigger[prod]){c.optionsByTrigger[prod].push('New Option');openFbCard_FB('delivery');}}
+function fbRemoveDelivOpt_FB(prod,i){var c=getCard_FB('delivery');if(c&&c.optionsByTrigger&&c.optionsByTrigger[prod]){if(c.optionsByTrigger[prod].length<=1){showToast('Need at least one option','warn');return;}c.optionsByTrigger[prod].splice(i,1);openFbCard_FB('delivery');}}
+function fbUpdateTextField_FB(id,i,field,v){var c=getCard_FB(id);if(c&&c.fields&&c.fields[i])c.fields[i][field]=v;}
+function fbUpdateEntryField_FB(id,i,v){var c=getCard_FB(id);if(c&&c.defaultFields&&c.defaultFields[i]){c.defaultFields[i].placeholder=v;c.defaultFields[i].label=v;}}
+function fbAddEntryField_FB(id){var c=getCard_FB(id);if(c&&c.defaultFields){c.defaultFields.push({label:'New Field',placeholder:'New field',required:false});openFbCard_FB(id);}}
+function fbRemoveEntryField_FB(id,i){var c=getCard_FB(id);if(c&&c.defaultFields){if(c.defaultFields.length<=1){showToast('Need at least one field','warn');return;}c.defaultFields.splice(i,1);openFbCard_FB(id);}}
+function fbToggleReq_FB(id){var c=getCard_FB(id);if(!c)return;c.required=!c.required;var btn=$('fbReqToggle'),lbl=$('fbReqLbl');if(btn){btn.className='fb-toggle '+(c.required?'on':'off');btn.innerHTML='<div class="fb-toggle-knob"></div>';}if(lbl)lbl.textContent=c.required?'Required':'Optional';}
+function fbToggleVis_FB(id){var c=getCard_FB(id);if(!c)return;c.visible=c.visible===false?true:false;var btn=$('fbVisToggle'),lbl=$('fbVisLbl');if(btn){btn.className='fb-toggle '+(c.visible!==false?'on':'off');btn.innerHTML='<div class="fb-toggle-knob"></div>';}if(lbl)lbl.textContent=c.visible!==false?'Visible':'Hidden';renderFbSidebar_FB();}
+
+function deleteFbCard_FB(id){
+  if(!confirm('Delete this card? This cannot be undone for the '+getMarketLabel_FB(activeMarket)+' form.'))return;
+  var cards=getMarketCards_FB();
+  var idx=cards.findIndex(function(c){return c.id===id;});
+  if(idx>-1){
+    cards.splice(idx,1);activeCardId=null;renderFbSidebar_FB();
+    var ed=$('fbEditor');
+    if(ed)ed.innerHTML='<div class="fb-editor-empty"><div class="fb-editor-empty-icon">&#128072;</div><div class="fb-editor-empty-title">Card deleted</div><div class="fb-editor-empty-sub">Select another card to continue</div></div>';
+  }
+}
+
+function openAddCardModal(){
+  newCardType=null;
+  var inp=$('fbNewCardTitle');if(inp)inp.value='';
+  var btn=$('fbAddCardConfirmBtn');if(btn)btn.disabled=true;
+  var grid=$('fbCardTypeGrid');
+  if(grid)grid.querySelectorAll('.fb-card-type-option').forEach(function(o){o.classList.remove('selected');});
+  var modal=$('fbNewCardModal');if(modal)modal.classList.remove('hidden');
+}
+function closeAddCardModal(){var modal=$('fbNewCardModal');if(modal)modal.classList.add('hidden');newCardType=null;}
+function selectNewCardType(el,type){
+  var grid=$('fbCardTypeGrid');
+  if(grid)grid.querySelectorAll('.fb-card-type-option').forEach(function(o){o.classList.remove('selected');});
+  el.classList.add('selected');newCardType=type;
+  var btn=$('fbAddCardConfirmBtn'),inp=$('fbNewCardTitle');
+  if(btn)btn.disabled=!(inp&&inp.value.trim());
+}
+function confirmAddCard(){
+  var inp=$('fbNewCardTitle');var title=inp?inp.value.trim():'';
+  if(!title||!newCardType)return;
+  var id='card_'+Date.now();
+  var newCard={id:id,type:newCardType,title:title,description:'',required:false,visible:true};
+  if(newCardType==='radio'||newCardType==='checkbox')newCard.options=[{value:'Option 1',label:'Option 1'}];
+  if(newCardType==='entry-fields')newCard.defaultFields=[{label:'Field 1',placeholder:'Field 1',required:false}];
+  if(newCardType==='text')newCard.fields=[{id:'f1',label:'Label',placeholder:'Placeholder',required:false}];
+  getMarketCards_FB().push(newCard);
+  closeAddCardModal();renderFbSidebar_FB();openFbCard_FB(id);
+  showToast('Card added - drag to reorder','success');
+}
+
+function startPublish(){
+  if(!liveConfig){showToast('Config not loaded yet','warn');return;}
+  var stored=localStorage.getItem(PAT_KEY_FB);
+  if(stored){doPublishWithToken_FB(stored);return;}
+  var inp=$('patInput');if(inp){inp.value='';inp.classList.remove('error');}
+  var err=$('patErr');if(err)err.style.display='none';
+  var modal=$('patModal');if(modal)modal.classList.remove('hidden');
+}
+function closePatModal(){var modal=$('patModal');if(modal)modal.classList.add('hidden');}
+function doPublish(){
+  var inp=$('patInput');var t=inp?inp.value.trim():'';
+  if(!t){if(inp)inp.classList.add('error');var err=$('patErr');if(err)err.style.display='block';return;}
+  var rem=$('patRemember');if(rem&&rem.checked){try{localStorage.setItem(PAT_KEY_FB,t);}catch(e){}}
+  closePatModal();doPublishWithToken_FB(t);
+}
+async function doPublishWithToken_FB(token){
+  var btn=$('fbPublishBtn');if(btn){btn.disabled=true;btn.innerHTML='<span>&#9203;</span> Publishing...';}
+  try{
+    if(!liveConfig.meta)liveConfig.meta={};
+    liveConfig.meta.version=(liveConfig.meta.version||1)+1;
+    liveConfig.meta.lastPublished=new Date().toISOString().substring(0,10);
+    var content=JSON.stringify(liveConfig,null,2);
+    var b64=btoa(unescape(encodeURIComponent(content)));
+    var gr=await fetch('https://api.github.com/repos/'+GH_REPO_FB+'/contents/'+GH_FILE_FB,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
+    var sha='';if(gr.ok){var gd=await gr.json();sha=gd.sha||'';}
+    var body={message:'Form Builder: update config.json (v'+liveConfig.meta.version+')',content:b64,branch:GH_BRANCH_FB};
+    if(sha)body.sha=sha;
+    var pr=await fetch('https://api.github.com/repos/'+GH_REPO_FB+'/contents/'+GH_FILE_FB,{method:'PUT',headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(pr.ok){
+      updatePublishMeta_FB();
+      showToast('Published! Seller form updates in ~30 seconds','success');
+    } else {
+      var ed2=await pr.json();
+      if(pr.status===401||pr.status===403){localStorage.removeItem(PAT_KEY_FB);showToast('Token invalid or expired - please re-enter','error');}
+      else showToast('Publish failed: '+(ed2.message||pr.status),'error');
+    }
+  }catch(err2){showToast('Error: '+err2.message,'error');}
+  finally{if(btn){btn.disabled=false;btn.innerHTML='<span>&#128640;</span> Publish';}}
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var inp=$('fbNewCardTitle');
+  if(inp)inp.addEventListener('input',function(){
+    var btn=$('fbAddCardConfirmBtn');
+    if(btn)btn.disabled=!(this.value.trim()&&newCardType);
+  });
+});
+
 </script>
 </body>
 </html>
