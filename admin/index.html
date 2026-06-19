@@ -1045,28 +1045,326 @@ if(restoreSession())loadRequests();
 // ══════════════════════════════════════════════════════════════════════════════
 // FORM BUILDER
 // ══════════════════════════════════════════════════════════════════════════════
-var GH_REPO_FB='fightiger23/Product_request';
-var GH_FILE_FB='config.json';
-var GH_BRANCH_FB='main';
-var CONFIG_URL_FB='https://raw.githubusercontent.com/fightiger23/Product_request/main/config.json';
-var PAT_KEY_FB='g2g_bd_pat';
-var liveConfig=null;
-var activeMarket='main-market';
-var activeCardId=null;
-var newCardType=null;
 
-var CARD_ICONS_FB={sellerIdentity:'👤',category:'📂',region:'🌍',brand:'🏷️',delivery:'📦',accountType:'👤',entryFields:'📋',manualTopUp:'🔐',platform:'🖥️',denominations:'🗂️',reference:'🔗'};
-var TYPE_LABELS_FB={identity:'Identity',radio:'Radio select',checkbox:'Checkbox','text':'Text input','entry-fields':'Entry fields',platform:'Platform',denom:'Denominations',region:'Region',reference:'URL + Image'};
-var LOCKED_FB=['sellerIdentity','region','denominations','reference','platform'];
+// ══════════════════════════════════════════════════════════════════════════════
+// FORM BUILDER — PRODUCT-CENTRIC
+// ══════════════════════════════════════════════════════════════════════════════
 
-function getDefaultCards_FB(){
+// Market product scope
+var MARKET_PRODUCTS = {
+  'main-market': null, // null = all products
+  'secondary-market': ['Game Account','Game Boosting','Game Coins','Game Items','Game Skins'],
+  'gpgc': ['Game Pal','Game Coaching']
+};
+
+// Default field sets per product type
+// Each field: { id, label, placeholder, type, required, editable, options }
+function getDefaultProductFields(product) {
+  var base = {
+    brand:  { id:'brand',  label:'Brand Name',       placeholder:'e.g. Steam, Epic Games', type:'text', required:true, editable:true },
+    variation: { id:'variation', label:'Product Variation', placeholder:'e.g. Season Pass, Bundle', type:'text', required:false, editable:true },
+    region: { id:'region', label:'Supported Region', type:'region', required:true, editable:false, note:'Full country list — managed by engine' },
+    refUrl: { id:'refUrl', label:'Reference URL',    type:'url',  required:true,  editable:false, note:'Required — managed by engine' },
+    refImg: { id:'refImg', label:'Reference Image',  type:'image',required:false, editable:false, note:'Optional — managed by engine' }
+  };
+
+  // Game types (Secondary Market)
+  if(['Game Account','Game Boosting','Game Coins','Game Items','Game Skins'].indexOf(product) > -1) {
+    return [
+      base.brand,
+      base.variation,
+      base.region,
+      { id:'platform', label:'Platform', type:'platform', required:true, editable:false, note:'PC / Xbox / PS / Nintendo — managed by engine' },
+      { id:'ef1', label:'Entry Field 1', placeholder:'e.g. Player ID / UID', type:'text', required:true, editable:true },
+      { id:'ef2', label:'Entry Field 2', placeholder:'e.g. Server / Region', type:'text', required:false, editable:true },
+      { id:'denom', label:'Denominations', type:'denom', required:true, editable:false, note:'Product Type + Dataset + Amount — managed by engine' },
+      base.refUrl,
+      base.refImg
+    ];
+  }
+  // Rent time (GPGC)
+  if(['Game Pal','Game Coaching'].indexOf(product) > -1) {
+    return [
+      base.brand,
+      base.variation,
+      base.region,
+      { id:'ef1', label:'Game Name', placeholder:'e.g. Mobile Legends, Valorant, PUBG', type:'text', required:true, editable:true },
+      { id:'ef2', label:'Service Details', placeholder:'e.g. Hours of coaching, Rank boost level', type:'text', required:true, editable:true },
+      base.refUrl,
+      base.refImg
+    ];
+  }
+  // Default (Main Market — all other products)
   return [
-    {id:'sellerIdentity',type:'identity',title:'Seller Identity',description:'Enter your G2G registered details.',required:true,visible:true},
-    {id:'brand',type:'text',title:'Brand Name',description:'The brand name for the product',required:true,visible:true,
-      fields:[{id:'brandName',label:'Brand Name',placeholder:'Enter brand name',required:true},{id:'productVariation',label:'Product Variation',placeholder:'e.g. Series, Variety',required:false}]},
-    {id:'region',type:'region',title:'Supported Region',description:'Region(s) where this product is available',required:true,visible:true},
-    {id:'delivery',type:'radio',title:'Delivery Method',description:'How this product will be delivered',required:true,visible:true,
-      optionsByTrigger:{
+    base.brand,
+    base.variation,
+    base.region,
+    { id:'delivery', label:'Delivery Method', type:'delivery', required:true, editable:true, note:'Options vary per product type' },
+    { id:'denom', label:'Denominations / Product Name', type:'denom', required:false, editable:false, note:'Managed by engine based on delivery method' },
+    base.refUrl,
+    base.refImg
+  ];
+}
+
+// Build market config from defaults
+function buildMarketConfig(market) {
+  var scope = MARKET_PRODUCTS[market];
+  var products = {};
+  var productList;
+  if(scope === null) {
+    // Main Market — all products
+    productList = [
+      'Game Account','Game Boosting','Game Coins','Game Items','Game Skins',
+      'Game Top Up & Gift Cards','AI & Tools','Ebooks','Live Streaming & Social',
+      'Video & Music','Dining & Food','eCommerce','Education','Fashion',
+      'Travel & Transport','eWallet & Prepaid','Mobile Credit Reload & Plans',
+      'Travel eSIM','Game Coaching','Game Pal'
+    ];
+  } else {
+    productList = scope;
+  }
+  productList.forEach(function(prod) {
+    products[prod] = {
+      visible: true,
+      fields: getDefaultProductFields(prod)
+    };
+  });
+  return {
+    label: getMarketLabel_FB(market),
+    products: products
+  };
+}
+
+function getDefaultConfig_V2() {
+  return {
+    meta: { version: 1, lastPublished: '' },
+    markets: {
+      'main-market':       buildMarketConfig('main-market'),
+      'secondary-market':  buildMarketConfig('secondary-market'),
+      'gpgc':              buildMarketConfig('gpgc')
+    }
+  };
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+var liveConfig = null;
+var activeMarket = 'main-market';
+var activeProduct = null;
+var activeFieldIdx = null;
+var newCardType = null;
+
+function getMarketData() {
+  if(!liveConfig||!liveConfig.markets) return null;
+  var m = liveConfig.markets[activeMarket];
+  if(!m) return null;
+  // Migrate old card-based config to product-based if needed
+  if(m.cards && !m.products) {
+    var built = buildMarketConfig(activeMarket);
+    m.products = built.products;
+    m.label = built.label;
+    delete m.cards;
+  }
+  return m;
+}
+
+function getProductList() {
+  var m = getMarketData();
+  if(!m || !m.products) return [];
+  return Object.keys(m.products);
+}
+
+function getProductFields(prod) {
+  var m = getMarketData();
+  if(!m || !m.products || !m.products[prod]) return [];
+  return m.products[prod].fields || [];
+}
+
+// ── Load config ───────────────────────────────────────────────────────────────
+function loadConfig() {
+  var el = $('fbCardList');
+  if(el) el.innerHTML = '<div class="fb-loading">Loading config\u2026</div>';
+  fetch(CONFIG_URL_FB + '?t=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(cfg) {
+      if(!cfg.markets) {
+        liveConfig = getDefaultConfig_V2();
+      } else {
+        liveConfig = cfg;
+        // Ensure all markets exist and are product-based
+        ['main-market','secondary-market','gpgc'].forEach(function(m) {
+          if(!liveConfig.markets[m]) {
+            liveConfig.markets[m] = buildMarketConfig(m);
+          } else if(!liveConfig.markets[m].products) {
+            var built = buildMarketConfig(m);
+            liveConfig.markets[m].products = built.products;
+          }
+        });
+      }
+      updatePublishMeta_FB();
+      renderFbSidebar_FB();
+      renderFbPreview();
+      showToast('Config loaded', 'success');
+    })
+    .catch(function() {
+      liveConfig = getDefaultConfig_V2();
+      renderFbSidebar_FB();
+      renderFbPreview();
+      showToast('Could not load config \u2014 using defaults', 'warn');
+    });
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+function renderFbSidebar_FB() {
+  var list = $('fbCardList');
+  if(!list) return;
+  var products = getProductList();
+  if(!products.length) {
+    list.innerHTML = '<div class="fb-loading">No products configured</div>';
+    return;
+  }
+  list.innerHTML = '';
+  var m = getMarketData();
+  products.forEach(function(prod) {
+    var pdata = m.products[prod] || {};
+    var isHidden = pdata.visible === false;
+    var item = document.createElement('div');
+    item.className = 'fb-card-item' + (prod === activeProduct ? ' active' : '') + (isHidden ? ' disabled-card' : '');
+    item.innerHTML =
+      '<span class="fb-card-icon">' + getProductIcon(prod) + '</span>'
+      + '<div class="fb-card-info">'
+        + '<div class="fb-card-name">' + esc(prod) + '</div>'
+        + '<div class="fb-card-type-lbl">' + getProductFieldCount(prod) + ' fields</div>'
+      + '</div>'
+      + '<button class="fb-card-vis ' + (isHidden ? 'off' : 'on') + '" onclick="toggleProductVis(\'' + esc(prod) + '\',event)" title="Toggle visibility"><div class="fb-card-vis-knob"></div></button>';
+    item.onclick = function() { openProductEditor(prod); };
+    list.appendChild(item);
+  });
+}
+
+function getProductIcon(prod) {
+  var icons = {
+    'Game Account':'🎮','Game Boosting':'⚡','Game Coins':'🪙',
+    'Game Items':'🗡️','Game Skins':'🎨','Game Top Up & Gift Cards':'🎁',
+    'AI & Tools':'🤖','Ebooks':'📚','Live Streaming & Social':'📱',
+    'Video & Music':'🎵','Dining & Food':'🍔','eCommerce':'🛒',
+    'Education':'🎓','Fashion':'👗','Travel & Transport':'✈️',
+    'eWallet & Prepaid':'💳','Mobile Credit Reload & Plans':'📶',
+    'Travel eSIM':'🌐','Game Coaching':'🏆','Game Pal':'🤝'
+  };
+  return icons[prod] || '📦';
+}
+
+function getProductFieldCount(prod) {
+  var fields = getProductFields(prod);
+  var editableCount = fields.filter(function(f) { return f.editable !== false; }).length;
+  return editableCount + ' editable, ' + (fields.length - editableCount) + ' engine';
+}
+
+function toggleProductVis(prod, e) {
+  e.stopPropagation();
+  var m = getMarketData();
+  if(!m || !m.products || !m.products[prod]) return;
+  m.products[prod].visible = m.products[prod].visible === false ? true : false;
+  renderFbSidebar_FB();
+  renderFbPreview();
+}
+
+// ── Product Editor ────────────────────────────────────────────────────────────
+function openProductEditor(prod) {
+  activeProduct = prod;
+  renderFbSidebar_FB();
+  renderFbPreview();
+  var ed = $('fbEditor');
+  if(!ed) return;
+  var fields = getProductFields(prod);
+  var m = getMarketData();
+  var pdata = m && m.products && m.products[prod] ? m.products[prod] : {};
+
+  var h = '<div style="max-width:580px;">';
+
+  // Header
+  h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">'
+    + '<span style="font-size:28px;">' + getProductIcon(prod) + '</span>'
+    + '<div>'
+      + '<div style="font-size:16px;font-weight:700;color:var(--text);">' + esc(prod) + '</div>'
+      + '<div style="font-size:12px;color:var(--muted);">Editing for ' + getMarketLabel_FB(activeMarket) + '</div>'
+    + '</div>'
+    + '<div style="margin-left:auto;display:flex;gap:8px;">'
+      + '<button onclick="resetProductToDefault(\'' + esc(prod) + '\')" style="padding:5px 12px;background:var(--warn-light);color:#92640a;border:1px solid var(--warn-border);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);">Reset to default</button>'
+    + '</div>'
+    + '</div>';
+
+  // Info banner
+  h += '<div style="padding:10px 14px;background:var(--info-light);border:1px solid var(--info-border);border-radius:8px;font-size:12px;color:var(--info);margin-bottom:18px;line-height:1.6;">'
+    + '&#9432; Seller Identity (username + email) is always shown first and cannot be removed. '
+    + 'Fields marked <strong>Engine</strong> are built-in and cannot be edited here.'
+    + '</div>';
+
+  // Field list
+  h += '<div class="fb-section"><div class="fb-section-label">Form fields — in order</div>';
+  h += '<div id="fbFieldList_' + esc(prod) + '" style="display:flex;flex-direction:column;gap:6px;">';
+
+  // Always show seller identity as first locked row
+  h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;opacity:.6;">'
+    + '<span style="font-size:13px;">👤</span>'
+    + '<div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--text);">Seller Identity</div>'
+    + '<div style="font-size:11px;color:var(--muted);">Username + Email — always shown first</div></div>'
+    + '<span class="fb-engine-badge">engine</span>'
+    + '</div>';
+
+  fields.forEach(function(field, i) {
+    var isEngine = field.editable === false;
+    h += '<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:' + (isEngine ? 'var(--bg)' : 'var(--white)') + ';border:1px solid var(--border);border-radius:8px;' + (isEngine ? 'opacity:.65;' : '') + '">';
+    if(!isEngine) {
+      h += '<span style="font-size:14px;cursor:grab;color:var(--muted);padding-top:2px;">⇅</span>';
+    } else {
+      h += '<span style="width:18px;flex-shrink:0;"></span>';
+    }
+    h += '<div style="flex:1;">';
+    h += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:' + (isEngine ? '0' : '6px') + ';">'
+      + '<span style="font-size:12px;font-weight:600;color:var(--text);">' + esc(field.label) + '</span>'
+      + (field.required ? '<span style="font-size:11px;color:var(--accent);">*</span>' : '')
+      + (isEngine ? '<span class="fb-engine-badge">engine</span>' : '')
+      + '</div>';
+    if(isEngine && field.note) {
+      h += '<div style="font-size:11px;color:var(--muted);">' + esc(field.note) + '</div>';
+    }
+    if(!isEngine) {
+      h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
+        + '<div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:3px;">Label</label>'
+        + '<input class="fb-input" style="font-size:12px;padding:6px 10px;" value="' + esc(field.label) + '" oninput="updateFieldProp(\'' + esc(prod) + '\',' + i + ',\'label\',this.value)"></div>'
+        + '<div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:3px;">Placeholder</label>'
+        + '<input class="fb-input" style="font-size:12px;padding:6px 10px;" value="' + esc(field.placeholder || '') + '" oninput="updateFieldProp(\'' + esc(prod) + '\',' + i + ',\'placeholder\',this.value)"></div>'
+        + '</div>';
+      h += '<div style="display:flex;align-items:center;gap:8px;margin-top:6px;">'
+        + '<label style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;cursor:pointer;">'
+        + '<input type="checkbox" ' + (field.required ? 'checked' : '') + ' onchange="updateFieldProp(\'' + esc(prod) + '\',' + i + ',\'required\',this.checked)" style="accent-color:var(--accent);"> Required</label>'
+        + '<button onclick="removeField(\'' + esc(prod) + '\',' + i + ')" style="margin-left:auto;padding:3px 10px;background:var(--accent-light);color:var(--accent);border:1px solid #fecaca;border-radius:5px;font-size:11px;cursor:pointer;font-family:var(--font);">Remove</button>'
+        + '</div>';
+    }
+    h += '</div></div>';
+  });
+
+  h += '</div>'; // fbFieldList
+
+  // Add field button
+  h += '<div style="margin-top:8px;display:flex;gap:8px;">'
+    + '<button onclick="addField(\'' + esc(prod) + '\')" class="btn-add" style="flex:1;">+ Add entry field</button>'
+    + '</div>';
+  h += '</div>'; // section
+
+  // Delivery options section (only for products that use delivery)
+  var delivCard = liveConfig && liveConfig.markets && liveConfig.markets['main-market'] &&
+    liveConfig.markets['main-market'].cards &&
+    liveConfig.markets['main-market'].cards.find(function(c){return c.id==='delivery';});
+
+  // For main-market, show delivery options editor
+  if(activeMarket === 'main-market') {
+    var mdata = getMarketData();
+    var delivOpts = mdata && mdata.deliveryOptions && mdata.deliveryOptions[prod];
+    if(!delivOpts) {
+      // Use defaults
+      var DEFAULT_DELIVERY = {
         'Game Top Up & Gift Cards':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
         'AI & Tools':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
         'Ebooks':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
@@ -1079,365 +1377,194 @@ function getDefaultCards_FB(){
         'Travel & Transport':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
         'eWallet & Prepaid':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
         'Mobile Credit Reload & Plans':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
-        'Travel eSIM':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up'],
-        'Game Account':['Game Account'],'Game Boosting':['Game Boosting'],'Game Coins':['Game Coins'],
-        'Game Items':['Game Items'],'Game Skins':['Game Skins'],'Game Coaching':['Game Coaching'],'Game Pal':['Game Pal']
-      }},
-    {id:'denominations',type:'denom',title:'Denominations',description:'List each denomination.',required:true,visible:true},
-    {id:'reference',type:'reference',title:'Reference Link / Image',description:'Provide a product page URL and reference images',required:true,visible:true}
-  ];
+        'Travel eSIM':['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']
+      };
+      delivOpts = DEFAULT_DELIVERY[prod] || null;
+    }
+    if(delivOpts) {
+      if(!mdata.deliveryOptions) mdata.deliveryOptions = {};
+      if(!mdata.deliveryOptions[prod]) mdata.deliveryOptions[prod] = delivOpts.slice();
+      h += '<div class="fb-section"><div class="fb-section-label">Delivery options for ' + esc(prod) + '</div>';
+      h += '<div class="fb-options-list" id="fbDelivOpts_' + esc(prod) + '">';
+      mdata.deliveryOptions[prod].forEach(function(opt, i) {
+        h += '<div class="fb-option-row">'
+          + '<span class="fb-option-drag">&#8691;</span>'
+          + '<input class="fb-option-input" value="' + esc(opt) + '" oninput="updateDelivOpt(\'' + esc(prod) + '\',' + i + ',this.value)">'
+          + '<button class="fb-option-rm" onclick="removeDelivOpt(\'' + esc(prod) + '\',' + i + ')">&#215;</button>'
+          + '</div>';
+      });
+      h += '<button class="fb-add-option-btn" onclick="addDelivOpt(\'' + esc(prod) + '\')">+ Add delivery option</button>';
+      h += '</div></div>';
+    }
+  }
+
+  h += '</div>'; // wrapper
+  ed.innerHTML = h;
 }
 
-function getMarketLabel_FB(m){
-  if(m==='main-market')return 'Main Market';
-  if(m==='secondary-market')return 'Secondary Market';
-  return 'GPGC';
+// ── Field editing helpers ─────────────────────────────────────────────────────
+function updateFieldProp(prod, idx, prop, val) {
+  var fields = getProductFields(prod);
+  if(fields[idx]) {
+    fields[idx][prop] = val;
+    renderFbPreview();
+  }
+}
+function removeField(prod, idx) {
+  var fields = getProductFields(prod);
+  if(fields.length <= 1) { showToast('Need at least one field', 'warn'); return; }
+  fields.splice(idx, 1);
+  openProductEditor(prod);
+}
+function addField(prod) {
+  var fields = getProductFields(prod);
+  fields.push({ id: 'ef_' + Date.now(), label: 'New Field', placeholder: 'Enter value', type: 'text', required: false, editable: true });
+  openProductEditor(prod);
+  showToast('Field added', 'success');
+}
+function resetProductToDefault(prod) {
+  if(!confirm('Reset ' + prod + ' to default fields? Your changes will be lost.')) return;
+  var m = getMarketData();
+  if(m && m.products && m.products[prod]) {
+    m.products[prod].fields = getDefaultProductFields(prod);
+    openProductEditor(prod);
+    renderFbPreview();
+    showToast('Reset to defaults', 'info');
+  }
 }
 
-function getMarketCards_FB(){
-  if(!liveConfig||!liveConfig.markets||!liveConfig.markets[activeMarket])return[];
-  return liveConfig.markets[activeMarket].cards||[];
+// ── Delivery option helpers ───────────────────────────────────────────────────
+function updateDelivOpt(prod, i, v) {
+  var m = getMarketData();
+  if(m && m.deliveryOptions && m.deliveryOptions[prod]) m.deliveryOptions[prod][i] = v;
+}
+function addDelivOpt(prod) {
+  var m = getMarketData();
+  if(!m.deliveryOptions) m.deliveryOptions = {};
+  if(!m.deliveryOptions[prod]) m.deliveryOptions[prod] = [];
+  m.deliveryOptions[prod].push('New Option');
+  openProductEditor(prod);
+}
+function removeDelivOpt(prod, i) {
+  var m = getMarketData();
+  if(m && m.deliveryOptions && m.deliveryOptions[prod]) {
+    if(m.deliveryOptions[prod].length <= 1) { showToast('Need at least one option', 'warn'); return; }
+    m.deliveryOptions[prod].splice(i, 1);
+    openProductEditor(prod);
+  }
 }
 
-function loadConfig(){
-  var el=$('fbCardList');
-  if(el)el.innerHTML='<div class="fb-loading">Loading config...</div>';
-  fetch(CONFIG_URL_FB+'?t='+Date.now())
-    .then(function(r){return r.json();})
-    .then(function(cfg){
-      if(cfg.cards&&!cfg.markets){
-        liveConfig={meta:cfg.meta||{},markets:{}};
-        ['main-market','secondary-market','gpgc'].forEach(function(m){
-          liveConfig.markets[m]={label:getMarketLabel_FB(m),cards:JSON.parse(JSON.stringify(cfg.cards))};
-        });
-      } else if(cfg.markets){
-        liveConfig=cfg;
-        ['main-market','secondary-market','gpgc'].forEach(function(m){
-          if(!liveConfig.markets[m]){
-            liveConfig.markets[m]={label:getMarketLabel_FB(m),cards:JSON.parse(JSON.stringify(getDefaultCards_FB()))};
-          }
-        });
-      } else {
-        liveConfig={meta:{version:1},markets:{
-          'main-market':{label:'Main Market',cards:getDefaultCards_FB()},
-          'secondary-market':{label:'Secondary Market',cards:getDefaultCards_FB()},
-          'gpgc':{label:'GPGC',cards:getDefaultCards_FB()}
-        }};
-      }
-      updatePublishMeta_FB();
-      renderFbSidebar_FB();
-      showToast('Config loaded','success');
-    })
-    .catch(function(){
-      liveConfig={meta:{version:1},markets:{
-        'main-market':{label:'Main Market',cards:getDefaultCards_FB()},
-        'secondary-market':{label:'Secondary Market',cards:getDefaultCards_FB()},
-        'gpgc':{label:'GPGC',cards:getDefaultCards_FB()}
-      }};
-      renderFbSidebar_FB();
-      renderFbPreview();
-      showToast('Could not load config - using defaults','warn');
+// ── Add Card Modal (kept for compatibility) ───────────────────────────────────
+function openAddCardModal() { showToast('Use the product editor to add fields', 'info'); }
+function closeAddCardModal() {}
+function selectNewCardType() {}
+function confirmAddCard() {}
+
+// ── Preview ───────────────────────────────────────────────────────────────────
+function renderFbPreview() {
+  var scroll = $('fbPreviewScroll');
+  var marketLbl = $('fbPreviewMarketLabel');
+  if(!scroll) return;
+  var products = getProductList();
+  if(!products.length) { scroll.innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted);font-size:12px;">No products configured</div>'; return; }
+  if(marketLbl) marketLbl.textContent = getMarketLabel_FB(activeMarket);
+  var m = getMarketData();
+  var h = '';
+  products.forEach(function(prod) {
+    var pdata = m && m.products && m.products[prod] ? m.products[prod] : {};
+    var isHidden = pdata.visible === false;
+    var fields = getProductFields(prod);
+    var editableFields = fields.filter(function(f) { return f.editable !== false; });
+    h += '<div class="fp-card' + (prod === activeProduct ? ' active-prev' : '') + (isHidden ? ' hidden-card' : '') + '" onclick="openProductEditor(\'' + esc(prod) + '\')">';
+    h += '<div class="fp-card-title">' + getProductIcon(prod) + ' ' + esc(prod) + (isHidden ? '<span class="fp-hidden-badge">hidden</span>' : '') + '</div>';
+    h += '<div class="fp-card-type">' + fields.length + ' fields (' + editableFields.length + ' editable)</div>';
+    // Show editable fields as preview
+    h += '<div class="fp-options">';
+    editableFields.slice(0, 4).forEach(function(f) {
+      h += '<span class="fp-option">' + esc(f.label) + (f.required ? ' *' : '') + '</span>';
     });
+    if(editableFields.length > 4) h += '<span class="fp-option">+' + (editableFields.length - 4) + ' more</span>';
+    h += '</div>';
+    h += '</div>';
+  });
+  scroll.innerHTML = h;
 }
 
-function updatePublishMeta_FB(){
-  var meta=$('fbPublishMeta');if(!meta)return;
-  var lp=liveConfig&&liveConfig.meta&&liveConfig.meta.lastPublished;
-  meta.textContent=lp?'Published: '+lp:'Not yet published';
-}
-
-function switchMarket(market,btn){
-  activeMarket=market;activeCardId=null;
-  document.querySelectorAll('.fb-market-tab').forEach(function(b){b.classList.remove('active');});
-  if(btn)btn.classList.add('active');
+// ── Market switch ─────────────────────────────────────────────────────────────
+function switchMarket(market, btn) {
+  activeMarket = market;
+  activeProduct = null;
+  document.querySelectorAll('.fb-market-tab').forEach(function(b) { b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
   renderFbSidebar_FB();
   renderFbPreview();
-  var ed=$('fbEditor');
-  if(ed)ed.innerHTML='<div class="fb-editor-empty"><div class="fb-editor-empty-icon">&#128072;</div><div class="fb-editor-empty-title">Select a card to edit</div><div class="fb-editor-empty-sub">Editing '+getMarketLabel_FB(market)+'</div></div>';
+  var ed = $('fbEditor');
+  if(ed) ed.innerHTML = '<div class="fb-editor-empty"><div class="fb-editor-empty-icon">&#128072;</div><div class="fb-editor-empty-title">Select a product to edit</div><div class="fb-editor-empty-sub">Editing ' + getMarketLabel_FB(market) + ' \u2014 click a product on the left</div></div>';
 }
 
-function renderFbSidebar_FB(){
-  var list=$('fbCardList');if(!list)return;
-  var cards=getMarketCards_FB();
-  if(!cards.length){list.innerHTML='<div class="fb-loading">No cards yet</div>';return;}
-  list.innerHTML='';
-  cards.forEach(function(card,i){
-    var locked=LOCKED_FB.indexOf(card.id)>-1;
-    var item=document.createElement('div');
-    item.className='fb-card-item'+(card.id===activeCardId?' active':'')+(card.visible===false?' disabled-card':'');
-    item.draggable=!locked;
-    item.dataset.idx=i;
-    var visBtn=!locked?'<button class="fb-card-vis '+(card.visible!==false?'on':'off')+'" onclick="toggleCardVis_FB(\''+card.id+'\',event)" title="Toggle visibility"><div class="fb-card-vis-knob"></div></button>':'';
-    var dragHandle=!locked?'<span class="fb-card-drag" title="Drag to reorder">&#8691;</span>':'<span style="width:14px;flex-shrink:0;"></span>';
-    item.innerHTML=dragHandle
-      +'<span class="fb-card-icon">'+(CARD_ICONS_FB[card.id]||'&#128196;')+'</span>'
-      +'<div class="fb-card-info"><div class="fb-card-name">'+esc(card.title)+'</div>'
-      +'<div class="fb-card-type-lbl">'+(TYPE_LABELS_FB[card.type]||card.type)+(locked?'<span class="fb-engine-badge">engine</span>':'')+'</div></div>'
-      +visBtn;
-    item.onclick=function(){openFbCard_FB(card.id);};
-    if(!locked){
-      item.addEventListener('dragstart',function(e){
-        e.dataTransfer.setData('text/plain',String(i));
-        item.style.opacity='.4';
-      });
-      item.addEventListener('dragend',function(){
-        item.style.opacity='';
-        list.querySelectorAll('.fb-card-item').forEach(function(x){x.classList.remove('drag-over');});
-      });
-      item.addEventListener('dragover',function(e){e.preventDefault();item.classList.add('drag-over');});
-      item.addEventListener('dragleave',function(){item.classList.remove('drag-over');});
-      item.addEventListener('drop',function(e){
-        e.preventDefault();item.classList.remove('drag-over');
-        var from=parseInt(e.dataTransfer.getData('text/plain'));
-        var to=parseInt(item.dataset.idx);
-        if(from===to)return;
-        var arr=getMarketCards_FB();
-        var moved=arr.splice(from,1)[0];
-        arr.splice(to,0,moved);
-        renderFbSidebar_FB();
-      });
-    }
-    list.appendChild(item);
-  });
+// ── Publish ───────────────────────────────────────────────────────────────────
+function startPublish() {
+  if(!liveConfig) { showToast('Config not loaded yet', 'warn'); return; }
+  var stored = localStorage.getItem(PAT_KEY_FB);
+  if(stored) { doPublishWithToken_FB(stored); return; }
+  var inp = $('patInput'); if(inp) { inp.value = ''; inp.classList.remove('error'); }
+  var err = $('patErr'); if(err) err.style.display = 'none';
+  var modal = $('patModal'); if(modal) modal.classList.remove('hidden');
 }
-
-function toggleCardVis_FB(id,e){
-  e.stopPropagation();
-  var c=getCard_FB(id);if(!c)return;
-  c.visible=c.visible===false?true:false;
-  renderFbSidebar_FB();renderFbPreview();
-  if(activeCardId===id)openFbCard_FB(id);
+function closePatModal() { var m = $('patModal'); if(m) m.classList.add('hidden'); }
+function doPublish() {
+  var inp = $('patInput'); var t = inp ? inp.value.trim() : '';
+  if(!t) { if(inp) inp.classList.add('error'); var err = $('patErr'); if(err) err.style.display = 'block'; return; }
+  var rem = $('patRemember'); if(rem && rem.checked) { try { localStorage.setItem(PAT_KEY_FB, t); } catch(e) {} }
+  closePatModal(); doPublishWithToken_FB(t);
 }
-
-function getCard_FB(id){
-  var c=getMarketCards_FB();
-  return c.find(function(x){return x.id===id;});
-}
-
-function openFbCard_FB(id){
-  activeCardId=id;renderFbSidebar_FB();renderFbPreview();
-  var card=getCard_FB(id);if(!card)return;
-  var locked=LOCKED_FB.indexOf(id)>-1;
-  var ed=$('fbEditor');if(!ed)return;
-  var h='<div style="max-width:580px;">';
-
-  // Header row
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">'
-    +'<span style="font-size:24px;">'+(CARD_ICONS_FB[id]||'&#128196;')+'</span>'
-    +'<div><div style="font-size:16px;font-weight:700;color:var(--text);">'+esc(card.title)+(locked?'<span class="fb-engine-badge">Engine</span>':'')+'</div>'
-    +'<div style="font-size:12px;color:var(--muted);">'+(TYPE_LABELS_FB[card.type]||card.type)+'</div></div>'
-    +(!locked?'<button onclick="deleteFbCard_FB(\''+id+'\')" style="margin-left:auto;padding:5px 12px;background:var(--accent-light);color:var(--accent);border:1px solid #fecaca;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">Delete</button>':'')
-    +'</div>';
-
-  if(locked){
-    h+='<div class="fb-locked-notice">&#9881; This card is managed by the form engine. Its core behaviour is fixed and it always appears in the seller form.</div>';
-  } else {
-    // Tabs
-    h+='<div class="fb-tabs">'
-      +'<button class="fb-tab active" onclick="fbSwitchTab_FB(this,\'content\')">Content</button>'
-      +'<button class="fb-tab" onclick="fbSwitchTab_FB(this,\'settings\')">Settings</button>'
-      +'</div>';
-
-    // Content tab
-    h+='<div id="fbTabContent_content">';
-    h+='<div class="fb-section"><div class="fb-section-label">Card content</div>'
-      +'<div class="fb-field"><label class="fb-field-label">Card title</label>'
-      +'<input class="fb-input" value="'+esc(card.title)+'" oninput="fbUpdateTitle_FB(\''+id+'\',this.value)"></div>'
-      +'<div class="fb-field"><label class="fb-field-label">Description</label>'
-      +'<input class="fb-input" value="'+esc(card.description||'')+'" oninput="fbUpdateDesc_FB(\''+id+'\',this.value)"></div>'
-      +'</div>';
-
-    // Radio / Checkbox options
-    if((card.type==='radio'||card.type==='checkbox')&&card.options&&id!=='delivery'){
-      h+='<div class="fb-section"><div class="fb-section-label">Options</div><div class="fb-options-list">';
-      card.options.forEach(function(opt,i){
-        h+='<div class="fb-option-row">'
-          +'<span class="fb-option-drag">&#8691;</span>'
-          +'<input class="fb-option-input" value="'+esc(opt.label||opt.value||'')+'" oninput="fbUpdateOpt_FB(\''+id+'\','+i+',this.value)">'
-          +'<button class="fb-option-rm" onclick="fbRemoveOpt_FB(\''+id+'\','+i+')">&#215;</button>'
-          +'</div>';
-      });
-      h+='<button class="fb-add-option-btn" onclick="fbAddOpt_FB(\''+id+'\')">+ Add option</button></div></div>';
-    }
-
-    // Delivery options by trigger
-    if(id==='delivery'&&card.optionsByTrigger){
-      h+='<div class="fb-section"><div class="fb-section-label">Delivery options per product type</div>'
-        +'<p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;">Edit delivery options for each product type. Changes apply to the '+getMarketLabel_FB(activeMarket)+' form only.</p>';
-      Object.keys(card.optionsByTrigger).forEach(function(prod){
-        var opts=card.optionsByTrigger[prod];
-        h+='<div class="fb-deliv-section"><div class="fb-cat-header">'+esc(prod)+'</div><div class="fb-options-list">';
-        opts.forEach(function(opt,i){
-          h+='<div class="fb-option-row">'
-            +'<span class="fb-option-drag">&#8691;</span>'
-            +'<input class="fb-option-input" value="'+esc(opt)+'" oninput="fbUpdateDelivOpt_FB(\''+esc(prod)+'\','+i+',this.value)">'
-            +'<button class="fb-option-rm" onclick="fbRemoveDelivOpt_FB(\''+esc(prod)+'\','+i+')">&#215;</button>'
-            +'</div>';
-        });
-        h+='<button class="fb-add-option-btn" onclick="fbAddDelivOpt_FB(\''+esc(prod)+'\')">+ Add option for '+esc(prod)+'</button></div></div>';
-      });
-      h+='</div>';
-    }
-
-    // Entry fields
-    if(card.type==='entry-fields'&&card.defaultFields){
-      h+='<div class="fb-section"><div class="fb-section-label">Default fields</div><div class="fb-options-list">';
-      card.defaultFields.forEach(function(f,i){
-        h+='<div class="fb-option-row">'
-          +'<span class="fb-option-drag">&#8691;</span>'
-          +'<input class="fb-option-input" value="'+esc(f.placeholder||f.label||'')+'" placeholder="Field placeholder" oninput="fbUpdateEntryField_FB(\''+id+'\','+i+',this.value)">'
-          +'<button class="fb-option-rm" onclick="fbRemoveEntryField_FB(\''+id+'\','+i+')">&#215;</button>'
-          +'</div>';
-      });
-      h+='<button class="fb-add-option-btn" onclick="fbAddEntryField_FB(\''+id+'\')">+ Add field</button></div></div>';
-    }
-
-    // Text fields
-    if(card.type==='text'&&card.fields){
-      h+='<div class="fb-section"><div class="fb-section-label">Fields</div>';
-      card.fields.forEach(function(f,i){
-        h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">'
-          +'<div><label class="fb-field-label">Label</label><input class="fb-input" value="'+esc(f.label||'')+'" oninput="fbUpdateTextField_FB(\''+id+'\','+i+',\'label\',this.value)"></div>'
-          +'<div><label class="fb-field-label">Placeholder</label><input class="fb-input" value="'+esc(f.placeholder||'')+'" oninput="fbUpdateTextField_FB(\''+id+'\','+i+',\'placeholder\',this.value)"></div>'
-          +'</div>';
-      });
-      h+='</div>';
-    }
-
-    h+='</div>'; // end fbTabContent_content
-
-    // Settings tab
-    h+='<div id="fbTabContent_settings" style="display:none;">';
-    h+='<div class="fb-section"><div class="fb-section-label">Required</div>'
-      +'<div class="fb-toggle-row">'
-      +'<button class="fb-toggle '+(card.required?'on':'off')+'" id="fbReqToggle" onclick="fbToggleReq_FB(\''+id+'\')"><div class="fb-toggle-knob"></div></button>'
-      +'<span id="fbReqLbl">'+(card.required?'Required':'Optional')+'</span>'
-      +'</div></div>';
-    h+='<div class="fb-section"><div class="fb-section-label">Visibility</div>'
-      +'<div class="fb-toggle-row">'
-      +'<button class="fb-toggle '+(card.visible!==false?'on':'off')+'" id="fbVisToggle" onclick="fbToggleVis_FB(\''+id+'\')"><div class="fb-toggle-knob"></div></button>'
-      +'<span id="fbVisLbl">'+(card.visible!==false?'Visible':'Hidden')+'</span>'
-      +'</div></div>';
-    h+='<div class="fb-section"><div class="fb-section-label">Card ID</div>'
-      +'<input class="fb-input" value="'+esc(id)+'" readonly style="font-family:var(--mono);font-size:12px;opacity:.6;"></div>';
-    h+='</div>'; // end settings tab
-  }
-
-  h+='</div>';
-  ed.innerHTML=h;
-}
-
-function fbSwitchTab_FB(btn,tab){
-  document.querySelectorAll('.fb-tab').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  ['content','settings'].forEach(function(t){
-    var el=$('fbTabContent_'+t);
-    if(el)el.style.display=t===tab?'block':'none';
-  });
-}
-
-function fbUpdateTitle_FB(id,v){var c=getCard_FB(id);if(c){c.title=v;renderFbSidebar_FB();renderFbPreview();}}
-function fbUpdateDesc_FB(id,v){var c=getCard_FB(id);if(c)c.description=v;}
-function fbUpdateOpt_FB(id,i,v){var c=getCard_FB(id);if(c&&c.options){c.options[i].label=v;c.options[i].value=v;}}
-function fbAddOpt_FB(id){var c=getCard_FB(id);if(c&&c.options){c.options.push({value:'New Option',label:'New Option'});openFbCard_FB(id);}}
-function fbRemoveOpt_FB(id,i){var c=getCard_FB(id);if(c&&c.options){if(c.options.length<=1){showToast('Need at least one option','warn');return;}c.options.splice(i,1);openFbCard_FB(id);}}
-function fbUpdateDelivOpt_FB(prod,i,v){var c=getCard_FB('delivery');if(c&&c.optionsByTrigger&&c.optionsByTrigger[prod])c.optionsByTrigger[prod][i]=v;}
-function fbAddDelivOpt_FB(prod){var c=getCard_FB('delivery');if(c&&c.optionsByTrigger&&c.optionsByTrigger[prod]){c.optionsByTrigger[prod].push('New Option');openFbCard_FB('delivery');}}
-function fbRemoveDelivOpt_FB(prod,i){var c=getCard_FB('delivery');if(c&&c.optionsByTrigger&&c.optionsByTrigger[prod]){if(c.optionsByTrigger[prod].length<=1){showToast('Need at least one option','warn');return;}c.optionsByTrigger[prod].splice(i,1);openFbCard_FB('delivery');}}
-function fbUpdateTextField_FB(id,i,field,v){var c=getCard_FB(id);if(c&&c.fields&&c.fields[i])c.fields[i][field]=v;}
-function fbUpdateEntryField_FB(id,i,v){var c=getCard_FB(id);if(c&&c.defaultFields&&c.defaultFields[i]){c.defaultFields[i].placeholder=v;c.defaultFields[i].label=v;}}
-function fbAddEntryField_FB(id){var c=getCard_FB(id);if(c&&c.defaultFields){c.defaultFields.push({label:'New Field',placeholder:'New field',required:false});openFbCard_FB(id);}}
-function fbRemoveEntryField_FB(id,i){var c=getCard_FB(id);if(c&&c.defaultFields){if(c.defaultFields.length<=1){showToast('Need at least one field','warn');return;}c.defaultFields.splice(i,1);openFbCard_FB(id);}}
-function fbToggleReq_FB(id){var c=getCard_FB(id);if(!c)return;c.required=!c.required;var btn=$('fbReqToggle'),lbl=$('fbReqLbl');if(btn){btn.className='fb-toggle '+(c.required?'on':'off');btn.innerHTML='<div class="fb-toggle-knob"></div>';}if(lbl)lbl.textContent=c.required?'Required':'Optional';}
-function fbToggleVis_FB(id){var c=getCard_FB(id);if(!c)return;c.visible=c.visible===false?true:false;var btn=$('fbVisToggle'),lbl=$('fbVisLbl');if(btn){btn.className='fb-toggle '+(c.visible!==false?'on':'off');btn.innerHTML='<div class="fb-toggle-knob"></div>';}if(lbl)lbl.textContent=c.visible!==false?'Visible':'Hidden';renderFbSidebar_FB();}
-
-function deleteFbCard_FB(id){
-  if(!confirm('Delete this card? This cannot be undone for the '+getMarketLabel_FB(activeMarket)+' form.'))return;
-  var cards=getMarketCards_FB();
-  var idx=cards.findIndex(function(c){return c.id===id;});
-  if(idx>-1){
-    cards.splice(idx,1);activeCardId=null;renderFbSidebar_FB();renderFbPreview();
-    var ed=$('fbEditor');
-    if(ed)ed.innerHTML='<div class="fb-editor-empty"><div class="fb-editor-empty-icon">&#128072;</div><div class="fb-editor-empty-title">Card deleted</div><div class="fb-editor-empty-sub">Select another card to continue</div></div>';
-  }
-}
-
-function openAddCardModal(){
-  newCardType=null;
-  var inp=$('fbNewCardTitle');if(inp)inp.value='';
-  var btn=$('fbAddCardConfirmBtn');if(btn)btn.disabled=true;
-  var grid=$('fbCardTypeGrid');
-  if(grid)grid.querySelectorAll('.fb-card-type-option').forEach(function(o){o.classList.remove('selected');});
-  var modal=$('fbNewCardModal');if(modal)modal.classList.remove('hidden');
-}
-function closeAddCardModal(){var modal=$('fbNewCardModal');if(modal)modal.classList.add('hidden');newCardType=null;}
-function selectNewCardType(el,type){
-  var grid=$('fbCardTypeGrid');
-  if(grid)grid.querySelectorAll('.fb-card-type-option').forEach(function(o){o.classList.remove('selected');});
-  el.classList.add('selected');newCardType=type;
-  var btn=$('fbAddCardConfirmBtn'),inp=$('fbNewCardTitle');
-  if(btn)btn.disabled=!(inp&&inp.value.trim());
-}
-function confirmAddCard(){
-  var inp=$('fbNewCardTitle');var title=inp?inp.value.trim():'';
-  if(!title||!newCardType)return;
-  var id='card_'+Date.now();
-  var newCard={id:id,type:newCardType,title:title,description:'',required:false,visible:true};
-  if(newCardType==='radio'||newCardType==='checkbox')newCard.options=[{value:'Option 1',label:'Option 1'}];
-  if(newCardType==='entry-fields')newCard.defaultFields=[{label:'Field 1',placeholder:'Field 1',required:false}];
-  if(newCardType==='text')newCard.fields=[{id:'f1',label:'Label',placeholder:'Placeholder',required:false}];
-  getMarketCards_FB().push(newCard);
-  closeAddCardModal();renderFbSidebar_FB();renderFbPreview();openFbCard_FB(id);
-  showToast('Card added - drag to reorder','success');
-}
-
-function startPublish(){
-  if(!liveConfig){showToast('Config not loaded yet','warn');return;}
-  var stored=localStorage.getItem(PAT_KEY_FB);
-  if(stored){doPublishWithToken_FB(stored);return;}
-  var inp=$('patInput');if(inp){inp.value='';inp.classList.remove('error');}
-  var err=$('patErr');if(err)err.style.display='none';
-  var modal=$('patModal');if(modal)modal.classList.remove('hidden');
-}
-function closePatModal(){var modal=$('patModal');if(modal)modal.classList.add('hidden');}
-function doPublish(){
-  var inp=$('patInput');var t=inp?inp.value.trim():'';
-  if(!t){if(inp)inp.classList.add('error');var err=$('patErr');if(err)err.style.display='block';return;}
-  var rem=$('patRemember');if(rem&&rem.checked){try{localStorage.setItem(PAT_KEY_FB,t);}catch(e){}}
-  closePatModal();doPublishWithToken_FB(t);
-}
-async function doPublishWithToken_FB(token){
-  var btn=$('fbPublishBtn');if(btn){btn.disabled=true;btn.innerHTML='<span>&#9203;</span> Publishing...';}
-  try{
-    if(!liveConfig.meta)liveConfig.meta={};
-    liveConfig.meta.version=(liveConfig.meta.version||1)+1;
-    liveConfig.meta.lastPublished=new Date().toISOString().substring(0,10);
-    var content=JSON.stringify(liveConfig,null,2);
-    var b64=btoa(unescape(encodeURIComponent(content)));
-    var gr=await fetch('https://api.github.com/repos/'+GH_REPO_FB+'/contents/'+GH_FILE_FB,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
-    var sha='';if(gr.ok){var gd=await gr.json();sha=gd.sha||'';}
-    var body={message:'Form Builder: update config.json (v'+liveConfig.meta.version+')',content:b64,branch:GH_BRANCH_FB};
-    if(sha)body.sha=sha;
-    var pr=await fetch('https://api.github.com/repos/'+GH_REPO_FB+'/contents/'+GH_FILE_FB,{method:'PUT',headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(pr.ok){
+async function doPublishWithToken_FB(token) {
+  var btn = $('fbPublishBtn');
+  if(btn) { btn.disabled = true; btn.innerHTML = '<span>&#9203;</span> Publishing\u2026'; }
+  try {
+    if(!liveConfig.meta) liveConfig.meta = {};
+    liveConfig.meta.version = (liveConfig.meta.version || 1) + 1;
+    liveConfig.meta.lastPublished = new Date().toISOString().substring(0, 10);
+    var content = JSON.stringify(liveConfig, null, 2);
+    var b64 = btoa(unescape(encodeURIComponent(content)));
+    var gr = await fetch('https://api.github.com/repos/' + GH_REPO_FB + '/contents/' + GH_FILE_FB, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    var sha = ''; if(gr.ok) { var gd = await gr.json(); sha = gd.sha || ''; }
+    var body = { message: 'Form Builder: update config.json (v' + liveConfig.meta.version + ')', content: b64, branch: GH_BRANCH_FB };
+    if(sha) body.sha = sha;
+    var pr = await fetch('https://api.github.com/repos/' + GH_REPO_FB + '/contents/' + GH_FILE_FB, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if(pr.ok) {
       updatePublishMeta_FB();
-      showToast('Published! Seller form updates in ~30 seconds','success');
+      showToast('\u2705 Published! Form updates in ~30 seconds', 'success');
     } else {
-      var ed2=await pr.json();
-      if(pr.status===401||pr.status===403){localStorage.removeItem(PAT_KEY_FB);showToast('Token invalid or expired - please re-enter','error');}
-      else showToast('Publish failed: '+(ed2.message||pr.status),'error');
+      var ed2 = await pr.json();
+      if(pr.status === 401 || pr.status === 403) { localStorage.removeItem(PAT_KEY_FB); showToast('\u274c Token invalid \u2014 please re-enter', 'error'); }
+      else showToast('\u274c Publish failed: ' + (ed2.message || pr.status), 'error');
     }
-  }catch(err2){showToast('Error: '+err2.message,'error');}
-  finally{if(btn){btn.disabled=false;btn.innerHTML='<span>&#128640;</span> Publish';}}
+  } catch(err2) { showToast('\u274c Error: ' + err2.message, 'error'); }
+  finally { if(btn) { btn.disabled = false; btn.innerHTML = '<span>&#128640;</span> Publish'; } }
 }
 
-document.addEventListener('DOMContentLoaded',function(){
-  var inp=$('fbNewCardTitle');
-  if(inp)inp.addEventListener('input',function(){
-    var btn=$('fbAddCardConfirmBtn');
-    if(btn)btn.disabled=!(this.value.trim()&&newCardType);
+function updatePublishMeta_FB() {
+  var meta = $('fbPublishMeta'); if(!meta) return;
+  var lp = liveConfig && liveConfig.meta && liveConfig.meta.lastPublished;
+  meta.textContent = lp ? 'Published: ' + lp : 'Not yet published';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var inp = $('fbNewCardTitle');
+  if(inp) inp.addEventListener('input', function() {
+    var btn = $('fbAddCardConfirmBtn');
+    if(btn) btn.disabled = !(this.value.trim() && newCardType);
   });
 });
+
+
 
 
 // ── FORM PREVIEW PANEL ────────────────────────────────────────────────────────
