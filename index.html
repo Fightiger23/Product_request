@@ -860,17 +860,18 @@ function renderDeliveryFields(idx,method,prod){
     h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',false);
     h+=denomHTML(idx,false);
   } else if(method==='Activation Links'){
-    h+=denomHTML(idx,false);
+    h+=productNameHTML(idx,'Activation Links');
   } else if(method==='Gift Cards'){
     h+=denomHTMLKeyLocked(idx);
   } else if(method==='Platform Engagement'){
+    h+=productNameHTML(idx,'Platform Engagement');
     h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',false,1,['e.g. Email, URL or username']);
   } else if(method==='Direct Top Up'){
     h+=entryFieldsHTML(idx,'What info does the buyer need to provide? (e.g. Player ID / UID)',false,1);
     h+=denomHTML(idx,false,true);
   } else if(method==='Manual Top Up'){
     h+=mtuFieldsHTML(idx);
-    h+=denomHTML(idx,false,true);
+    h+=denomWithOthersHTML(idx);
   } else if(method==='Game Coaching'||method==='Game Pal'){
     // Rent time services — only need entry fields (e.g. game name, hours needed)
     h+='<div style="margin-bottom:14px;">'
@@ -946,6 +947,58 @@ function entryFieldsHTML(idx,desc,required,minFields,customPlaceholders){
 }
 var entryFieldCounts={};
 function initEntry(idx){entryFieldCounts[idx]=2;}
+
+function onDenomTypeChange(idx){
+  var sel=document.querySelector('input[name="denomType_'+idx+'"]:checked');
+  var wrap=document.getElementById('denomTypeFields_'+idx);
+  if(!wrap||!sel)return;
+  var val=sel.value;
+  // Sync option selected styles
+  var opts=document.getElementById('denomTypeOpts_'+idx);
+  if(opts)opts.querySelectorAll('.option').forEach(function(o){o.classList.toggle('selected',o.querySelector('input').checked);});
+  if(val==='Others'){
+    wrap.innerHTML='<input type="text" id="denomOthersName_'+idx+'" placeholder="Enter product name (e.g. Grab Food Voucher RM50)" style="margin-top:6px;">';
+  } else {
+    var datasets={"Currency":["AUD","BRL","CAD","EUR","GBP","IDR","MYR","PHP","SGD","THB","USD","VND"],"Duration":["Days","Months","Years"],"Game Currency":["Gold","Coins","Gems","Diamonds","V-Bucks","Robux"]};
+    var opts2=datasets[val]||[];
+    var h='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 80px;gap:8px;margin-top:8px;align-items:center;">'
+      +'<div class="denom-sel-wrap"><select id="denomDS_simple_'+idx+'">'
+      +'<option value="">-- Select --</option>'
+      +opts2.map(function(o){return '<option>'+o+'</option>';}).join('')
+      +'</select></div>'
+      +'<div></div>'
+      +'<input type="text" class="denom-amt" id="denomAmt_simple_'+idx+'" placeholder="e.g. 50">'
+      +'<div></div>'
+      +'</div>';
+    wrap.innerHTML=h;
+  }
+}
+
+function productNameHTML(idx,context){
+  var hint = context==='Activation Links'
+    ? 'e.g. Claude Pro 1 Month, Spotify Premium, Adobe Creative Cloud'
+    : 'e.g. Netflix 1 Month Subscription, YouTube Premium';
+  return '<div style="margin-bottom:14px;">'
+    +'<label class="field-label">Product Name <span class="required">*</span></label>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Enter the exact product name as it will appear to buyers.</div>'
+    +'<input type="text" id="prodName_'+idx+'" placeholder="'+hint+'">'
+    +'</div>';
+}
+
+function denomWithOthersHTML(idx){
+  // Denominations with Others option — when Others selected, product name replaces amount
+  return '<div style="margin-bottom:14px;">'
+    +'<label class="field-label">Denomination <span class="optional-tag">optional</span></label>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Select a denomination type. Choose Others to enter a product name instead.</div>'
+    +'<div class="options-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:10px;" id="denomTypeOpts_'+idx+'">'
+    +'<label class="option"><input type="radio" name="denomType_'+idx+'" value="Currency" onchange="onDenomTypeChange('+idx+')"> Currency</label>'
+    +'<label class="option"><input type="radio" name="denomType_'+idx+'" value="Duration" onchange="onDenomTypeChange('+idx+')"> Duration</label>'
+    +'<label class="option"><input type="radio" name="denomType_'+idx+'" value="Game Currency" onchange="onDenomTypeChange('+idx+')"> Game Currency</label>'
+    +'<label class="option"><input type="radio" name="denomType_'+idx+'" value="Others" onchange="onDenomTypeChange('+idx+')"> Others</label>'
+    +'</div>'
+    +'<div id="denomTypeFields_'+idx+'"></div>'
+    +'</div>';
+}
 
 function mtuFieldsHTML(idx){
   return '<div style="margin-bottom:14px;">'
@@ -1094,6 +1147,23 @@ function collectTabData(idx){
   var dm=DELIVERY_MAP[prod]||{};
   var delivSel=document.querySelector('input[name="delivery_'+idx+'"]:checked');
   var delivery=delivSel?delivSel.value:(dm.methods&&dm.methods.length===1?dm.methods[0]:'');
+  // Capture Product Name (Activation Links + Platform Engagement)
+  var prodNameEl=document.getElementById('prodName_'+idx);
+  if(prodNameEl&&prodNameEl.value.trim()){
+    denoms=[{productType:'Product Name',dataset:'',amount:prodNameEl.value.trim()}];
+  }
+  // Capture denom with Others
+  var denomTypeEl=document.querySelector('input[name="denomType_'+idx+'"]:checked');
+  if(denomTypeEl){
+    if(denomTypeEl.value==='Others'){
+      var othersEl=document.getElementById('denomOthersName_'+idx);
+      if(othersEl&&othersEl.value.trim())denoms=[{productType:'Others',dataset:'Product Name',amount:othersEl.value.trim()}];
+    } else {
+      var dsEl=document.getElementById('denomDS_simple_'+idx);
+      var amtEl=document.getElementById('denomAmt_simple_'+idx);
+      if(amtEl&&amtEl.value.trim())denoms=[{productType:denomTypeEl.value,dataset:dsEl?dsEl.value:'',amount:amtEl.value.trim()}];
+    }
+  }
   var keyCheck=$('keyCheck_'+idx);
   var giftCardAmtEl=$('giftCardAmt_'+idx);
   var isGiftCardLocked=!!giftCardAmtEl; // Gift Cards locked key path
