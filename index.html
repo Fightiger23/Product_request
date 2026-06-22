@@ -19,14 +19,10 @@
   body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;min-height:100vh;padding:32px 16px 80px;}
   .container{max-width:720px;margin:0 auto;}
   .hidden{display:none!important;}
-
-  /* HEADER */
   .header{background:#e3001b;border-radius:var(--radius);padding:20px 28px;margin-bottom:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:20px;}
   .logo{width:44px;height:44px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:18px;letter-spacing:-1px;flex-shrink:0;}
   .header-text h1{font-size:18px;font-weight:700;color:#fff;margin-bottom:2px;}
   .header-text p{font-size:13px;color:rgba(255,255,255,.65);}
-
-  /* PROGRESS */
   .progress-wrap{margin-bottom:16px;}
   .progress-steps{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
   .pstep{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
@@ -37,8 +33,6 @@
   .pstep-arrow{color:var(--muted);font-size:12px;}
   .progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
   .progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;}
-
-  /* CARDS */
   .card{background:var(--white);border-radius:var(--radius);padding:24px 28px;margin-bottom:12px;box-shadow:var(--shadow);border:1px solid var(--border);transition:border-color .2s,box-shadow .2s;}
   .card:focus-within{border-color:rgba(227,0,27,.25);box-shadow:var(--shadow-md);}
   .card-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
@@ -47,8 +41,6 @@
   .card-desc{font-size:12px;color:var(--muted);line-height:1.5;}
   .required{color:var(--accent);margin-left:2px;}
   .optional-tag{font-size:10px;font-weight:500;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle;}
-
-  /* INPUTS */
   .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .field-block{display:flex;flex-direction:column;}
   .field-label{font-size:12px;font-weight:600;color:var(--label);margin-bottom:5px;display:block;}
@@ -60,24 +52,17 @@
   .identity-note{margin-top:12px;padding:9px 12px;background:#fffbeb;border-left:3px solid var(--warning);border-radius:0 6px 6px 0;font-size:11px;color:#92640a;line-height:1.6;}
   .verify-pending{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;font-weight:600;color:#92640a;background:#fff9e6;border:1px solid #fde68a;border-radius:20px;padding:4px 10px;}
   .divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
-
-  /* LAYER FILTER */
   .layer-grid{display:flex;flex-wrap:wrap;gap:8px;}
   .layer-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-weight:500;color:var(--label);cursor:pointer;transition:all .15s;user-select:none;font-family:'Inter',sans-serif;}
   .layer-btn:hover{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
   .layer-btn.selected{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
   .layer-btn .lb-check{width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
   .layer-btn.selected .lb-check{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .layer-section-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
   .selection-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
   .sel-tag{display:inline-flex;align-items:center;gap:5px;background:var(--accent-light);color:var(--accent);border:1px solid rgba(227,0,27,.2);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:500;}
-
-  /* CONTINUE BTN */
   .continue-btn{width:100%;background:var(--accent);color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;border:none;border-radius:var(--radius);padding:14px;cursor:pointer;transition:all .2s;margin-top:4px;}
   .continue-btn:hover{background:var(--accent-hover);box-shadow:0 4px 14px rgba(227,0,27,.25);}
   .continue-btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;}
-
-  /* TABS */
   .tabs-container{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px;}
   .tab-bar{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;background:var(--bg);}
   .tab-bar::-webkit-scrollbar{height:3px;}
@@ -88,16 +73,12 @@
   .tab-item.submitted{color:var(--success);}
   .tab-item.submitted::after{content:'✓';font-size:11px;color:var(--success);}
   .tab-content{padding:24px 28px;}
-
-  /* INSIDE TAB */
   .options-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;}
   .options-grid.single-col{grid-template-columns:1fr;}
   .option{display:flex;align-items:center;gap:10px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;transition:all .15s;font-size:13px;font-weight:500;color:var(--label);user-select:none;}
   .option:hover{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
   .option.selected{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
   .option input[type="radio"],.option input[type="checkbox"]{width:15px;height:15px;accent-color:var(--accent);flex-shrink:0;cursor:pointer;}
-
-  /* REGION */
   .dropdown-container{position:relative;width:100%;}
   .dropdown-input{width:100%;background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:10px 14px;outline:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-height:40px;}
   .dropdown-input:hover{border-color:var(--accent);}
@@ -118,9 +99,6 @@
   .cross-region-toggle:hover{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
   .cross-region-toggle.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
   .cross-region-toggle input[type="checkbox"]{width:14px;height:14px;accent-color:var(--accent);cursor:pointer;}
-  .cross-region-note{margin-top:8px;padding:8px 10px;background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;font-size:11px;color:#712b13;line-height:1.5;}
-
-  /* TIERED REGION */
   .tier-block{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;}
   .tier-block-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
   .tier-label{font-size:12px;font-weight:600;color:var(--label);}
@@ -128,8 +106,6 @@
   .btn-add:hover{background:var(--accent-light);border-color:var(--accent);}
   .btn-remove{background:#fff5f5;color:#e3001b;border:1px solid #fecaca;border-radius:6px;padding:6px 8px;font-size:14px;cursor:pointer;transition:all .15s;line-height:1;flex-shrink:0;}
   .btn-remove:hover{background:#fee2e2;}
-
-  /* DENOMINATIONS */
   .key-toggle-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;margin-bottom:14px;cursor:pointer;transition:all .15s;user-select:none;width:fit-content;}
   .key-toggle-row:hover{border-color:var(--accent);background:var(--accent-light);}
   .key-toggle-row.active{border-color:var(--accent);background:var(--accent-light);}
@@ -137,7 +113,7 @@
   .key-toggle-label{font-size:13px;font-weight:600;color:var(--label);}
   .key-toggle-row.active .key-toggle-label{color:var(--accent);}
   .key-note{font-size:11px;color:var(--muted);margin-top:-6px;margin-bottom:14px;padding:7px 12px;background:#fffbeb;border-left:3px solid var(--warning);border-radius:0 6px 6px 0;line-height:1.5;}
-  .denom-col-headers{display:grid;grid-template-columns:1fr 1fr 1fr 80px;gap:8px;margin-bottom:6px;padding:0 2px;}
+  .denom-col-headers{display:grid;grid-template-columns:1fr 1fr 1fr 80px;gap:8px;margin-bottom:6px;padding:0 2px;overflow:visible;}
   .denom-col-headers span{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
   .denom-rows-wrap{transition:opacity .2s;}
   .denom-rows-wrap.locked{opacity:.38;pointer-events:none;}
@@ -152,12 +128,6 @@
   .denom-amt{font-size:13px!important;padding:9px 12px!important;margin:0!important;}
   .apply-all-label{display:flex;align-items:center;gap:3px;font-size:.65rem;color:var(--muted);cursor:pointer;white-space:nowrap;font-weight:500;overflow:visible;line-height:1.2;}
   .apply-all-label input{width:12px;height:12px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
-  .denom-col-headers{overflow:visible;}
-
-  /* ENTRY FIELDS */
-  .entry-field-row,.mtu-field-row{display:flex;flex-direction:column;gap:4px;}
-
-  /* REFERENCE */
   .ref-url-input-wrap{position:relative;flex:1;}
   .ref-url-input-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;pointer-events:none;color:var(--muted);}
   .ref-url-input{width:100%;padding:10px 14px 10px 32px!important;}
@@ -177,13 +147,9 @@
   .ref-img-item-rm:hover{color:var(--accent);}
   .ref-opt-hint{margin-top:8px;padding:7px 10px;background:var(--bg);border-left:3px solid var(--border);border-radius:0 6px 6px 0;font-size:11px;color:var(--muted);line-height:1.5;}
   .cp-note{font-size:12px;color:#047857;background:#ecfdf5;border-left:3px solid #10b981;padding:8px 12px;border-radius:0 6px 6px 0;margin-top:8px;line-height:1.5;}
-
-  /* ACCOUNT TYPE */
   .sub-options{margin-top:10px;padding:12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);}
   .sub-options-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
   .sub-options-grid{display:flex;gap:8px;flex-wrap:wrap;}
-
-  /* TAB SUBMIT */
   .tab-submit-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:20px;margin-top:8px;border-top:1px solid var(--border);flex-wrap:wrap;}
   .tab-progress-info{font-size:12px;color:var(--muted);}
   .tab-submit-btn{padding:12px 28px;background:var(--accent);color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;border:none;border-radius:var(--radius);cursor:pointer;transition:all .2s;}
@@ -194,8 +160,6 @@
   .tab-submitted-banner-sub{font-size:12px;color:#166534;margin-top:2px;}
   .next-tab-btn{padding:10px 20px;background:var(--white);border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--label);cursor:pointer;transition:all .15s;}
   .next-tab-btn:hover{border-color:var(--accent);color:var(--accent);}
-
-  /* DONE SCREEN */
   .done-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:40px 28px;text-align:center;}
   .done-icon{font-size:48px;margin-bottom:16px;}
   .done-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px;}
@@ -204,16 +168,20 @@
   .done-restart:hover{border-color:var(--accent);color:var(--accent);}
   .back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--white);border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--label);cursor:pointer;transition:all .15s;margin-bottom:12px;}
   .back-btn:hover{border-color:var(--accent);color:var(--accent);}
-
-  /* ERRORS */
-  .error-msg{background:var(--accent-light);border:1px solid #fecaca;border-radius:8px;padding:12px 16px;color:var(--accent);font-size:13px;margin-top:12px;}
   .sr-tooltip-wrap{position:relative;display:inline-flex;align-items:center;margin-left:4px;}
   .sr-tooltip-icon{font-size:12px;color:var(--muted);cursor:default;line-height:1;}
   .sr-tooltip-wrap:hover .sr-tooltip-icon{color:var(--accent);}
   .sr-tooltip-box{display:none;position:absolute;right:0;top:calc(100% + 8px);width:220px;background:#1a1a2e;color:#fff;font-size:11px;font-weight:400;line-height:1.6;padding:9px 11px;border-radius:7px;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:9999;pointer-events:none;white-space:normal;}
   .sr-tooltip-box::before{content:'';position:absolute;top:-5px;right:9px;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:5px solid #1a1a2e;}
   .sr-tooltip-wrap:hover .sr-tooltip-box{display:block;}
-
+  /* ADJ3: left-anchored tooltip variant for key banner */
+  .sr-tooltip-box.tip-left{left:0;right:auto;}
+  .sr-tooltip-box.tip-left::before{left:9px;right:auto;}
+  /* ADJ2: full-width platform select for Gift Cards */
+  .gc-platform-wrap{position:relative;width:100%;}
+  .gc-platform-wrap select{width:100%;appearance:none;-webkit-appearance:none;background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:10px 36px 10px 14px;outline:none;cursor:pointer;transition:border-color .15s;}
+  .gc-platform-wrap select:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(227,0,27,.1);}
+  .gc-platform-wrap::after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none;}
   @media(max-width:520px){
     .two-col{grid-template-columns:1fr;}
     .denom-row{grid-template-columns:1fr 1fr;grid-template-rows:auto auto;}
@@ -224,7 +192,6 @@
 </head>
 <body>
 <div class="container">
-  <!-- HEADER -->
   <div class="header">
     <div class="logo">G2G</div>
     <div class="header-text">
@@ -232,8 +199,6 @@
       <p>Submit new product listings for BD team review</p>
     </div>
   </div>
-
-  <!-- PROGRESS -->
   <div class="progress-wrap">
     <div class="progress-steps">
       <div class="pstep active" id="pstep1"><div class="pstep-num">1</div><span>Select products</span></div>
@@ -247,10 +212,8 @@
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:8%"></div></div>
   </div>
 
-  <!-- ═══ STEP 1: 3-LAYER FILTER ═══ -->
+  <!-- STEP 1 -->
   <div id="step1Wrap">
-
-    <!-- Layer 1 -->
     <div class="card">
       <div class="card-header">
         <div class="card-icon">🗂️</div>
@@ -264,8 +227,6 @@
         <button class="layer-btn" onclick="toggleLayer(1,this,'Rent Time Services')"><span class="lb-check"></span>Rent Time Services</button>
       </div>
     </div>
-
-    <!-- Layer 2 -->
     <div class="card hidden" id="l2Card">
       <div class="card-header">
         <div class="card-icon">📂</div>
@@ -276,8 +237,6 @@
       </div>
       <div class="layer-grid" id="l2Grid"></div>
     </div>
-
-    <!-- Layer 3 -->
     <div class="card hidden" id="l3Card">
       <div class="card-header">
         <div class="card-icon">🏷️</div>
@@ -288,8 +247,6 @@
       </div>
       <div class="layer-grid" id="l3Grid"></div>
     </div>
-
-    <!-- Selection summary -->
     <div class="card hidden" id="selSummaryCard">
       <div class="card-header">
         <div class="card-icon">✅</div>
@@ -302,10 +259,9 @@
       <div style="height:16px;"></div>
       <button class="continue-btn" id="continueToIdentityBtn" disabled onclick="goToStep2()">Continue →</button>
     </div>
-
   </div>
 
-  <!-- ═══ STEP 2: SELLER IDENTITY ═══ -->
+  <!-- STEP 2 -->
   <div id="step2Wrap" class="hidden">
     <button class="back-btn" onclick="backToStep1()">← Back</button>
     <div class="card">
@@ -335,23 +291,20 @@
     </div>
   </div>
 
-  <!-- ═══ STEP 3: TABBED FORMS ═══ -->
+  <!-- STEP 3 -->
   <div id="step3Wrap" class="hidden">
     <button class="back-btn" onclick="backToStep2()">← Back to seller details</button>
-
     <div style="margin-bottom:12px;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
       <span>Submitting as <strong style="color:var(--text)" id="identitySummary"></strong></span>
       <span id="tabProgressSummary" style="color:var(--muted);"></span>
     </div>
-
     <div class="tabs-container">
       <div class="tab-bar" id="tabBar"></div>
       <div class="tab-content" id="tabContent"></div>
     </div>
-
   </div>
 
-  <!-- ═══ STEP 4: DONE ═══ -->
+  <!-- STEP 4 -->
   <div id="step4Wrap" class="hidden">
     <div class="done-card">
       <div class="done-icon">🎉</div>
@@ -360,13 +313,11 @@
       <button class="done-restart" onclick="resetAll()">Submit another request</button>
     </div>
   </div>
-
 </div>
 <script>
 var SCRIPT_URL='https://script.google.com/macros/s/AKfycbzWMRr34s08mgfRliKfFUKwvp6QiHSmewYTapN63Z7Ok64TKe1pDUNkTdoYkLCNVKgceg/exec';
 var CONFIG_URL='https://raw.githubusercontent.com/fightiger23/Product_request/main/config.json';
 
-// ── Category tree (loaded from config.json, fallback to defaults) ────────────
 var TREE={
   'Digital Products':{
     'Gaming':['Game Account','Game Boosting','Game Coins','Game Items','Game Skins','Game Top Up & Gift Cards'],
@@ -375,255 +326,161 @@ var TREE={
     'Payment & Stable Coins':['eWallet & Prepaid'],
     'Telco':['Mobile Credit Reload & Plans','Travel eSIM']
   },
-  'Rent Time Services':{
-    'Gaming':['Game Coaching','Game Pal']
-  }
+  'Rent Time Services':{'Gaming':['Game Coaching','Game Pal']}
 };
-
 var DELIVERY_MAP={
-  'Game Account':       {type:'game',     methods:['Game Account']},
-  'Game Boosting':      {type:'game',     methods:['Game Boosting']},
-  'Game Coins':         {type:'game',     methods:['Game Coins']},
-  'Game Items':         {type:'game',     methods:['Game Items']},
-  'Game Skins':         {type:'game',     methods:['Game Skins']},
+  'Game Account':{type:'game',methods:['Game Account']},
+  'Game Boosting':{type:'game',methods:['Game Boosting']},
+  'Game Coins':{type:'game',methods:['Game Coins']},
+  'Game Items':{type:'game',methods:['Game Items']},
+  'Game Skins':{type:'game',methods:['Game Skins']},
   'Game Top Up & Gift Cards':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'AI & Tools':         {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Ebooks':             {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'AI & Tools':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Ebooks':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'Live Streaming & Social':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Video & Music':      {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Dining & Food':      {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'eCommerce':          {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Education':          {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Fashion':            {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Travel & Transport': {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'eWallet & Prepaid':  {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Video & Music':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Dining & Food':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'eCommerce':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Education':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Fashion':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Travel & Transport':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'eWallet & Prepaid':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'Mobile Credit Reload & Plans':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Travel eSIM':        {type:'giftcard', methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Game Coaching':      {type:'renttime', methods:['Game Coaching']},
-  'Game Pal':           {type:'renttime', methods:['Game Pal']}
+  'Travel eSIM':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Game Coaching':{type:'renttime',methods:['Game Coaching']},
+  'Game Pal':{type:'renttime',methods:['Game Pal']}
 };
 
-// ── Config state ──────────────────────────────────────────────────────────────
-var formConfig=null;        // loaded from config.json
-var configLoaded=false;     // whether config has been fetched
-
-// Detect market from URL param e.g. ?market=secondary-market
-function getMarketFromUrl(){
-  var params=new URLSearchParams(window.location.search);
-  return params.get('market')||'main-market';
+var formConfig=null,configLoaded=false;
+function getMarketFromUrl(){var p=new URLSearchParams(window.location.search);return p.get('market')||'main-market';}
+function loadFormConfig(cb){
+  fetch(CONFIG_URL+'?t='+Date.now()).then(function(r){return r.json();}).then(function(cfg){
+    formConfig=cfg;var market=getMarketFromUrl();
+    var cards=null;
+    if(cfg.markets&&cfg.markets[market])cards=cfg.markets[market].cards;
+    else if(cfg.cards)cards=cfg.cards;
+    if(cards){var dc=cards.find(function(c){return c.id==='delivery';});
+      if(dc&&dc.optionsByTrigger)Object.keys(dc.optionsByTrigger).forEach(function(p){if(DELIVERY_MAP[p])DELIVERY_MAP[p].methods=dc.optionsByTrigger[p].slice();});}
+    configLoaded=true;if(cb)cb();
+  }).catch(function(){configLoaded=true;if(cb)cb();});
 }
 
-// Load config.json and apply to DELIVERY_MAP
-function loadFormConfig(callback){
-  fetch(CONFIG_URL+'?t='+Date.now())
-    .then(function(r){return r.json();})
-    .then(function(cfg){
-      formConfig=cfg;
-      var market=getMarketFromUrl();
-      // Get cards for this market
-      var cards=null;
-      if(cfg.markets&&cfg.markets[market]){
-        cards=cfg.markets[market].cards;
-      } else if(cfg.cards){
-        cards=cfg.cards; // old flat format
-      }
-      if(cards){
-        // Find delivery card and update DELIVERY_MAP
-        var delivCard=cards.find(function(c){return c.id==='delivery';});
-        if(delivCard&&delivCard.optionsByTrigger){
-          Object.keys(delivCard.optionsByTrigger).forEach(function(prod){
-            if(DELIVERY_MAP[prod]){
-              DELIVERY_MAP[prod].methods=delivCard.optionsByTrigger[prod].slice();
-            }
-          });
-        }
-        // Apply card visibility and title overrides
-        cards.forEach(function(card){
-          // Update any card titles/descriptions that BD has customised
-          // (future enhancement — for now delivery methods are the key thing)
-        });
-      }
-      configLoaded=true;
-      if(callback)callback();
-    })
-    .catch(function(){
-      // Config load failed — use hardcoded defaults, form still works
-      configLoaded=true;
-      if(callback)callback();
-    });
-}
-
-
+// ADJ5: 'Years' removed from Duration
 var datasetMap={
   'Currency':['AUD','BRL','CAD','CHF','CNY','EUR','GBP','IDR','INR','JPY','KRW','MYR','PHP','SGD','THB','USD','VND','AED','HKD','TWD'],
-  'Duration':['Days','Months','Years'],
+  'Duration':['Days','Months'],
   'Game Currency':['Gold','Coins','Gems','Diamonds','Crystals','Oneiric Shard','VP','Points','Credits','Tokens','V-Bucks','Robux'],
   'Others':null
 };
 
-// ── State ─────────────────────────────────────────────────────────────────────
-var selL1=[],selL2=[],selL3=[];
-var activeTab=0,submittedTabs=[];
-var tabStates={};   // per-tab form state
-
+var selL1=[],selL2=[],selL3=[],activeTab=0,submittedTabs=[],tabStates={};
 function $(id){return document.getElementById(id);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function pad(n){return String(n).padStart(2,'0');}
 
-// ── Layer selection ───────────────────────────────────────────────────────────
 function toggleLayer(layer,btn,val){
   btn.classList.toggle('selected');
   var arr=layer===1?selL1:layer===2?selL2:selL3;
-  var idx=arr.indexOf(val);
-  if(idx>-1)arr.splice(idx,1);else arr.push(val);
+  var idx=arr.indexOf(val);if(idx>-1)arr.splice(idx,1);else arr.push(val);
   btn.querySelector('.lb-check').textContent=btn.classList.contains('selected')?'✓':'';
   if(layer===1){selL2=[];selL3=[];renderL2();}
   if(layer===2){selL3=[];renderL3();}
   if(layer===3)updateSummary();
 }
-
 function renderL2(){
   var card=$('l2Card'),grid=$('l2Grid');
   if(!selL1.length){card.classList.add('hidden');$('l3Card').classList.add('hidden');$('selSummaryCard').classList.add('hidden');return;}
   card.classList.remove('hidden');
-  var cats={};
-  selL1.forEach(function(l1){Object.keys(TREE[l1]||{}).forEach(function(c){cats[c]=true;});});
+  var cats={};selL1.forEach(function(l1){Object.keys(TREE[l1]||{}).forEach(function(c){cats[c]=true;});});
   grid.innerHTML='';
   Object.keys(cats).forEach(function(cat){
-    var btn=document.createElement('button');
-    btn.className='layer-btn';
+    var btn=document.createElement('button');btn.className='layer-btn';
     btn.innerHTML='<span class="lb-check"></span>'+cat;
-    btn.onclick=function(){toggleLayer(2,btn,cat);};
-    grid.appendChild(btn);
+    btn.onclick=function(){toggleLayer(2,btn,cat);};grid.appendChild(btn);
   });
   $('l3Card').classList.add('hidden');$('selSummaryCard').classList.add('hidden');
 }
-
 function renderL3(){
   var card=$('l3Card'),grid=$('l3Grid');
   if(!selL2.length){card.classList.add('hidden');$('selSummaryCard').classList.add('hidden');return;}
   card.classList.remove('hidden');
-  var prods={};
-  selL1.forEach(function(l1){selL2.forEach(function(cat){(TREE[l1]&&TREE[l1][cat]||[]).forEach(function(p){prods[p]=true;});});});
+  var prods={};selL1.forEach(function(l1){selL2.forEach(function(cat){(TREE[l1]&&TREE[l1][cat]||[]).forEach(function(p){prods[p]=true;});});});
   grid.innerHTML='';
   Object.keys(prods).forEach(function(prod){
-    var btn=document.createElement('button');
-    btn.className='layer-btn';
+    var btn=document.createElement('button');btn.className='layer-btn';
     btn.innerHTML='<span class="lb-check"></span>'+prod;
-    btn.onclick=function(){toggleLayer(3,btn,prod);};
-    grid.appendChild(btn);
+    btn.onclick=function(){toggleLayer(3,btn,prod);};grid.appendChild(btn);
   });
   $('selSummaryCard').classList.add('hidden');
 }
-
 function updateSummary(){
   var card=$('selSummaryCard'),tags=$('selectionTags'),btn=$('continueToIdentityBtn');
   if(!selL3.length){card.classList.add('hidden');return;}
   card.classList.remove('hidden');
   tags.innerHTML=selL3.map(function(p){return '<span class="sel-tag">'+p+'</span>';}).join('');
-  btn.disabled=false;
-  btn.textContent='Continue — '+selL3.length+' form'+(selL3.length>1?'s':'')+' to fill →';
+  btn.disabled=false;btn.textContent='Continue — '+selL3.length+' form'+(selL3.length>1?'s':'')+' to fill →';
   $('progressFill').style.width='25%';
 }
 
-// ── Step navigation ───────────────────────────────────────────────────────────
 function goToStep2(){
-  $('step1Wrap').classList.add('hidden');
-  $('step2Wrap').classList.remove('hidden');
-  $('pstep1').classList.remove('active');$('pstep1').classList.add('done');
-  $('pstep2').classList.add('active');
-  $('progressFill').style.width='45%';
-  window.scrollTo({top:0,behavior:'smooth'});
+  $('step1Wrap').classList.add('hidden');$('step2Wrap').classList.remove('hidden');
+  $('pstep1').classList.remove('active');$('pstep1').classList.add('done');$('pstep2').classList.add('active');
+  $('progressFill').style.width='45%';window.scrollTo({top:0,behavior:'smooth'});
 }
-
 function goToStep3(){
-  var username=$('sellerUsername').value.trim();
-  var email=$('sellerEmail').value.trim();
-  if(!username){$('sellerUsername').classList.add('field-error');$('usernameErr').style.display='block';return;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){$('sellerEmail').classList.add('field-error');$('emailErr').style.display='block';return;}
-  $('step2Wrap').classList.add('hidden');
-  $('step3Wrap').classList.remove('hidden');
-  $('pstep2').classList.remove('active');$('pstep2').classList.add('done');
-  $('pstep3').classList.add('active');
-  $('progressFill').style.width='60%';
-  $('identitySummary').textContent=username+' · '+email;
+  var u=$('sellerUsername').value.trim(),e=$('sellerEmail').value.trim();
+  if(!u){$('sellerUsername').classList.add('field-error');$('usernameErr').style.display='block';return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){$('sellerEmail').classList.add('field-error');$('emailErr').style.display='block';return;}
+  $('step2Wrap').classList.add('hidden');$('step3Wrap').classList.remove('hidden');
+  $('pstep2').classList.remove('active');$('pstep2').classList.add('done');$('pstep3').classList.add('active');
+  $('progressFill').style.width='60%';$('identitySummary').textContent=u+' · '+e;
   activeTab=0;submittedTabs=[];tabStates={};
-  // Load config first, then build tabs — ensures BD changes are reflected
-  if(!configLoaded){
-    loadFormConfig(function(){buildTabs();});
-  } else {
-    buildTabs();
-  }
+  if(!configLoaded)loadFormConfig(function(){buildTabs();});else buildTabs();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-
-// ── Tabs ─────────────────────────────────────────────────────────────────────
-function buildTabs(){
-  renderTabBar();
-  renderTabContent(activeTab);
-  updateTabProgress();
-}
-
+function buildTabs(){renderTabBar();renderTabContent(activeTab);updateTabProgress();}
 function renderTabBar(){
   var bar=$('tabBar');bar.innerHTML='';
   selL3.forEach(function(prod,i){
     var tab=document.createElement('button');
     tab.className='tab-item'+(i===activeTab?' active':'')+(submittedTabs.indexOf(i)>-1?' submitted':'');
-    tab.textContent=prod;
-    tab.onclick=function(){activeTab=i;saveTabState();renderTabBar();renderTabContent(i);};
+    tab.textContent=prod;tab.onclick=function(){activeTab=i;saveTabState();renderTabBar();renderTabContent(i);};
     bar.appendChild(tab);
   });
 }
+function updateTabProgress(){$('tabProgressSummary').textContent=submittedTabs.length+' of '+selL3.length+' submitted';}
 
-function updateTabProgress(){
-  $('tabProgressSummary').textContent=submittedTabs.length+' of '+selL3.length+' submitted';
-}
-
-// ── Save / restore tab state ──────────────────────────────────────────────────
+// BUG2 FIX: read delivery from radio name, not missing element ID
 function saveTabState(){
-  // Snapshot key input values for current tab before switching
   var s={};
-  ['tabBrand','tabVariation','tabDelivery','tabAccountType'].forEach(function(id){
-    var el=document.getElementById(id+'_'+activeTab);
-    if(el)s[id]=el.value;
-  });
-  tabStates[activeTab]=tabStates[activeTab]||{};
-  Object.assign(tabStates[activeTab],s);
+  ['tabBrand','tabVariation'].forEach(function(id){var el=document.getElementById(id+'_'+activeTab);if(el)s[id]=el.value;});
+  var delivEl=document.querySelector('input[name="delivery_'+activeTab+'"]:checked');
+  if(delivEl)s.tabDelivery=delivEl.value;
+  tabStates[activeTab]=tabStates[activeTab]||{};Object.assign(tabStates[activeTab],s);
 }
 
-// ── Render tab content ────────────────────────────────────────────────────────
 function renderTabContent(idx){
-  var prod=selL3[idx];
-  var content=$('tabContent');
+  var prod=selL3[idx],content=$('tabContent');
   var isDone=submittedTabs.indexOf(idx)>-1;
-
   if(isDone){
-    var nextIdx=idx+1;
-    var allDone=submittedTabs.length===selL3.length;
+    var ni=idx+1,allDone=submittedTabs.length===selL3.length;
     content.innerHTML='<div class="tab-submitted-banner">'
       +'<div><div class="tab-submitted-banner-text">✅ '+esc(prod)+' submitted</div>'
       +'<div class="tab-submitted-banner-sub">Sent to BD team for review. You\'ll be notified at '+esc($('sellerEmail').value)+'</div></div>'
       +(allDone?'<button class="tab-submit-btn" onclick="goToStep4()">View summary →</button>'
-        :(nextIdx<selL3.length?'<button class="next-tab-btn" onclick="switchTab('+nextIdx+')">Next: '+esc(selL3[nextIdx])+' →</button>':''))
+        :(ni<selL3.length?'<button class="next-tab-btn" onclick="switchTab('+ni+')">Next: '+esc(selL3[ni])+' →</button>':''))
       +'</div>';
     return;
   }
-
   var dm=DELIVERY_MAP[prod]||{type:'giftcard',methods:['Gift Cards']};
   var savedDelivery=(tabStates[idx]&&tabStates[idx].tabDelivery)||'';
-
   var h='';
-
-  // Brand
   h+='<div class="two-col" style="margin-bottom:14px;">'
     +'<div class="field-block"><label class="field-label">Brand Name <span class="required">*</span></label>'
     +'<input type="text" id="tabBrand_'+idx+'" placeholder="e.g. Steam, Netflix, Grab" value="'+esc((tabStates[idx]&&tabStates[idx].tabBrand)||'')+'"></div>'
     +'<div class="field-block"><label class="field-label">Product Variation <span class="optional-tag">optional</span></label>'
     +'<input type="text" id="tabVariation_'+idx+'" placeholder="e.g. Series, Variety" value="'+esc((tabStates[idx]&&tabStates[idx].tabVariation)||'')+'"></div>'
     +'</div>';
-
-  // Region
-  h+='<div style="margin-bottom:14px;" id="regionWrap_'+idx+'">'
+  h+='<div style="margin-bottom:14px;">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">'
     +'<label class="field-label" style="margin:0">Supported Region <span class="required">*</span></label>'
     +'<label class="cross-region-toggle" id="crToggle_'+idx+'">'
@@ -633,31 +490,22 @@ function renderTabContent(idx){
     +'</label></div>'
     +'<div id="regionDropWrap_'+idx+'"></div>'
     +'<div class="dropdown-tags-wrapper" id="regionTags_'+idx+'"></div>'
-    +'<div class="hidden" id="crNote_'+idx+'" style="margin-top:6px;padding:7px 10px;background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;font-size:11px;color:#712b13;">Shared Region enabled — this product can be used across multiple regions.</div>'
+    +'<div class="hidden" id="crNote_'+idx+'" style="margin-top:6px;padding:7px 10px;background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;font-size:11px;color:#712b13;">Shared Region enabled.</div>'
     +'</div>';
-
-  // Tiered Region
   h+='<div style="margin-bottom:14px;padding-top:14px;border-top:1px solid var(--border);">'
     +'<label class="field-label">Tiered Region <span class="optional-tag">optional</span></label>'
     +'<div id="tierList_'+idx+'" style="display:flex;flex-direction:column;gap:8px;"></div>'
     +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addTier('+idx+')">+ Add Tier</button>'
     +'</div>';
-
-  // Delivery method (only show selector if multiple methods)
   if(dm.methods.length>1){
-    h+='<div style="margin-bottom:14px;">'
-      +'<label class="field-label">Delivery Method <span class="required">*</span></label>'
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Delivery Method <span class="required">*</span></label>'
       +'<div class="options-grid single-col" id="deliveryGroup_'+idx+'">';
     dm.methods.forEach(function(m){
       h+='<label class="option"><input type="radio" name="delivery_'+idx+'" value="'+esc(m)+'" onchange="onDeliveryChange('+idx+')"'+(savedDelivery===m?' checked':'')+'>'+esc(m)+'</label>';
     });
     h+='</div></div>';
   }
-
-  // Dynamic fields based on delivery
   h+='<div id="deliveryFields_'+idx+'"></div>';
-
-  // Reference (always shown)
   h+='<div id="refSection_'+idx+'">'
     +'<div class="divider"></div>'
     +'<label class="field-label">Reference URL <span class="required">*</span></label>'
@@ -677,89 +525,60 @@ function renderTabContent(idx){
     +'<div style="font-size:12px;color:var(--muted);"><span style="color:var(--accent);font-weight:600;">Click to browse</span> · PNG, JPG, WEBP · Max 10MB</div>'
     +'</div>'
     +'<div class="ref-img-grid" id="refImgGrid_'+idx+'"></div>'
-    +'<div class="ref-opt-hint">Images are optional but help the BD team verify listing details faster.</div>'
+    +'<div class="ref-opt-hint">Images are shown locally for reference. Share them directly with the BD team if needed.</div>'
     +'</div>';
-
-  // Submit row
   h+='<div class="tab-submit-row">'
     +'<div class="tab-progress-info">Form '+(idx+1)+' of '+selL3.length+' &nbsp;·&nbsp; '+esc(prod)+'</div>'
     +'<button class="tab-submit-btn" onclick="submitTab('+idx+')">Submit '+esc(prod)+' →</button>'
     +'</div>';
-
   content.innerHTML=h;
-
-  // Init region dropdown for this tab
   initTabRegion(idx);
-
-  // Init delivery fields if saved delivery exists
   if(savedDelivery){
     var radio=document.querySelector('input[name="delivery_'+idx+'"][value="'+savedDelivery+'"]');
-    if(radio){radio.checked=true;}
+    if(radio)radio.checked=true;
     renderDeliveryFields(idx,savedDelivery,prod);
   } else if(dm.methods.length===1){
     renderDeliveryFields(idx,dm.methods[0],prod);
   }
 }
+function switchTab(idx){saveTabState();activeTab=idx;renderTabBar();renderTabContent(idx);}
 
-function switchTab(idx){
-  saveTabState();
-  activeTab=idx;
-  renderTabBar();
-  renderTabContent(idx);
-}
-
-// ── Cross Region toggle ───────────────────────────────────────────────────────
 function toggleCR(idx){
-  var cb=$('crCheck_'+idx);
-  var toggle=$('crToggle_'+idx);
-  var note=$('crNote_'+idx);
+  var cb=$('crCheck_'+idx),toggle=$('crToggle_'+idx),note=$('crNote_'+idx);
   toggle.classList.toggle('active',cb.checked);
   cb.checked?note.classList.remove('hidden'):note.classList.add('hidden');
 }
 
-// ── Region dropdown per tab ───────────────────────────────────────────────────
-var tabRegions={};
-var tabTiers={};
+var tabRegions={},tabTiers={};
 var REGION_GROUPS=[
   {value:'GLOBAL',label:'Global'},{value:'AF-REGION',label:'Africa (AF)'},{value:'AS-REGION',label:'Asia (AS)'},
   {value:'CIS',label:'CIS'},{value:'EU',label:'Europe (EU)'},{value:'EMEA',label:'EMEA'},
   {value:'LATAM',label:'Latin America (LATAM)'},{value:'MENA',label:'MENA'},{value:'NA-REGION',label:'North America (NA)'},{value:'SEA',label:'South East Asia (SEA)'}
 ];
 var ALL_COUNTRIES=[
-  {v:'AD',l:'Andorra'},{v:'AE',l:'UAE'},{v:'AF',l:'Afghanistan'},{v:'AL',l:'Albania'},{v:'AM',l:'Armenia'},
-  {v:'AO',l:'Angola'},{v:'AR',l:'Argentina'},{v:'AT',l:'Austria'},{v:'AU',l:'Australia'},{v:'AZ',l:'Azerbaijan'},
-  {v:'BA',l:'Bosnia-Herzegovina'},{v:'BD',l:'Bangladesh'},{v:'BE',l:'Belgium'},{v:'BG',l:'Bulgaria'},
-  {v:'BH',l:'Bahrain'},{v:'BN',l:'Brunei'},{v:'BO',l:'Bolivia'},{v:'BR',l:'Brazil'},{v:'BY',l:'Belarus'},
-  {v:'BZ',l:'Belize'},{v:'CA',l:'Canada'},{v:'CH',l:'Switzerland'},{v:'CL',l:'Chile'},{v:'CM',l:'Cameroon'},
-  {v:'CN',l:'China'},{v:'CO',l:'Colombia'},{v:'CR',l:'Costa Rica'},{v:'CU',l:'Cuba'},{v:'CY',l:'Cyprus'},
-  {v:'CZ',l:'Czech Republic'},{v:'DE',l:'Germany'},{v:'DK',l:'Denmark'},{v:'DO',l:'Dominican Republic'},
-  {v:'DZ',l:'Algeria'},{v:'EC',l:'Ecuador'},{v:'EE',l:'Estonia'},{v:'EG',l:'Egypt'},{v:'ES',l:'Spain'},
-  {v:'ET',l:'Ethiopia'},{v:'FI',l:'Finland'},{v:'FR',l:'France'},{v:'GB',l:'Great Britain'},{v:'GE',l:'Georgia'},
-  {v:'GH',l:'Ghana'},{v:'GR',l:'Greece'},{v:'GT',l:'Guatemala'},{v:'HK',l:'Hong Kong'},{v:'HN',l:'Honduras'},
-  {v:'HR',l:'Croatia'},{v:'HU',l:'Hungary'},{v:'ID',l:'Indonesia'},{v:'IE',l:'Ireland'},{v:'IL',l:'Israel'},
-  {v:'IN',l:'India'},{v:'IQ',l:'Iraq'},{v:'IS',l:'Iceland'},{v:'IT',l:'Italy'},{v:'JM',l:'Jamaica'},
-  {v:'JO',l:'Jordan'},{v:'JP',l:'Japan'},{v:'KE',l:'Kenya'},{v:'KG',l:'Kyrgyzstan'},{v:'KH',l:'Cambodia'},
-  {v:'KR',l:'South Korea'},{v:'KW',l:'Kuwait'},{v:'KZ',l:'Kazakhstan'},{v:'LA',l:'Laos'},{v:'LB',l:'Lebanon'},
-  {v:'LK',l:'Sri Lanka'},{v:'LT',l:'Lithuania'},{v:'LU',l:'Luxembourg'},{v:'LV',l:'Latvia'},{v:'LY',l:'Libya'},
-  {v:'MA',l:'Morocco'},{v:'MD',l:'Moldova'},{v:'MK',l:'Macedonia'},{v:'MM',l:'Myanmar'},{v:'MN',l:'Mongolia'},
-  {v:'MO',l:'Macau'},{v:'MX',l:'Mexico'},{v:'MY',l:'Malaysia'},{v:'MZ',l:'Mozambique'},{v:'NA',l:'Namibia'},
-  {v:'NG',l:'Nigeria'},{v:'NI',l:'Nicaragua'},{v:'NL',l:'Netherlands'},{v:'NO',l:'Norway'},{v:'NP',l:'Nepal'},
-  {v:'NZ',l:'New Zealand'},{v:'OM',l:'Oman'},{v:'PA',l:'Panama'},{v:'PE',l:'Peru'},{v:'PH',l:'Philippines'},
-  {v:'PK',l:'Pakistan'},{v:'PL',l:'Poland'},{v:'PR',l:'Puerto Rico'},{v:'PT',l:'Portugal'},{v:'PY',l:'Paraguay'},
+  {v:'AD',l:'Andorra'},{v:'AE',l:'UAE'},{v:'AF',l:'Afghanistan'},{v:'AL',l:'Albania'},{v:'AM',l:'Armenia'},{v:'AO',l:'Angola'},{v:'AR',l:'Argentina'},{v:'AT',l:'Austria'},{v:'AU',l:'Australia'},{v:'AZ',l:'Azerbaijan'},
+  {v:'BA',l:'Bosnia-Herzegovina'},{v:'BD',l:'Bangladesh'},{v:'BE',l:'Belgium'},{v:'BG',l:'Bulgaria'},{v:'BH',l:'Bahrain'},{v:'BN',l:'Brunei'},{v:'BO',l:'Bolivia'},{v:'BR',l:'Brazil'},{v:'BY',l:'Belarus'},{v:'BZ',l:'Belize'},
+  {v:'CA',l:'Canada'},{v:'CH',l:'Switzerland'},{v:'CL',l:'Chile'},{v:'CM',l:'Cameroon'},{v:'CN',l:'China'},{v:'CO',l:'Colombia'},{v:'CR',l:'Costa Rica'},{v:'CU',l:'Cuba'},{v:'CY',l:'Cyprus'},{v:'CZ',l:'Czech Republic'},
+  {v:'DE',l:'Germany'},{v:'DK',l:'Denmark'},{v:'DO',l:'Dominican Republic'},{v:'DZ',l:'Algeria'},{v:'EC',l:'Ecuador'},{v:'EE',l:'Estonia'},{v:'EG',l:'Egypt'},{v:'ES',l:'Spain'},{v:'ET',l:'Ethiopia'},
+  {v:'FI',l:'Finland'},{v:'FR',l:'France'},{v:'GB',l:'Great Britain'},{v:'GE',l:'Georgia'},{v:'GH',l:'Ghana'},{v:'GR',l:'Greece'},{v:'GT',l:'Guatemala'},
+  {v:'HK',l:'Hong Kong'},{v:'HN',l:'Honduras'},{v:'HR',l:'Croatia'},{v:'HU',l:'Hungary'},{v:'ID',l:'Indonesia'},{v:'IE',l:'Ireland'},{v:'IL',l:'Israel'},{v:'IN',l:'India'},{v:'IQ',l:'Iraq'},{v:'IS',l:'Iceland'},{v:'IT',l:'Italy'},
+  {v:'JM',l:'Jamaica'},{v:'JO',l:'Jordan'},{v:'JP',l:'Japan'},{v:'KE',l:'Kenya'},{v:'KG',l:'Kyrgyzstan'},{v:'KH',l:'Cambodia'},{v:'KR',l:'South Korea'},{v:'KW',l:'Kuwait'},{v:'KZ',l:'Kazakhstan'},
+  {v:'LA',l:'Laos'},{v:'LB',l:'Lebanon'},{v:'LK',l:'Sri Lanka'},{v:'LT',l:'Lithuania'},{v:'LU',l:'Luxembourg'},{v:'LV',l:'Latvia'},{v:'LY',l:'Libya'},
+  {v:'MA',l:'Morocco'},{v:'MD',l:'Moldova'},{v:'MK',l:'Macedonia'},{v:'MM',l:'Myanmar'},{v:'MN',l:'Mongolia'},{v:'MO',l:'Macau'},{v:'MX',l:'Mexico'},{v:'MY',l:'Malaysia'},{v:'MZ',l:'Mozambique'},
+  {v:'NA',l:'Namibia'},{v:'NG',l:'Nigeria'},{v:'NI',l:'Nicaragua'},{v:'NL',l:'Netherlands'},{v:'NO',l:'Norway'},{v:'NP',l:'Nepal'},{v:'NZ',l:'New Zealand'},
+  {v:'OM',l:'Oman'},{v:'PA',l:'Panama'},{v:'PE',l:'Peru'},{v:'PH',l:'Philippines'},{v:'PK',l:'Pakistan'},{v:'PL',l:'Poland'},{v:'PR',l:'Puerto Rico'},{v:'PT',l:'Portugal'},{v:'PY',l:'Paraguay'},
   {v:'QA',l:'Qatar'},{v:'RO',l:'Romania'},{v:'RS',l:'Serbia'},{v:'RU',l:'Russia'},{v:'RW',l:'Rwanda'},
-  {v:'SA',l:'Saudi Arabia'},{v:'SE',l:'Sweden'},{v:'SG',l:'Singapore'},{v:'SK',l:'Slovakia'},{v:'SN',l:'Senegal'},
-  {v:'SV',l:'El Salvador'},{v:'SY',l:'Syria'},{v:'TH',l:'Thailand'},{v:'TJ',l:'Tajikistan'},{v:'TN',l:'Tunisia'},
-  {v:'TR',l:'Turkey'},{v:'TT',l:'Trinidad and Tobago'},{v:'TW',l:'Taiwan'},{v:'TZ',l:'Tanzania'},
+  {v:'SA',l:'Saudi Arabia'},{v:'SE',l:'Sweden'},{v:'SG',l:'Singapore'},{v:'SK',l:'Slovakia'},{v:'SN',l:'Senegal'},{v:'SV',l:'El Salvador'},{v:'SY',l:'Syria'},
+  {v:'TH',l:'Thailand'},{v:'TJ',l:'Tajikistan'},{v:'TN',l:'Tunisia'},{v:'TR',l:'Turkey'},{v:'TT',l:'Trinidad and Tobago'},{v:'TW',l:'Taiwan'},{v:'TZ',l:'Tanzania'},
   {v:'UA',l:'Ukraine'},{v:'UG',l:'Uganda'},{v:'US',l:'United States'},{v:'UY',l:'Uruguay'},{v:'UZ',l:'Uzbekistan'},
   {v:'VE',l:'Venezuela'},{v:'VN',l:'Vietnam'},{v:'YE',l:'Yemen'},{v:'ZA',l:'South Africa'},{v:'ZM',l:'Zambia'},{v:'ZW',l:'Zimbabwe'}
 ];
 
 function initTabRegion(idx){
-  tabRegions[idx]=tabRegions[idx]||[];
-  tabTiers[idx]=tabTiers[idx]||[];
+  tabRegions[idx]=tabRegions[idx]||[];tabTiers[idx]=tabTiers[idx]||[];
   var wrap=$('regionDropWrap_'+idx);
   var items=REGION_GROUPS.concat(ALL_COUNTRIES.map(function(c){return {value:c.v,label:c.l+' ('+c.v+')'};}));
-  var listId='regionList_'+idx, ddId='regionDD_'+idx, searchId='regionSearch_'+idx;
+  var listId='regionList_'+idx,ddId='regionDD_'+idx,searchId='regionSearch_'+idx;
   wrap.innerHTML='<div class="dropdown-container">'
     +'<div class="dropdown-input" id="'+ddId+'" tabindex="0"><span id="regionSel_'+idx+'">Select regions...</span><span>▼</span></div>'
     +'<div class="dropdown-list" id="'+listId+'">'
@@ -779,40 +598,30 @@ function initTabRegion(idx){
   document.addEventListener('click',function(e){if(dd&&!dd.contains(e.target)&&list&&!list.contains(e.target))list.classList.remove('active');});
   updateRegionDisplay(idx);updateRegionTags(idx);
 }
-
 function updateRegionDisplay(idx){
   var el=$('regionSel_'+idx);if(!el)return;
   var r=tabRegions[idx]||[];
   if(!r.length){el.textContent='Select regions...';el.style.color='var(--muted)';el.style.fontWeight='300';}
   else{var n=r.map(function(x){return x.value;});el.textContent=n.length<=4?n.join(', '):n.slice(0,4).join(', ')+' +'+(n.length-4)+' more';el.style.color='var(--text)';el.style.fontWeight='400';}
 }
-
 function updateRegionTags(idx){
   var w=$('regionTags_'+idx);if(!w)return;w.innerHTML='';
   (tabRegions[idx]||[]).forEach(function(r){
     var t=document.createElement('span');t.className='dropdown-tag';
-    t.innerHTML=r.value+' <span class="dropdown-tag-remove" data-value="'+r.value+'">×</span>';
-    w.appendChild(t);
+    t.innerHTML=r.value+' <span class="dropdown-tag-remove" data-value="'+r.value+'">×</span>';w.appendChild(t);
   });
   w.querySelectorAll('.dropdown-tag-remove').forEach(function(b){
-    b.addEventListener('click',function(e){
-      tabRegions[idx]=tabRegions[idx].filter(function(r){return r.value!==e.target.dataset.value;});
-      updateRegionDisplay(idx);updateRegionTags(idx);
-    });
+    b.addEventListener('click',function(e){tabRegions[idx]=tabRegions[idx].filter(function(r){return r.value!==e.target.dataset.value;});updateRegionDisplay(idx);updateRegionTags(idx);});
   });
 }
 
-// ── Tiered Region ─────────────────────────────────────────────────────────────
 var tierCounters={};
 function addTier(tabIdx){
-  tierCounters[tabIdx]=(tierCounters[tabIdx]||0)+1;
-  var tid=tierCounters[tabIdx];
-  if(!tabTiers[tabIdx])tabTiers[tabIdx]={};
-  tabTiers[tabIdx][tid]=[];
+  tierCounters[tabIdx]=(tierCounters[tabIdx]||0)+1;var tid=tierCounters[tabIdx];
+  if(!tabTiers[tabIdx])tabTiers[tabIdx]={};tabTiers[tabIdx][tid]=[];
   var list=$('tierList_'+tabIdx);
   var items=REGION_GROUPS.concat(ALL_COUNTRIES.map(function(c){return {value:c.v,label:c.l+' ('+c.v+')'};}));
-  var block=document.createElement('div');
-  block.className='tier-block';block.id='tierBlock_'+tabIdx+'_'+tid;
+  var block=document.createElement('div');block.className='tier-block';block.id='tierBlock_'+tabIdx+'_'+tid;
   block.innerHTML='<div class="tier-block-header"><span class="tier-label">Tier '+tid+'</span><button type="button" class="btn-remove" onclick="removeTier('+tabIdx+','+tid+')">×</button></div>'
     +'<div class="dropdown-container">'
     +'<div class="dropdown-input" id="tierDD_'+tabIdx+'_'+tid+'" tabindex="0"><span id="tierSel_'+tabIdx+'_'+tid+'" style="color:var(--muted);font-weight:300;">Select regions...</span><span>▼</span></div>'
@@ -821,10 +630,8 @@ function addTier(tabIdx){
     +items.map(function(r){return '<div class="dropdown-item" data-value="'+r.value+'">'+r.label+'</div>';}).join('')
     +'</div></div>'
     +'<div class="dropdown-tags-wrapper" id="tierTags_'+tabIdx+'_'+tid+'"></div>';
-  list.appendChild(block);
-  initTierDD(tabIdx,tid);
+  list.appendChild(block);initTierDD(tabIdx,tid);
 }
-
 function initTierDD(ti,tid){
   var dd=$('tierDD_'+ti+'_'+tid),list=$('tierList2_'+ti+'_'+tid),si=$('tierSearch_'+ti+'_'+tid);
   dd.addEventListener('click',function(){list.classList.toggle('active');if(list.classList.contains('active'))si.focus();});
@@ -838,103 +645,97 @@ function initTierDD(ti,tid){
   });
   document.addEventListener('click',function(e){if(dd&&!dd.contains(e.target)&&list&&!list.contains(e.target))list.classList.remove('active');});
 }
-
 function updateTierDisplay(ti,tid){var el=$('tierSel_'+ti+'_'+tid);if(!el)return;var r=tabTiers[ti][tid]||[];if(!r.length){el.textContent='Select regions...';el.style.color='var(--muted)';el.style.fontWeight='300';}else{var n=r.map(function(x){return x.label;});el.textContent=n.length<=2?n.join(', '):n.slice(0,2).join(', ')+' +'+(n.length-2)+' more';el.style.color='var(--text)';el.style.fontWeight='400';}}
 function updateTierTags(ti,tid){var w=$('tierTags_'+ti+'_'+tid);if(!w)return;w.innerHTML='';(tabTiers[ti][tid]||[]).forEach(function(r){var t=document.createElement('span');t.className='dropdown-tag';t.innerHTML=r.label+' <span class="dropdown-tag-remove" data-value="'+r.value+'">×</span>';w.appendChild(t);});w.querySelectorAll('.dropdown-tag-remove').forEach(function(b){b.addEventListener('click',function(e){tabTiers[ti][tid]=tabTiers[ti][tid].filter(function(r){return r.value!==e.target.dataset.value;});updateTierDisplay(ti,tid);updateTierTags(ti,tid);});});}
 function removeTier(ti,tid){var b=$('tierBlock_'+ti+'_'+tid);if(b)b.remove();delete tabTiers[ti][tid];}
 
-// ── Delivery fields ───────────────────────────────────────────────────────────
-function onDeliveryChange(idx){
-  var sel=document.querySelector('input[name="delivery_'+idx+'"]:checked');
-  if(sel)renderDeliveryFields(idx,sel.value,selL3[idx]);
-}
+function onDeliveryChange(idx){var sel=document.querySelector('input[name="delivery_'+idx+'"]:checked');if(sel)renderDeliveryFields(idx,sel.value,selL3[idx]);}
 
 function renderDeliveryFields(idx,method,prod){
   var wrap=$('deliveryFields_'+idx);if(!wrap)return;
   var h='';
-  var denomId='denom_'+idx;
-  var entryId='entry_'+idx;
-
-  if(method==='Account'){
-    h+=accountTypeHTML(idx);
-    h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',false);
-    h+=denomHTML(idx,false);
-  } else if(method==='Activation Links'){
+  if(method==='Activation Links'){
     h+='<div style="margin-bottom:14px;">'
       +'<label class="field-label">Product Name <span class="required">*</span></label>'
       +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Enter the exact product name as it will appear to buyers.</div>'
       +'<input type="text" id="prodName_'+idx+'" placeholder="e.g. Claude Pro 1 Month, Spotify Premium, Adobe Creative Cloud">'
       +'</div>';
   } else if(method==='Gift Cards'){
+    // ADJ2: dropdown select instead of radio grid
     h+='<div style="margin-bottom:14px;">'
       +'<label class="field-label">Platform <span class="required">*</span></label>'
       +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Select the platform this gift card is for.</div>'
-      +'<div class="options-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));" id="gcPlatform_'+idx+'">'
-      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Steam"> Steam</label>'
-      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Epic Games"> Epic Games</label>'
-      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Xbox"> Xbox</label>'
-      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="PlayStation"> PlayStation</label>'
-      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Nintendo"> Nintendo</label>'
-      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Razer Gold"> Razer Gold</label>'
-      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Google Play"> Google Play</label>'
-      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="App Store"> App Store</label>'
-      +'<label class="option"><input type="radio" name="gcPlat_'+idx+'" value="Others" onchange="toggleGCOthers('+idx+',this)"> Others</label>'
-      +'</div>'
+      +'<div class="gc-platform-wrap">'
+      +'<select id="gcPlatformSelect_'+idx+'" onchange="toggleGCOthersDropdown('+idx+')">'
+      +'<option value="">— Select platform —</option>'
+      +'<option value="Steam">Steam</option>'
+      +'<option value="Epic Games">Epic Games</option>'
+      +'<option value="Xbox">Xbox</option>'
+      +'<option value="PlayStation">PlayStation</option>'
+      +'<option value="Nintendo">Nintendo</option>'
+      +'<option value="Razer Gold">Razer Gold</option>'
+      +'<option value="Google Play">Google Play</option>'
+      +'<option value="App Store">App Store</option>'
+      +'<option value="Others">Others</option>'
+      +'</select></div>'
       +'<div class="hidden" id="gcOthers_'+idx+'" style="margin-top:8px;">'
       +'<input type="text" id="gcOthersInput_'+idx+'" placeholder="Enter platform name">'
-      +'</div>'
-      +'</div>';
+      +'</div></div>';
     h+=denomHTMLKeyLocked(idx);
   } else if(method==='Platform Engagement'){
     h+=productNameHTML(idx,'Platform Engagement');
-    h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',false,1,['e.g. Email, URL or username']);
+    // ADJ4: required=true, minFields=1 → "Add" creates Field 2
+    h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',true,1,['e.g. Email, URL or username']);
   } else if(method==='Direct Top Up'){
     h+=entryFieldsHTML(idx,'What info does the buyer need to provide? (e.g. Player ID / UID)',false,1);
     h+=denomHTML(idx,false,true);
   } else if(method==='Manual Top Up'){
     h+=mtuFieldsHTML(idx);
-    h+=denomWithOthersHTML(idx);
+    // ADJ6: aligned to same denomHTML as Direct Top Up
+    h+=denomHTML(idx,false,true);
   } else if(method==='Game Coaching'||method==='Game Pal'){
-    // Rent time services — only need entry fields (e.g. game name, hours needed)
     h+='<div style="margin-bottom:14px;">'
       +'<label class="field-label">Service Details <span class="required">*</span></label>'
       +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Provide details about the service being offered.</div>'
-      +'<div style="display:flex;flex-direction:column;gap:8px;">'
+      +'<div id="entryContainer_'+idx+'" data-fields="2" style="display:flex;flex-direction:column;gap:8px;">'
       +'<input type="text" id="ef1_'+idx+'" placeholder="Game Name (e.g. Mobile Legends, Valorant)">'
       +'<input type="text" id="ef2_'+idx+'" placeholder="Service details (e.g. hours, rank boost level)">'
       +'</div>'
       +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addEntryField('+idx+')">+ Add more details</button>'
       +'</div>';
-  } else if(method==='Others'){
-    h+='<div style="margin-bottom:14px;">'
-      +'<label class="field-label">Product Name <span class="required">*</span></label>'
-      +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Describe the product being offered.</div>'
-      +'<input type="text" id="prodName_'+idx+'" placeholder="e.g. Custom Top Up Service, Special Bundle">'
-      +'</div>';
-    h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',false,1);
   } else {
-    // Game type (Game Account, Boosting etc.) — always show platform + entry + denom
+    // Game type fallback
     h+=platformHTML(idx);
     h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',false);
     h+=denomHTML(idx,false);
   }
-
   wrap.innerHTML=h;
   if(h.includes('denomList_'+idx))initDenom(idx);
   if(h.includes('entryContainer_'+idx))initEntry(idx);
 }
 
-// Account Type
-function accountTypeHTML(idx){
-  return '<div style="margin-bottom:14px;">'
-    +'<label class="field-label">Account Type <span class="required">*</span></label>'
-    +'<div class="options-grid" style="grid-template-columns:1fr 1fr;">'
-    +'<label class="option"><input type="radio" name="acctType_'+idx+'" value="Private"> 🔒 Private</label>'
-    +'<label class="option"><input type="radio" name="acctType_'+idx+'" value="Shared"> 👥 Shared</label>'
-    +'</div></div>';
+// ADJ2
+function toggleGCOthersDropdown(idx){
+  var sel=document.getElementById('gcPlatformSelect_'+idx);
+  var wrap=document.getElementById('gcOthers_'+idx);
+  if(wrap)wrap.classList.toggle('hidden',sel.value!=='Others');
 }
 
-// Platform
+// ADJ3: removed 'Locked' text; added ⓘ tooltip
+function denomHTMLKeyLocked(idx){
+  return '<div style="margin-bottom:14px;">'
+    +'<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--accent-light);border:1.5px solid var(--accent);border-radius:8px;margin-bottom:10px;">'
+    +'<span style="font-size:15px;">&#128273;</span>'
+    +'<span style="font-size:13px;font-weight:600;color:var(--accent);">Key &mdash; Gift Card product</span>'
+    +'<span class="sr-tooltip-wrap" style="margin-left:6px;">'
+    +'<span class="sr-tooltip-icon" style="font-size:14px;">ⓘ</span>'
+    +'<span class="sr-tooltip-box tip-left">Gift Cards are delivered as keys. Enter the product name as the denomination (e.g. Steam Wallet $50, Netflix 1 Month).</span>'
+    +'</span></div>'
+    +'<label class="field-label">Product Name <span class="required">*</span></label>'
+    +'<input type="text" id="giftCardAmt_'+idx+'" placeholder="e.g. Steam Wallet $50, Netflix 1 Month, Spotify Premium">'
+    +'</div>';
+}
+
 function platformHTML(idx){
   return '<div style="margin-bottom:14px;">'
     +'<label class="field-label">Platform <span class="required">*</span></label>'
@@ -957,61 +758,10 @@ function platformHTML(idx){
     +'<div class="cp-note">Enabled: Shared key across all platforms. Disabled: Separate key per platform.</div>'
     +'</div></div>';
 }
-function toggleGCOthers(idx,radio){
-  var wrap=document.getElementById('gcOthers_'+idx);
-  if(wrap)wrap.classList.toggle('hidden', radio.value!=='Others');
-}
-
 function togglePCSub(idx){var cb=document.querySelector('input[name="plat_'+idx+'"][value="PC"]');var sub=$('pcSub_'+idx);if(sub)sub.classList.toggle('hidden',!cb||!cb.checked);}
 
-// Entry Fields
-function entryFieldsHTML(idx,desc,required,minFields,customPlaceholders){
-  minFields=minFields||2;
-  var fields='';
-  var placeholders=customPlaceholders||['Field 1 — e.g. Player ID / UID','Field 2 — e.g. Server / Region (optional)'];
-  for(var fi=1;fi<=minFields;fi++){
-    fields+='<input type="text" id="ef'+fi+'_'+idx+'" placeholder="'+(placeholders[fi-1]||'Field '+fi+' (optional)')+'">';
-  }
-  return '<div style="margin-bottom:14px;">'
-    +'<label class="field-label">Entry Fields '+(required?'<span class="required">*</span>':'<span class="optional-tag">optional</span>')+'</label>'
-    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">'+desc+'</div>'
-    +'<div id="entryContainer_'+idx+'" style="display:flex;flex-direction:column;gap:8px;">'+fields+'</div>'
-    +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addEntryField('+idx+')">+ Add another field</button>'
-    +'</div>';
-}
-var entryFieldCounts={};
-function initEntry(idx){entryFieldCounts[idx]=2;}
-
-function onDenomTypeChange(idx){
-  var sel=document.querySelector('input[name="denomType_'+idx+'"]:checked');
-  var wrap=document.getElementById('denomTypeFields_'+idx);
-  if(!wrap||!sel)return;
-  var val=sel.value;
-  // Sync option selected styles
-  var opts=document.getElementById('denomTypeOpts_'+idx);
-  if(opts)opts.querySelectorAll('.option').forEach(function(o){o.classList.toggle('selected',o.querySelector('input').checked);});
-  if(val==='Others'){
-    wrap.innerHTML='<input type="text" id="denomOthersName_'+idx+'" placeholder="Enter product name (e.g. Grab Food Voucher RM50)" style="margin-top:6px;">';
-  } else {
-    var datasets={"Currency":["AUD","BRL","CAD","EUR","GBP","IDR","MYR","PHP","SGD","THB","USD","VND"],"Duration":["Days","Months","Years"],"Game Currency":["Gold","Coins","Gems","Diamonds","V-Bucks","Robux"]};
-    var opts2=datasets[val]||[];
-    var h='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 80px;gap:8px;margin-top:8px;align-items:center;">'
-      +'<div class="denom-sel-wrap"><select id="denomDS_simple_'+idx+'">'
-      +'<option value="">-- Select --</option>'
-      +opts2.map(function(o){return '<option>'+o+'</option>';}).join('')
-      +'</select></div>'
-      +'<div></div>'
-      +'<input type="text" class="denom-amt" id="denomAmt_simple_'+idx+'" placeholder="e.g. 50">'
-      +'<div></div>'
-      +'</div>';
-    wrap.innerHTML=h;
-  }
-}
-
 function productNameHTML(idx,context){
-  var hint = context==='Activation Links'
-    ? 'e.g. Claude Pro 1 Month, Spotify Premium, Adobe Creative Cloud'
-    : 'e.g. Netflix 1 Month Subscription, YouTube Premium';
+  var hint=context==='Activation Links'?'e.g. Claude Pro 1 Month, Spotify Premium':'e.g. Netflix 1 Month Subscription, YouTube Premium';
   return '<div style="margin-bottom:14px;">'
     +'<label class="field-label">Product Name <span class="required">*</span></label>'
     +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Enter the exact product name as it will appear to buyers.</div>'
@@ -1019,33 +769,27 @@ function productNameHTML(idx,context){
     +'</div>';
 }
 
-function denomWithOthersHTML(idx){
-  // Denominations with Others option — when Others selected, product name replaces amount
+// ADJ4: data-fields attribute so initEntry reads correct starting count
+function entryFieldsHTML(idx,desc,required,minFields,customPlaceholders){
+  minFields=minFields||2;
+  var fields='',placeholders=customPlaceholders||['Field 1 — e.g. Player ID / UID','Field 2 — e.g. Server / Region (optional)'];
+  for(var fi=1;fi<=minFields;fi++){
+    fields+='<input type="text" id="ef'+fi+'_'+idx+'" placeholder="'+(placeholders[fi-1]||'Field '+fi+' (optional)')+'">';
+  }
   return '<div style="margin-bottom:14px;">'
-    +'<label class="field-label">Denomination <span class="optional-tag">optional</span></label>'
-    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Select a denomination type. Choose Others to enter a product name instead.</div>'
-    +'<div class="options-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:10px;" id="denomTypeOpts_'+idx+'">'
-    +'<label class="option"><input type="radio" name="denomType_'+idx+'" value="Currency" onchange="onDenomTypeChange('+idx+')"> Currency</label>'
-    +'<label class="option"><input type="radio" name="denomType_'+idx+'" value="Duration" onchange="onDenomTypeChange('+idx+')"> Duration</label>'
-    +'<label class="option"><input type="radio" name="denomType_'+idx+'" value="Game Currency" onchange="onDenomTypeChange('+idx+')"> Game Currency</label>'
-    +'<label class="option"><input type="radio" name="denomType_'+idx+'" value="Others" onchange="onDenomTypeChange('+idx+')"> Others</label>'
-    +'</div>'
-    +'<div id="denomTypeFields_'+idx+'"></div>'
-    +'</div>';
-}
-
-function mtuFieldsHTML(idx){
-  return '<div style="margin-bottom:14px;">'
-    +'<label class="field-label">Login Information Required <span class="required">*</span></label>'
-    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Define the login credentials needed to top up the buyer&#39;s account.</div>'
-    +'<div id="entryContainer_'+idx+'" style="display:flex;flex-direction:column;gap:8px;">'
-    +'<input type="text" id="ef1_'+idx+'" placeholder="Field 1 — e.g. Login / Username / Email">'
-    +'<input type="text" id="ef2_'+idx+'" placeholder="Field 2 — e.g. Password">'
-    +'</div>'
+    +'<label class="field-label">Entry Fields '+(required?'<span class="required">*</span>':'<span class="optional-tag">optional</span>')+'</label>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">'+desc+'</div>'
+    +'<div id="entryContainer_'+idx+'" data-fields="'+minFields+'" style="display:flex;flex-direction:column;gap:8px;">'+fields+'</div>'
     +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addEntryField('+idx+')">+ Add another field</button>'
     +'</div>';
 }
 
+var entryFieldCounts={};
+// ADJ4: reads data-fields so Platform Engagement (1 field) correctly generates Field 2 next
+function initEntry(idx){
+  var c=document.getElementById('entryContainer_'+idx);
+  entryFieldCounts[idx]=c&&c.dataset.fields?parseInt(c.dataset.fields):2;
+}
 function addEntryField(idx){
   var c=entryFieldCounts[idx]=(entryFieldCounts[idx]||2)+1;
   var cont=$('entryContainer_'+idx);if(!cont)return;
@@ -1053,31 +797,24 @@ function addEntryField(idx){
   cont.appendChild(inp);
 }
 
-// Denominations
-function denomHTMLKeyLocked(idx){
-  // Gift Cards — Key is locked ON, product name is the denomination
+function mtuFieldsHTML(idx){
   return '<div style="margin-bottom:14px;">'
-    +'<label class="field-label">Key</label>'
-    +'<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--accent-light);border:1.5px solid var(--accent);border-radius:8px;margin-bottom:8px;">'
-    +'<span style="font-size:15px;">&#128273;</span>'
-    +'<span style="font-size:13px;font-weight:600;color:var(--accent);">Key &mdash; Gift Card product</span>'
-    +'<span style="margin-left:auto;font-size:11px;color:var(--accent);opacity:.7;">Locked</span>'
+    +'<label class="field-label">Login Information Required <span class="required">*</span></label>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Define the login credentials needed to top up the buyer&#39;s account.</div>'
+    +'<div id="entryContainer_'+idx+'" data-fields="2" style="display:flex;flex-direction:column;gap:8px;">'
+    +'<input type="text" id="ef1_'+idx+'" placeholder="Field 1 — e.g. Login / Username / Email">'
+    +'<input type="text" id="ef2_'+idx+'" placeholder="Field 2 — e.g. Password">'
     +'</div>'
-    +'<div style="font-size:11px;color:var(--muted);padding:7px 12px;background:#fffbeb;border-left:3px solid var(--warning);border-radius:0 6px 6px 0;line-height:1.5;">'
-    +'Gift Cards are delivered as keys. Enter the product name as the denomination (e.g. Steam Wallet $50, Netflix 1 Month).</div>'
-    +'<div style="margin-top:10px;">'
-    +'<label class="field-label">Product Name <span class="required">*</span></label>'
-    +'<input type="text" id="giftCardAmt_'+idx+'" placeholder="e.g. Steam Wallet $50, Netflix 1 Month, Spotify Premium">'
-    +'</div></div>';
+    +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addEntryField('+idx+')">+ Add another field</button>'
+    +'</div>';
 }
 
 function denomHTML(idx,showKeyToggle,optional){
   return '<div style="margin-bottom:14px;">'
     +'<label class="field-label">Denominations '+(optional?'<span class="optional-tag">optional</span>':'<span class="required">*</span>')+'</label>'
     +(showKeyToggle?'<label class="key-toggle-row" id="keyRow_'+idx+'" onclick="toggleKey('+idx+')">'
-      +'<input type="checkbox" id="keyCheck_'+idx+'"><span>🔑</span>'
-      +'<span class="key-toggle-label">Key</span></label>'
-      +'<div class="key-note hidden" id="keyNote_'+idx+'">Key selected — denomination details not required.</div>':'' )
+      +'<input type="checkbox" id="keyCheck_'+idx+'"><span>🔑</span><span class="key-toggle-label">Key</span></label>'
+      +'<div class="key-note hidden" id="keyNote_'+idx+'">Key selected — denomination details not required.</div>':'')
     +'<div class="denom-col-headers">'
     +'<span>Product Type</span><span>Dataset</span><span>Amount <span style="color:var(--accent)">*</span></span>'
     +'<span><label class="apply-all-label"><input type="checkbox" id="applyAll_'+idx+'" onchange="applyAllChange('+idx+')"><span>Apply all</span></label></span>'
@@ -1087,14 +824,11 @@ function denomHTML(idx,showKeyToggle,optional){
     +'<button type="button" class="btn-add" onclick="addDenom('+idx+')">+ Add denomination</button>'
     +'</div></div>';
 }
-
 var denomCounts={};
 function initDenom(idx){denomCounts[idx]=0;addDenom(idx);}
 function toggleKey(idx){
   var cb=$('keyCheck_'+idx),row=$('keyRow_'+idx),wrap=$('denomRowsWrap_'+idx),note=$('keyNote_'+idx);
-  if(row)row.classList.toggle('active',cb.checked);
-  if(wrap)wrap.classList.toggle('locked',cb.checked);
-  if(note)note.classList.toggle('hidden',!cb.checked);
+  if(row)row.classList.toggle('active',cb.checked);if(wrap)wrap.classList.toggle('locked',cb.checked);if(note)note.classList.toggle('hidden',!cb.checked);
 }
 function applyAllChange(idx){
   var cb=$('applyAll_'+idx);if(!cb||!cb.checked)return;
@@ -1117,48 +851,53 @@ function addDenom(idx){
   ptWrap.appendChild(pt);
   var dsCell=document.createElement('div');dsCell.id='dDSCell_'+idx+'_'+n;renderDSField(idx,n,'',dsCell);
   var amt=document.createElement('input');amt.type='text';amt.className='denom-amt';amt.id='dAmt_'+idx+'_'+n;amt.placeholder='e.g. 100';
+  // ADJ5: tip div for Duration/Months warning
+  var tipDiv=document.createElement('div');tipDiv.id='dTip_'+idx+'_'+n;
+  tipDiv.style.cssText='display:none;font-size:11px;color:#92640a;background:#fffbeb;border-left:3px solid #f59e0b;padding:6px 10px;border-radius:0 6px 6px 0;line-height:1.5;margin-top:-2px;';
+  tipDiv.textContent='Note: Only 1 month can be selected per denomination.';
   var rm=document.createElement('button');rm.type='button';rm.className='btn-remove';rm.textContent='×';
-  rm.onclick=function(){if($('denomList_'+idx).children.length>1)row.remove();};
+  rm.onclick=function(){var list=$('denomList_'+idx);if(list.querySelectorAll('.denom-row').length>1){row.remove();tipDiv.remove();}};
   row.appendChild(ptWrap);row.appendChild(dsCell);row.appendChild(amt);row.appendChild(rm);
   $('denomList_'+idx).appendChild(row);
+  $('denomList_'+idx).appendChild(tipDiv);
   pt.addEventListener('change',function(){renderDSField(idx,n,pt.value,$('dDSCell_'+idx+'_'+n));});
 }
 
+// ADJ5: hide tip on type change; show when Duration+Months
 function renderDSField(idx,n,ptVal,cell){
+  var tip=document.getElementById('dTip_'+idx+'_'+n);if(tip)tip.style.display='none';
   cell.innerHTML='';
   if(ptVal==='Others'){
-    // Others: hide amount col, merge into one product name field spanning full row
-    var row=document.getElementById('dRow_'+idx+'_'+n);
-    var amtEl=document.getElementById('dAmt_'+idx+'_'+n);
-    if(amtEl)amtEl.style.display='none';
+    var amtEl=document.getElementById('dAmt_'+idx+'_'+n);if(amtEl)amtEl.style.display='none';
     var inp=document.createElement('input');inp.type='text';inp.className='denom-ds-text';inp.id='dDS_'+idx+'_'+n;
-    inp.placeholder='Product name (e.g. Steam Wallet $50, Spotify 1 Month)';
-    inp.style.gridColumn='span 2';
+    inp.placeholder='Product name (e.g. Steam Wallet $50, Spotify 1 Month)';inp.style.gridColumn='span 2';
     cell.appendChild(inp);
   } else {
-    var amtEl=document.getElementById('dAmt_'+idx+'_'+n);
-    if(amtEl)amtEl.style.display='';
+    var amtEl=document.getElementById('dAmt_'+idx+'_'+n);if(amtEl)amtEl.style.display='';
     var opts=datasetMap[ptVal]||[];var sel=document.createElement('select');sel.id='dDS_'+idx+'_'+n;
     var ph=document.createElement('option');ph.value='';ph.textContent='— Select —';sel.appendChild(ph);
     opts.forEach(function(o){var op=document.createElement('option');op.value=o;op.textContent=o;sel.appendChild(op);});
+    if(ptVal==='Duration'){
+      sel.addEventListener('change',function(){
+        var t=document.getElementById('dTip_'+idx+'_'+n);
+        if(t)t.style.display=(sel.value==='Months')?'block':'none';
+      });
+    }
     cell.style.position='relative';cell.className='denom-sel-wrap';cell.appendChild(sel);
   }
 }
 
-// ── Reference URLs per tab ────────────────────────────────────────────────────
-var tabRefUrls={}, tabRefImgs={};
+var tabRefUrls={},tabRefImgs={};
 function refUrlKey(e,idx){if(e.key==='Enter'){e.preventDefault();commitRefUrl(idx);}}
 function handleRefPaste(e,idx){
   e.preventDefault();var pasted=(e.clipboardData||window.clipboardData).getData('text').trim();
-  var lines=pasted.split(/[\n\r\s]+/).map(function(u){return u.trim();}).filter(Boolean);
-  var added=0;
+  var lines=pasted.split(/[\n\r\s]+/).map(function(u){return u.trim();}).filter(Boolean);var added=0;
   lines.forEach(function(raw){var url=normaliseUrl(raw);if(url&&!(tabRefUrls[idx]||[]).includes(url)&&(tabRefUrls[idx]||[]).length<5){if(!tabRefUrls[idx])tabRefUrls[idx]=[];tabRefUrls[idx].push(url);added++;}});
   if(added){$('refUrlInput_'+idx).value='';renderRefUrls(idx);}
 }
 function normaliseUrl(raw){if(!raw)return null;var url=raw.replace(/^['"<>]+|['">,]+$/g,'').trim();if(url.startsWith('https://'))return url.length>9?url:null;if(url.startsWith('http://'))return 'https://'+url.slice(7);if(url.indexOf('.')>0)return 'https://'+url;return null;}
 function commitRefUrl(idx){
-  var inp=$('refUrlInput_'+idx);if(!inp)return;
-  var url=normaliseUrl(inp.value.trim());
+  var inp=$('refUrlInput_'+idx);if(!inp)return;var url=normaliseUrl(inp.value.trim());
   if(!url){inp.classList.add('field-error');$('refUrlErr_'+idx).style.display='block';return;}
   if(!tabRefUrls[idx])tabRefUrls[idx]=[];
   if(!tabRefUrls[idx].includes(url)&&tabRefUrls[idx].length<5){tabRefUrls[idx].push(url);inp.value='';renderRefUrls(idx);}
@@ -1190,85 +929,75 @@ function renderRefImgs(idx){
 }
 function removeRefImg(idx,i){if(tabRefImgs[idx])tabRefImgs[idx].splice(i,1);renderRefImgs(idx);}
 
-// ── Collect tab data ──────────────────────────────────────────────────────────
+// BUG1 FIX: var denoms declared at top — no mid-function wipe possible
 function collectTabData(idx){
-  var prod=selL3[idx];
-  var dm=DELIVERY_MAP[prod]||{};
+  var prod=selL3[idx],dm=DELIVERY_MAP[prod]||{};
   var delivSel=document.querySelector('input[name="delivery_'+idx+'"]:checked');
   var delivery=delivSel?delivSel.value:(dm.methods&&dm.methods.length===1?dm.methods[0]:'');
-  // Capture Product Name (Activation Links + Platform Engagement)
-  var prodNameEl=document.getElementById('prodName_'+idx);
-  if(prodNameEl&&prodNameEl.value.trim()){
-    denoms=[{productType:'Product Name',dataset:'',amount:prodNameEl.value.trim()}];
-  }
-  // Capture denom with Others
-  var denomTypeEl=document.querySelector('input[name="denomType_'+idx+'"]:checked');
-  if(denomTypeEl){
-    if(denomTypeEl.value==='Others'){
-      var othersEl=document.getElementById('denomOthersName_'+idx);
-      if(othersEl&&othersEl.value.trim())denoms=[{productType:'Others',dataset:'Product Name',amount:othersEl.value.trim()}];
-    } else {
-      var dsEl=document.getElementById('denomDS_simple_'+idx);
-      var amtEl=document.getElementById('denomAmt_simple_'+idx);
-      if(amtEl&&amtEl.value.trim())denoms=[{productType:denomTypeEl.value,dataset:dsEl?dsEl.value:'',amount:amtEl.value.trim()}];
-    }
-  }
+
+  var denoms=[];  // declared once, at the top
+
   var keyCheck=$('keyCheck_'+idx);
   var giftCardAmtEl=$('giftCardAmt_'+idx);
-  var isGiftCardLocked=!!giftCardAmtEl; // Gift Cards locked key path
+  var isGiftCardLocked=!!giftCardAmtEl;
   var isKey=isGiftCardLocked?true:(keyCheck?keyCheck.checked:false);
-  var denoms=[];
-  if(isGiftCardLocked&&giftCardAmtEl.value.trim()){
+
+  if(isGiftCardLocked&&giftCardAmtEl.value.trim())
     denoms.push({productType:'Gift Cards',dataset:'Key',amount:giftCardAmtEl.value.trim()});
-  }
+
+  var prodNameEl=document.getElementById('prodName_'+idx);
+  if(prodNameEl&&prodNameEl.value.trim())
+    denoms.push({productType:'Product Name',dataset:'',amount:prodNameEl.value.trim()});
+
   if(!isKey||isGiftCardLocked){
     var denomList=$('denomList_'+idx);
     if(denomList)denomList.querySelectorAll('.denom-row').forEach(function(row){
-      var pt=row.querySelector('[id^="dPT_"]');var ds=row.querySelector('select[id^="dDS_"],input[id^="dDS_"]');var amt=row.querySelector('[id^="dAmt_"]');
-      if(amt&&amt.value.trim())denoms.push({productType:pt?pt.value:'',dataset:ds?ds.value:'',amount:amt.value.trim()});
+      var pt=row.querySelector('[id^="dPT_"]');
+      var ds=row.querySelector('select[id^="dDS_"],input[id^="dDS_"]');
+      var amt=row.querySelector('[id^="dAmt_"]');
+      var ptVal=pt?pt.value:'';
+      if(ptVal==='Others'){if(ds&&ds.value.trim())denoms.push({productType:'Others',dataset:'Product Name',amount:ds.value.trim()});}
+      else{if(amt&&amt.value.trim())denoms.push({productType:ptVal,dataset:ds?ds.value:'',amount:amt.value.trim()});}
     });
   }
+
   var acct=document.querySelector('input[name="acctType_'+idx+'"]:checked');
-  // Gift card platform
-  var gcPlatSel=document.querySelector('input[name="gcPlat_'+idx+'"]:checked');
+
+  // ADJ2: Gift Cards platform from select element
+  var gcPlatSelect=document.getElementById('gcPlatformSelect_'+idx);
   var gcPlat='';
-  if(gcPlatSel){
-    gcPlat=gcPlatSel.value==='Others'?(document.getElementById('gcOthersInput_'+idx)||{}).value||'Others':gcPlatSel.value;
-  }
+  if(gcPlatSelect&&gcPlatSelect.value)
+    gcPlat=gcPlatSelect.value==='Others'?(document.getElementById('gcOthersInput_'+idx)||{}).value||'Others':gcPlatSelect.value;
+
   var platChecks=Array.from(document.querySelectorAll('input[name="plat_'+idx+'"]:checked')).map(function(i){return i.value;});
-  if(gcPlat&&!platChecks.length)platChecks=[gcPlat]; // Gift card platform
+  if(gcPlat&&!platChecks.length)platChecks=[gcPlat];
   var pcPlat=Array.from(document.querySelectorAll('input[name="pcPlat_'+idx+'"]:checked')).map(function(i){return i.value;});
   var cross=$('crossPlat_'+idx);
   var plat=pcPlat.length?platChecks.map(function(p){return p==='PC'?'PC ('+pcPlat.join(', ')+')':p;}).join(', '):platChecks.join(', ');
   var crossStr=cross&&cross.checked?plat+' (Cross Platform: Shared Key)':plat+(plat?' (Separate Key per Platform)':'');
+
   var ef=[];
   for(var ei=1;ei<=10;ei++){var ef_el=document.getElementById('ef'+ei+'_'+idx);if(ef_el&&ef_el.value.trim())ef.push(ef_el.value.trim());}
   var tiers=[];
   if(tabTiers[idx])Object.keys(tabTiers[idx]).forEach(function(tid){var r=tabTiers[idx][tid];if(r&&r.length)tiers.push(r.map(function(x){return x.value;}).join(', '));});
+
   return {
-    submissionId:'G2G-'+Date.now()+'-'+idx,
-    timestamp:new Date().toISOString(),
-    sellerUsername:$('sellerUsername').value.trim(),
-    sellerEmail:$('sellerEmail').value.trim(),
-    productType:prod,
-    layer1:selL1.join(', '),layer2:selL2.join(', '),
-    brand:($('tabBrand_'+idx)||{}).value||'',
-    productVariation:($('tabVariation_'+idx)||{}).value||'',
+    submissionId:'G2G-'+Date.now()+'-'+idx,timestamp:new Date().toISOString(),
+    sellerUsername:$('sellerUsername').value.trim(),sellerEmail:$('sellerEmail').value.trim(),
+    productType:prod,layer1:selL1.join(', '),layer2:selL2.join(', '),
+    brand:($('tabBrand_'+idx)||{}).value||'',productVariation:($('tabVariation_'+idx)||{}).value||'',
     region:(tabRegions[idx]||[]).map(function(r){return r.value;}).join(', '),
     sharedRegion:($('crCheck_'+idx)&&$('crCheck_'+idx).checked)?'Yes':'No',
     tieredRegion:tiers.map(function(t,i){return 'Tier '+(i+1)+': '+t;}).join(' | '),
-    deliveryMethod:delivery,
-    accountType:acct?acct.value:'',
-    platforms:crossStr,
+    deliveryMethod:delivery,accountType:acct?acct.value:'',platforms:crossStr,
     isKey:isKey?'Yes':'No',
-    denominations:isKey?'Key':denoms.map(function(d){return d.productType+':'+d.dataset+':'+d.amount;}).join(' | '),
+    denominations:(isKey&&!isGiftCardLocked)?'Key':denoms.map(function(d){return d.productType+':'+d.dataset+':'+d.amount;}).join(' | '),
     entryField1:ef[0]||'',entryField2:ef[1]||'',entryField3:ef[2]||'',entryField4:ef[3]||'',entryField5:ef[4]||'',
     refLink:(tabRefUrls[idx]||[]).join(' | '),
     refImages:(tabRefImgs[idx]||[]).map(function(f){return f.name;}).join(', ')
   };
 }
 
-// ── Submit a tab ──────────────────────────────────────────────────────────────
 function submitTab(idx){
   var brand=($('tabBrand_'+idx)||{}).value||'';
   if(!brand.trim()){alert('Please enter a Brand Name.');return;}
@@ -1280,65 +1009,43 @@ function submitTab(idx){
     .then(function(){
       if(submittedTabs.indexOf(idx)===-1)submittedTabs.push(idx);
       var pct=Math.round(60+(submittedTabs.length/selL3.length)*35);
-      $('progressFill').style.width=pct+'%';
-      updateTabProgress();
-      renderTabBar();
-      renderTabContent(idx);
-      if(submittedTabs.length===selL3.length){setTimeout(goToStep4,1200);}
+      $('progressFill').style.width=pct+'%';updateTabProgress();renderTabBar();renderTabContent(idx);
+      if(submittedTabs.length===selL3.length)setTimeout(goToStep4,1200);
     })
     .catch(function(){if(btn){btn.disabled=false;btn.textContent='Submit '+selL3[idx]+' →';}alert('Submission failed. Please check your connection and try again.');});
 }
 
-// ── Step 4: Done ──────────────────────────────────────────────────────────────
 function goToStep4(){
-  $('step3Wrap').classList.add('hidden');
-  $('step4Wrap').classList.remove('hidden');
-  $('pstep3').classList.remove('active');$('pstep3').classList.add('done');
-  $('pstep4').classList.add('active');
+  $('step3Wrap').classList.add('hidden');$('step4Wrap').classList.remove('hidden');
+  $('pstep3').classList.remove('active');$('pstep3').classList.add('done');$('pstep4').classList.add('active');
   $('progressFill').style.width='100%';
   $('doneSummaryText').innerHTML='All <strong>'+selL3.length+'</strong> product request'+(selL3.length>1?'s have':' has')+' been sent to the BD team for review. You\'ll be notified at <strong>'+esc($('sellerEmail').value)+'</strong>.';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── Reset ─────────────────────────────────────────────────────────────────────
 function resetAll(){
   selL1=[];selL2=[];selL3=[];activeTab=0;submittedTabs=[];tabStates={};tabRegions={};tabTiers={};tierCounters={};denomCounts={};entryFieldCounts={};tabRefUrls={};tabRefImgs={};
-  $('step4Wrap').classList.add('hidden');$('step3Wrap').classList.add('hidden');$('step2Wrap').classList.add('hidden');
-  $('step1Wrap').classList.remove('hidden');
+  $('step4Wrap').classList.add('hidden');$('step3Wrap').classList.add('hidden');$('step2Wrap').classList.add('hidden');$('step1Wrap').classList.remove('hidden');
   $('l2Card').classList.add('hidden');$('l3Card').classList.add('hidden');$('selSummaryCard').classList.add('hidden');
   $('l1Grid').querySelectorAll('.layer-btn').forEach(function(b){b.classList.remove('selected');b.querySelector('.lb-check').textContent='';});
   $('sellerUsername').value='';$('sellerEmail').value='';
   ['pstep1','pstep2','pstep3','pstep4'].forEach(function(id){$(id).classList.remove('active','done');});
-  $('pstep1').classList.add('active');
-  $('progressFill').style.width='8%';
-  window.scrollTo({top:0,behavior:'smooth'});
+  $('pstep1').classList.add('active');$('progressFill').style.width='8%';window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── Back navigation ─────────────────────────────────────────────────────────
 function backToStep1(){
-  $('step2Wrap').classList.add('hidden');
-  $('step1Wrap').classList.remove('hidden');
-  $('pstep2').classList.remove('active','done');
-  $('pstep1').classList.remove('done');
-  $('pstep1').classList.add('active');
-  $('progressFill').style.width='25%';
+  $('step2Wrap').classList.add('hidden');$('step1Wrap').classList.remove('hidden');
+  $('pstep2').classList.remove('active','done');$('pstep1').classList.remove('done');$('pstep1').classList.add('active');
+  $('progressFill').style.width='8%';  // BUG fix: was 25%, correct value is 8%
   window.scrollTo({top:0,behavior:'smooth'});
 }
-
 function backToStep2(){
-  $('step3Wrap').classList.add('hidden');
-  $('step2Wrap').classList.remove('hidden');
-  $('pstep3').classList.remove('active','done');
-  $('pstep2').classList.remove('done');
-  $('pstep2').classList.add('active');
-  $('progressFill').style.width='45%';
-  window.scrollTo({top:0,behavior:'smooth'});
+  $('step3Wrap').classList.add('hidden');$('step2Wrap').classList.remove('hidden');
+  $('pstep3').classList.remove('active','done');$('pstep2').classList.remove('done');$('pstep2').classList.add('active');
+  $('progressFill').style.width='45%';window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── Prefetch config on page load ─────────────────────────────────────────────
-loadFormConfig(null); // background load — applies delivery method overrides early
-
-// ── Input cleanup ─────────────────────────────────────────────────────────────
+loadFormConfig(null);
 $('sellerUsername').addEventListener('input',function(){this.classList.remove('field-error');$('usernameErr').style.display='none';});
 $('sellerEmail').addEventListener('input',function(){this.classList.remove('field-error');$('emailErr').style.display='none';});
 </script>
