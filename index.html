@@ -332,10 +332,10 @@ var DELIVERY_MAP={
   'Game Items':{type:'game',methods:['Game Items']},
   'Game Skins':{type:'game',methods:['Game Skins']},
   'Game Top Up & Gift Cards':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'AI & Tools':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Ebooks':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Live Streaming & Social':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Video & Music':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'AI & Tools':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up','Account']},
+  'Ebooks':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up','Account']},
+  'Live Streaming & Social':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up','Account']},
+  'Video & Music':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up','Account']},
   'Dining & Food':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'eCommerce':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'Education':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
@@ -677,6 +677,22 @@ function renderDeliveryFields(idx,method,prod){
   } else if(method==='Manual Top Up'){
     h+=mtuFieldsHTML(idx);
     h+=denomHTML(idx,false,true);
+  } else if(method==='Account'){
+    h+='<div style="margin-bottom:14px;">'
+      +'<label class="field-label">Account Type <span class="required">*</span></label>'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Select whether this is a private or shared account.</div>'
+      +'<div class="options-grid" style="grid-template-columns:1fr 1fr;margin-bottom:14px;" id="acctTypeGroup_'+idx+'">'
+      +'<label class="option" onclick="onAcctTypeChange('+idx+')">'
+      +'<input type="radio" name="acctType_'+idx+'" value="Private"> 🔒 Private</label>'
+      +'<label class="option" onclick="onAcctTypeChange('+idx+')">'
+      +'<input type="radio" name="acctType_'+idx+'" value="Shared"> 👥 Shared</label>'
+      +'</div>'
+      +'<div class="hidden" id="acctProductName_'+idx+'">'
+      +'<label class="field-label">Product Name <span class="required">*</span></label>'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Enter the exact product name as it will appear to buyers.</div>'
+      +'<input type="text" id="prodName_'+idx+'" placeholder="e.g. Netflix 1 Month, Spotify Premium, ChatGPT Plus">'
+      +'</div>'
+      +'</div>';
   } else if(method==='Game Coaching'||method==='Game Pal'){
     h+='<div style="margin-bottom:14px;">'
       +'<label class="field-label">Service Details <span class="required">*</span></label>'
@@ -993,6 +1009,11 @@ function backToStep2(){
   $('step3Wrap').classList.add('hidden');$('step2Wrap').classList.remove('hidden');
   $('pstep3').classList.remove('active','done');$('pstep2').classList.remove('done');$('pstep2').classList.add('active');
   $('progressFill').style.width='25%';window.scrollTo({top:0,behavior:'smooth'});
+}
+function onAcctTypeChange(idx){
+  var sel=document.querySelector('input[name="acctType_'+idx+'"]:checked');
+  var wrap=document.getElementById('acctProductName_'+idx);
+  if(wrap)wrap.classList.toggle('hidden',!sel);
 }
 loadFormConfig(null);
 $('sellerUsername').addEventListener('input',function(){this.classList.remove('field-error');$('usernameErr').style.display='none';});
