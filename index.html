@@ -174,10 +174,8 @@
   .sr-tooltip-box{display:none;position:absolute;right:0;top:calc(100% + 8px);width:220px;background:#1a1a2e;color:#fff;font-size:11px;font-weight:400;line-height:1.6;padding:9px 11px;border-radius:7px;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:9999;pointer-events:none;white-space:normal;}
   .sr-tooltip-box::before{content:'';position:absolute;top:-5px;right:9px;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:5px solid #1a1a2e;}
   .sr-tooltip-wrap:hover .sr-tooltip-box{display:block;}
-  /* ADJ3: left-anchored tooltip variant for key banner */
   .sr-tooltip-box.tip-left{left:0;right:auto;}
   .sr-tooltip-box.tip-left::before{left:9px;right:auto;}
-  /* ADJ2: full-width platform select for Gift Cards */
   .gc-platform-wrap{position:relative;width:100%;}
   .gc-platform-wrap select{width:100%;appearance:none;-webkit-appearance:none;background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:10px 36px 10px 14px;outline:none;cursor:pointer;transition:border-color .15s;}
   .gc-platform-wrap select:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(227,0,27,.1);}
@@ -201,9 +199,9 @@
   </div>
   <div class="progress-wrap">
     <div class="progress-steps">
-      <div class="pstep active" id="pstep1"><div class="pstep-num">1</div><span>Select products</span></div>
+      <div class="pstep active" id="pstep1"><div class="pstep-num">1</div><span>User details</span></div>
       <div class="pstep-arrow">›</div>
-      <div class="pstep" id="pstep2"><div class="pstep-num">2</div><span>Seller details</span></div>
+      <div class="pstep" id="pstep2"><div class="pstep-num">2</div><span>Select products</span></div>
       <div class="pstep-arrow">›</div>
       <div class="pstep" id="pstep3"><div class="pstep-num">3</div><span>Fill forms</span></div>
       <div class="pstep-arrow">›</div>
@@ -212,8 +210,38 @@
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:8%"></div></div>
   </div>
 
-  <!-- STEP 1 -->
+  <!-- STEP 1: User Details -->
   <div id="step1Wrap">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">👤</div>
+        <div>
+          <div class="card-title">User Details <span class="required">*</span></div>
+          <div class="card-desc">Enter your G2G registered details before selecting products.</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field-block">
+          <label class="field-label">G2G Username <span class="required">*</span></label>
+          <input type="text" id="sellerUsername" placeholder="e.g. seller_abc123">
+          <div class="field-err-msg" id="usernameErr">Please enter your G2G username</div>
+        </div>
+        <div class="field-block">
+          <label class="field-label">Registered Email <span class="required">*</span></label>
+          <input type="email" id="sellerEmail" placeholder="e.g. seller@email.com">
+          <div class="field-err-msg" id="emailErr">Please enter a valid email address</div>
+        </div>
+      </div>
+      <div class="verify-pending">⏳ Live verification coming soon — ensure details match your G2G account</div>
+      <div class="identity-note">Your username and email will be used to notify you of each request's status. Make sure these match your registered G2G account exactly.</div>
+      <div style="height:16px;"></div>
+      <button class="continue-btn" onclick="goToStep2()">Continue to product selection →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Select Products -->
+  <div id="step2Wrap" class="hidden">
+    <button class="back-btn" onclick="backToStep1()">← Back to user details</button>
     <div class="card">
       <div class="card-header">
         <div class="card-icon">🗂️</div>
@@ -257,43 +285,13 @@
       </div>
       <div class="selection-tags" id="selectionTags"></div>
       <div style="height:16px;"></div>
-      <button class="continue-btn" id="continueToIdentityBtn" disabled onclick="goToStep2()">Continue →</button>
+      <button class="continue-btn" id="continueToFormsBtn" disabled onclick="goToStep3()">Continue →</button>
     </div>
   </div>
 
-  <!-- STEP 2 -->
-  <div id="step2Wrap" class="hidden">
-    <button class="back-btn" onclick="backToStep1()">← Back</button>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon">👤</div>
-        <div>
-          <div class="card-title">Seller Identity <span class="required">*</span></div>
-          <div class="card-desc">Enter your G2G registered details. These apply to all your submissions in this session.</div>
-        </div>
-      </div>
-      <div class="two-col">
-        <div class="field-block">
-          <label class="field-label">G2G Username <span class="required">*</span></label>
-          <input type="text" id="sellerUsername" placeholder="e.g. seller_abc123">
-          <div class="field-err-msg" id="usernameErr">Please enter your G2G username</div>
-        </div>
-        <div class="field-block">
-          <label class="field-label">Registered Email <span class="required">*</span></label>
-          <input type="email" id="sellerEmail" placeholder="e.g. seller@email.com">
-          <div class="field-err-msg" id="emailErr">Please enter a valid email address</div>
-        </div>
-      </div>
-      <div class="verify-pending">⏳ Live verification coming soon — ensure details match your G2G account</div>
-      <div class="identity-note">Your username and email will be used to notify you of each request's status. Make sure these match your registered G2G seller account exactly.</div>
-      <div style="height:16px;"></div>
-      <button class="continue-btn" onclick="goToStep3()">Continue to forms →</button>
-    </div>
-  </div>
-
-  <!-- STEP 3 -->
+  <!-- STEP 3: Fill Forms -->
   <div id="step3Wrap" class="hidden">
-    <button class="back-btn" onclick="backToStep2()">← Back to seller details</button>
+    <button class="back-btn" onclick="backToStep2()">← Back to products</button>
     <div style="margin-bottom:12px;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
       <span>Submitting as <strong style="color:var(--text)" id="identitySummary"></strong></span>
       <span id="tabProgressSummary" style="color:var(--muted);"></span>
@@ -304,7 +302,7 @@
     </div>
   </div>
 
-  <!-- STEP 4 -->
+  <!-- STEP 4: Done -->
   <div id="step4Wrap" class="hidden">
     <div class="done-card">
       <div class="done-icon">🎉</div>
@@ -317,7 +315,6 @@
 <script>
 var SCRIPT_URL='https://script.google.com/macros/s/AKfycbzWMRr34s08mgfRliKfFUKwvp6QiHSmewYTapN63Z7Ok64TKe1pDUNkTdoYkLCNVKgceg/exec';
 var CONFIG_URL='https://raw.githubusercontent.com/fightiger23/Product_request/main/config.json';
-
 var TREE={
   'Digital Products':{
     'Gaming':['Game Account','Game Boosting','Game Coins','Game Items','Game Skins','Game Top Up & Gift Cards'],
@@ -350,7 +347,6 @@ var DELIVERY_MAP={
   'Game Coaching':{type:'renttime',methods:['Game Coaching']},
   'Game Pal':{type:'renttime',methods:['Game Pal']}
 };
-
 var formConfig=null,configLoaded=false;
 function getMarketFromUrl(){var p=new URLSearchParams(window.location.search);return p.get('market')||'main-market';}
 function loadFormConfig(cb){
@@ -364,19 +360,15 @@ function loadFormConfig(cb){
     configLoaded=true;if(cb)cb();
   }).catch(function(){configLoaded=true;if(cb)cb();});
 }
-
-// ADJ5: 'Years' removed from Duration
 var datasetMap={
   'Currency':['AUD','BRL','CAD','CHF','CNY','EUR','GBP','IDR','INR','JPY','KRW','MYR','PHP','SGD','THB','USD','VND','AED','HKD','TWD'],
   'Duration':['Days','Months'],
   'Game Currency':['Gold','Coins','Gems','Diamonds','Crystals','Oneiric Shard','VP','Points','Credits','Tokens','V-Bucks','Robux'],
   'Others':null
 };
-
 var selL1=[],selL2=[],selL3=[],activeTab=0,submittedTabs=[],tabStates={};
 function $(id){return document.getElementById(id);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
 function toggleLayer(layer,btn,val){
   btn.classList.toggle('selected');
   var arr=layer===1?selL1:layer===2?selL2:selL3;
@@ -413,26 +405,30 @@ function renderL3(){
   $('selSummaryCard').classList.add('hidden');
 }
 function updateSummary(){
-  var card=$('selSummaryCard'),tags=$('selectionTags'),btn=$('continueToIdentityBtn');
+  var card=$('selSummaryCard'),tags=$('selectionTags'),btn=$('continueToFormsBtn');
   if(!selL3.length){card.classList.add('hidden');return;}
   card.classList.remove('hidden');
   tags.innerHTML=selL3.map(function(p){return '<span class="sel-tag">'+p+'</span>';}).join('');
   btn.disabled=false;btn.textContent='Continue — '+selL3.length+' form'+(selL3.length>1?'s':'')+' to fill →';
-  $('progressFill').style.width='25%';
+  $('progressFill').style.width='45%';
 }
-
+// Step 1 → Step 2: validate user details
 function goToStep2(){
+  var u=$('sellerUsername').value.trim(),e=$('sellerEmail').value.trim();
+  var ok=true;
+  if(!u){$('sellerUsername').classList.add('field-error');$('usernameErr').style.display='block';ok=false;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){$('sellerEmail').classList.add('field-error');$('emailErr').style.display='block';ok=false;}
+  if(!ok)return;
   $('step1Wrap').classList.add('hidden');$('step2Wrap').classList.remove('hidden');
   $('pstep1').classList.remove('active');$('pstep1').classList.add('done');$('pstep2').classList.add('active');
-  $('progressFill').style.width='45%';window.scrollTo({top:0,behavior:'smooth'});
+  $('progressFill').style.width='25%';window.scrollTo({top:0,behavior:'smooth'});
 }
+// Step 2 → Step 3: validate product selection
 function goToStep3(){
-  var u=$('sellerUsername').value.trim(),e=$('sellerEmail').value.trim();
-  if(!u){$('sellerUsername').classList.add('field-error');$('usernameErr').style.display='block';return;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){$('sellerEmail').classList.add('field-error');$('emailErr').style.display='block';return;}
   $('step2Wrap').classList.add('hidden');$('step3Wrap').classList.remove('hidden');
   $('pstep2').classList.remove('active');$('pstep2').classList.add('done');$('pstep3').classList.add('active');
-  $('progressFill').style.width='60%';$('identitySummary').textContent=u+' · '+e;
+  $('progressFill').style.width='60%';
+  $('identitySummary').textContent=$('sellerUsername').value.trim()+' · '+$('sellerEmail').value.trim();
   activeTab=0;submittedTabs=[];tabStates={};
   if(!configLoaded)loadFormConfig(function(){buildTabs();});else buildTabs();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -448,8 +444,6 @@ function renderTabBar(){
   });
 }
 function updateTabProgress(){$('tabProgressSummary').textContent=submittedTabs.length+' of '+selL3.length+' submitted';}
-
-// BUG2 FIX: read delivery from radio name, not missing element ID
 function saveTabState(){
   var s={};
   ['tabBrand','tabVariation'].forEach(function(id){var el=document.getElementById(id+'_'+activeTab);if(el)s[id]=el.value;});
@@ -457,7 +451,6 @@ function saveTabState(){
   if(delivEl)s.tabDelivery=delivEl.value;
   tabStates[activeTab]=tabStates[activeTab]||{};Object.assign(tabStates[activeTab],s);
 }
-
 function renderTabContent(idx){
   var prod=selL3[idx],content=$('tabContent');
   var isDone=submittedTabs.indexOf(idx)>-1;
@@ -542,13 +535,11 @@ function renderTabContent(idx){
   }
 }
 function switchTab(idx){saveTabState();activeTab=idx;renderTabBar();renderTabContent(idx);}
-
 function toggleCR(idx){
   var cb=$('crCheck_'+idx),toggle=$('crToggle_'+idx),note=$('crNote_'+idx);
   toggle.classList.toggle('active',cb.checked);
   cb.checked?note.classList.remove('hidden'):note.classList.add('hidden');
 }
-
 var tabRegions={},tabTiers={};
 var REGION_GROUPS=[
   {value:'GLOBAL',label:'Global'},{value:'AF-REGION',label:'Africa (AF)'},{value:'AS-REGION',label:'Asia (AS)'},
@@ -573,7 +564,6 @@ var ALL_COUNTRIES=[
   {v:'UA',l:'Ukraine'},{v:'UG',l:'Uganda'},{v:'US',l:'United States'},{v:'UY',l:'Uruguay'},{v:'UZ',l:'Uzbekistan'},
   {v:'VE',l:'Venezuela'},{v:'VN',l:'Vietnam'},{v:'YE',l:'Yemen'},{v:'ZA',l:'South Africa'},{v:'ZM',l:'Zambia'},{v:'ZW',l:'Zimbabwe'}
 ];
-
 function initTabRegion(idx){
   tabRegions[idx]=tabRegions[idx]||[];tabTiers[idx]=tabTiers[idx]||[];
   var wrap=$('regionDropWrap_'+idx);
@@ -614,7 +604,6 @@ function updateRegionTags(idx){
     b.addEventListener('click',function(e){tabRegions[idx]=tabRegions[idx].filter(function(r){return r.value!==e.target.dataset.value;});updateRegionDisplay(idx);updateRegionTags(idx);});
   });
 }
-
 var tierCounters={};
 function addTier(tabIdx){
   tierCounters[tabIdx]=(tierCounters[tabIdx]||0)+1;var tid=tierCounters[tabIdx];
@@ -648,9 +637,7 @@ function initTierDD(ti,tid){
 function updateTierDisplay(ti,tid){var el=$('tierSel_'+ti+'_'+tid);if(!el)return;var r=tabTiers[ti][tid]||[];if(!r.length){el.textContent='Select regions...';el.style.color='var(--muted)';el.style.fontWeight='300';}else{var n=r.map(function(x){return x.label;});el.textContent=n.length<=2?n.join(', '):n.slice(0,2).join(', ')+' +'+(n.length-2)+' more';el.style.color='var(--text)';el.style.fontWeight='400';}}
 function updateTierTags(ti,tid){var w=$('tierTags_'+ti+'_'+tid);if(!w)return;w.innerHTML='';(tabTiers[ti][tid]||[]).forEach(function(r){var t=document.createElement('span');t.className='dropdown-tag';t.innerHTML=r.label+' <span class="dropdown-tag-remove" data-value="'+r.value+'">×</span>';w.appendChild(t);});w.querySelectorAll('.dropdown-tag-remove').forEach(function(b){b.addEventListener('click',function(e){tabTiers[ti][tid]=tabTiers[ti][tid].filter(function(r){return r.value!==e.target.dataset.value;});updateTierDisplay(ti,tid);updateTierTags(ti,tid);});});}
 function removeTier(ti,tid){var b=$('tierBlock_'+ti+'_'+tid);if(b)b.remove();delete tabTiers[ti][tid];}
-
 function onDeliveryChange(idx){var sel=document.querySelector('input[name="delivery_'+idx+'"]:checked');if(sel)renderDeliveryFields(idx,sel.value,selL3[idx]);}
-
 function renderDeliveryFields(idx,method,prod){
   var wrap=$('deliveryFields_'+idx);if(!wrap)return;
   var h='';
@@ -661,7 +648,6 @@ function renderDeliveryFields(idx,method,prod){
       +'<input type="text" id="prodName_'+idx+'" placeholder="e.g. Claude Pro 1 Month, Spotify Premium, Adobe Creative Cloud">'
       +'</div>';
   } else if(method==='Gift Cards'){
-    // ADJ2: dropdown select instead of radio grid
     h+='<div style="margin-bottom:14px;">'
       +'<label class="field-label">Platform <span class="required">*</span></label>'
       +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Select the platform this gift card is for.</div>'
@@ -684,14 +670,12 @@ function renderDeliveryFields(idx,method,prod){
     h+=denomHTMLKeyLocked(idx);
   } else if(method==='Platform Engagement'){
     h+=productNameHTML(idx,'Platform Engagement');
-    // ADJ4: required=true, minFields=1 → "Add" creates Field 2
     h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',true,1,['e.g. Email, URL or username']);
   } else if(method==='Direct Top Up'){
     h+=entryFieldsHTML(idx,'What info does the buyer need to provide? (e.g. Player ID / UID)',false,1);
     h+=denomHTML(idx,false,true);
   } else if(method==='Manual Top Up'){
     h+=mtuFieldsHTML(idx);
-    // ADJ6: aligned to same denomHTML as Direct Top Up
     h+=denomHTML(idx,false,true);
   } else if(method==='Game Coaching'||method==='Game Pal'){
     h+='<div style="margin-bottom:14px;">'
@@ -704,7 +688,6 @@ function renderDeliveryFields(idx,method,prod){
       +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addEntryField('+idx+')">+ Add more details</button>'
       +'</div>';
   } else {
-    // Game type fallback
     h+=platformHTML(idx);
     h+=entryFieldsHTML(idx,'What info does the buyer need to provide?',false);
     h+=denomHTML(idx,false);
@@ -713,15 +696,11 @@ function renderDeliveryFields(idx,method,prod){
   if(h.includes('denomList_'+idx))initDenom(idx);
   if(h.includes('entryContainer_'+idx))initEntry(idx);
 }
-
-// ADJ2
 function toggleGCOthersDropdown(idx){
   var sel=document.getElementById('gcPlatformSelect_'+idx);
   var wrap=document.getElementById('gcOthers_'+idx);
   if(wrap)wrap.classList.toggle('hidden',sel.value!=='Others');
 }
-
-// ADJ3: removed 'Locked' text; added ⓘ tooltip
 function denomHTMLKeyLocked(idx){
   return '<div style="margin-bottom:14px;">'
     +'<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--accent-light);border:1.5px solid var(--accent);border-radius:8px;margin-bottom:10px;">'
@@ -735,7 +714,6 @@ function denomHTMLKeyLocked(idx){
     +'<input type="text" id="giftCardAmt_'+idx+'" placeholder="e.g. Steam Wallet $50, Netflix 1 Month, Spotify Premium">'
     +'</div>';
 }
-
 function platformHTML(idx){
   return '<div style="margin-bottom:14px;">'
     +'<label class="field-label">Platform <span class="required">*</span></label>'
@@ -759,7 +737,6 @@ function platformHTML(idx){
     +'</div></div>';
 }
 function togglePCSub(idx){var cb=document.querySelector('input[name="plat_'+idx+'"][value="PC"]');var sub=$('pcSub_'+idx);if(sub)sub.classList.toggle('hidden',!cb||!cb.checked);}
-
 function productNameHTML(idx,context){
   var hint=context==='Activation Links'?'e.g. Claude Pro 1 Month, Spotify Premium':'e.g. Netflix 1 Month Subscription, YouTube Premium';
   return '<div style="margin-bottom:14px;">'
@@ -768,8 +745,6 @@ function productNameHTML(idx,context){
     +'<input type="text" id="prodName_'+idx+'" placeholder="'+hint+'">'
     +'</div>';
 }
-
-// ADJ4: data-fields attribute so initEntry reads correct starting count
 function entryFieldsHTML(idx,desc,required,minFields,customPlaceholders){
   minFields=minFields||2;
   var fields='',placeholders=customPlaceholders||['Field 1 — e.g. Player ID / UID','Field 2 — e.g. Server / Region (optional)'];
@@ -783,9 +758,7 @@ function entryFieldsHTML(idx,desc,required,minFields,customPlaceholders){
     +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addEntryField('+idx+')">+ Add another field</button>'
     +'</div>';
 }
-
 var entryFieldCounts={};
-// ADJ4: reads data-fields so Platform Engagement (1 field) correctly generates Field 2 next
 function initEntry(idx){
   var c=document.getElementById('entryContainer_'+idx);
   entryFieldCounts[idx]=c&&c.dataset.fields?parseInt(c.dataset.fields):2;
@@ -796,7 +769,6 @@ function addEntryField(idx){
   var inp=document.createElement('input');inp.type='text';inp.id='ef'+c+'_'+idx;inp.placeholder='Field '+c+' (optional)';
   cont.appendChild(inp);
 }
-
 function mtuFieldsHTML(idx){
   return '<div style="margin-bottom:14px;">'
     +'<label class="field-label">Login Information Required <span class="required">*</span></label>'
@@ -808,7 +780,6 @@ function mtuFieldsHTML(idx){
     +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addEntryField('+idx+')">+ Add another field</button>'
     +'</div>';
 }
-
 function denomHTML(idx,showKeyToggle,optional){
   return '<div style="margin-bottom:14px;">'
     +'<label class="field-label">Denominations '+(optional?'<span class="optional-tag">optional</span>':'<span class="required">*</span>')+'</label>'
@@ -841,7 +812,6 @@ function applyAllChange(idx){
     setTimeout(function(){var rds=row.querySelector('select[id^="dDS_"],input[id^="dDS_"]');if(rds&&rds.value!==dsV)rds.value=dsV;},50);
   });
 }
-
 function addDenom(idx){
   denomCounts[idx]=(denomCounts[idx]||0)+1;var n=denomCounts[idx];
   var row=document.createElement('div');row.className='denom-row';row.id='dRow_'+idx+'_'+n;
@@ -851,7 +821,6 @@ function addDenom(idx){
   ptWrap.appendChild(pt);
   var dsCell=document.createElement('div');dsCell.id='dDSCell_'+idx+'_'+n;renderDSField(idx,n,'',dsCell);
   var amt=document.createElement('input');amt.type='text';amt.className='denom-amt';amt.id='dAmt_'+idx+'_'+n;amt.placeholder='e.g. 100';
-  // ADJ5: tip div for Duration/Months warning
   var tipDiv=document.createElement('div');tipDiv.id='dTip_'+idx+'_'+n;
   tipDiv.style.cssText='display:none;font-size:11px;color:#92640a;background:#fffbeb;border-left:3px solid #f59e0b;padding:6px 10px;border-radius:0 6px 6px 0;line-height:1.5;margin-top:-2px;';
   tipDiv.textContent='Note: Only 1 month can be selected per denomination.';
@@ -862,8 +831,6 @@ function addDenom(idx){
   $('denomList_'+idx).appendChild(tipDiv);
   pt.addEventListener('change',function(){renderDSField(idx,n,pt.value,$('dDSCell_'+idx+'_'+n));});
 }
-
-// ADJ5: hide tip on type change; show when Duration+Months
 function renderDSField(idx,n,ptVal,cell){
   var tip=document.getElementById('dTip_'+idx+'_'+n);if(tip)tip.style.display='none';
   cell.innerHTML='';
@@ -886,7 +853,6 @@ function renderDSField(idx,n,ptVal,cell){
     cell.style.position='relative';cell.className='denom-sel-wrap';cell.appendChild(sel);
   }
 }
-
 var tabRefUrls={},tabRefImgs={};
 function refUrlKey(e,idx){if(e.key==='Enter'){e.preventDefault();commitRefUrl(idx);}}
 function handleRefPaste(e,idx){
@@ -928,27 +894,20 @@ function renderRefImgs(idx){
   });
 }
 function removeRefImg(idx,i){if(tabRefImgs[idx])tabRefImgs[idx].splice(i,1);renderRefImgs(idx);}
-
-// BUG1 FIX: var denoms declared at top — no mid-function wipe possible
 function collectTabData(idx){
   var prod=selL3[idx],dm=DELIVERY_MAP[prod]||{};
   var delivSel=document.querySelector('input[name="delivery_'+idx+'"]:checked');
   var delivery=delivSel?delivSel.value:(dm.methods&&dm.methods.length===1?dm.methods[0]:'');
-
-  var denoms=[];  // declared once, at the top
-
+  var denoms=[];
   var keyCheck=$('keyCheck_'+idx);
   var giftCardAmtEl=$('giftCardAmt_'+idx);
   var isGiftCardLocked=!!giftCardAmtEl;
   var isKey=isGiftCardLocked?true:(keyCheck?keyCheck.checked:false);
-
   if(isGiftCardLocked&&giftCardAmtEl.value.trim())
     denoms.push({productType:'Gift Cards',dataset:'Key',amount:giftCardAmtEl.value.trim()});
-
   var prodNameEl=document.getElementById('prodName_'+idx);
   if(prodNameEl&&prodNameEl.value.trim())
     denoms.push({productType:'Product Name',dataset:'',amount:prodNameEl.value.trim()});
-
   if(!isKey||isGiftCardLocked){
     var denomList=$('denomList_'+idx);
     if(denomList)denomList.querySelectorAll('.denom-row').forEach(function(row){
@@ -960,27 +919,21 @@ function collectTabData(idx){
       else{if(amt&&amt.value.trim())denoms.push({productType:ptVal,dataset:ds?ds.value:'',amount:amt.value.trim()});}
     });
   }
-
   var acct=document.querySelector('input[name="acctType_'+idx+'"]:checked');
-
-  // ADJ2: Gift Cards platform from select element
   var gcPlatSelect=document.getElementById('gcPlatformSelect_'+idx);
   var gcPlat='';
   if(gcPlatSelect&&gcPlatSelect.value)
     gcPlat=gcPlatSelect.value==='Others'?(document.getElementById('gcOthersInput_'+idx)||{}).value||'Others':gcPlatSelect.value;
-
   var platChecks=Array.from(document.querySelectorAll('input[name="plat_'+idx+'"]:checked')).map(function(i){return i.value;});
   if(gcPlat&&!platChecks.length)platChecks=[gcPlat];
   var pcPlat=Array.from(document.querySelectorAll('input[name="pcPlat_'+idx+'"]:checked')).map(function(i){return i.value;});
   var cross=$('crossPlat_'+idx);
   var plat=pcPlat.length?platChecks.map(function(p){return p==='PC'?'PC ('+pcPlat.join(', ')+')':p;}).join(', '):platChecks.join(', ');
   var crossStr=cross&&cross.checked?plat+' (Cross Platform: Shared Key)':plat+(plat?' (Separate Key per Platform)':'');
-
   var ef=[];
   for(var ei=1;ei<=10;ei++){var ef_el=document.getElementById('ef'+ei+'_'+idx);if(ef_el&&ef_el.value.trim())ef.push(ef_el.value.trim());}
   var tiers=[];
   if(tabTiers[idx])Object.keys(tabTiers[idx]).forEach(function(tid){var r=tabTiers[idx][tid];if(r&&r.length)tiers.push(r.map(function(x){return x.value;}).join(', '));});
-
   return {
     submissionId:'G2G-'+Date.now()+'-'+idx,timestamp:new Date().toISOString(),
     sellerUsername:$('sellerUsername').value.trim(),sellerEmail:$('sellerEmail').value.trim(),
@@ -997,7 +950,6 @@ function collectTabData(idx){
     refImages:(tabRefImgs[idx]||[]).map(function(f){return f.name;}).join(', ')
   };
 }
-
 function submitTab(idx){
   var brand=($('tabBrand_'+idx)||{}).value||'';
   if(!brand.trim()){alert('Please enter a Brand Name.');return;}
@@ -1014,7 +966,6 @@ function submitTab(idx){
     })
     .catch(function(){if(btn){btn.disabled=false;btn.textContent='Submit '+selL3[idx]+' →';}alert('Submission failed. Please check your connection and try again.');});
 }
-
 function goToStep4(){
   $('step3Wrap').classList.add('hidden');$('step4Wrap').classList.remove('hidden');
   $('pstep3').classList.remove('active');$('pstep3').classList.add('done');$('pstep4').classList.add('active');
@@ -1022,7 +973,6 @@ function goToStep4(){
   $('doneSummaryText').innerHTML='All <strong>'+selL3.length+'</strong> product request'+(selL3.length>1?'s have':' has')+' been sent to the BD team for review. You\'ll be notified at <strong>'+esc($('sellerEmail').value)+'</strong>.';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-
 function resetAll(){
   selL1=[];selL2=[];selL3=[];activeTab=0;submittedTabs=[];tabStates={};tabRegions={};tabTiers={};tierCounters={};denomCounts={};entryFieldCounts={};tabRefUrls={};tabRefImgs={};
   $('step4Wrap').classList.add('hidden');$('step3Wrap').classList.add('hidden');$('step2Wrap').classList.add('hidden');$('step1Wrap').classList.remove('hidden');
@@ -1032,19 +982,18 @@ function resetAll(){
   ['pstep1','pstep2','pstep3','pstep4'].forEach(function(id){$(id).classList.remove('active','done');});
   $('pstep1').classList.add('active');$('progressFill').style.width='8%';window.scrollTo({top:0,behavior:'smooth'});
 }
-
+// Step 2 → Step 1
 function backToStep1(){
   $('step2Wrap').classList.add('hidden');$('step1Wrap').classList.remove('hidden');
   $('pstep2').classList.remove('active','done');$('pstep1').classList.remove('done');$('pstep1').classList.add('active');
-  $('progressFill').style.width='8%';  // BUG fix: was 25%, correct value is 8%
-  window.scrollTo({top:0,behavior:'smooth'});
+  $('progressFill').style.width='8%';window.scrollTo({top:0,behavior:'smooth'});
 }
+// Step 3 → Step 2
 function backToStep2(){
   $('step3Wrap').classList.add('hidden');$('step2Wrap').classList.remove('hidden');
   $('pstep3').classList.remove('active','done');$('pstep2').classList.remove('done');$('pstep2').classList.add('active');
-  $('progressFill').style.width='45%';window.scrollTo({top:0,behavior:'smooth'});
+  $('progressFill').style.width='25%';window.scrollTo({top:0,behavior:'smooth'});
 }
-
 loadFormConfig(null);
 $('sellerUsername').addEventListener('input',function(){this.classList.remove('field-error');$('usernameErr').style.display='none';});
 $('sellerEmail').addEventListener('input',function(){this.classList.remove('field-error');$('emailErr').style.display='none';});
