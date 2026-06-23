@@ -386,9 +386,8 @@ function getAvailableCats(){
   var cats={};selL1.forEach(function(l1){Object.keys(TREE[l1]||{}).forEach(function(c){cats[c]=true;});});return cats;
 }
 function getAvailableProds(){
-  // Scan all TREE branches so shared categories (e.g. Gaming) always surface
-  // products from every branch that contains them.
-  var prods={};Object.keys(TREE).forEach(function(l1){selL2.forEach(function(cat){(TREE[l1]&&TREE[l1][cat]||[]).forEach(function(p){prods[p]=true;});});});return prods;
+  // Only scan selected L1 branches — products are scoped to what the user has selected
+  var prods={};selL1.forEach(function(l1){selL2.forEach(function(cat){(TREE[l1]&&TREE[l1][cat]||[]).forEach(function(p){prods[p]=true;});});});return prods;
 }
 // Drop stale selections when a parent layer changes (without wiping everything)
 function reconcileL2(){var av=getAvailableCats();selL2=selL2.filter(function(c){return av[c];});}
