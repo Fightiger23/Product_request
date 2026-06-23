@@ -172,16 +172,18 @@
   .stat-val.approved{color:var(--success);}
   .stat-val.rejected{color:var(--accent);}
 
+  /* ── TEAM TABS ── */
+  .team-filter-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .team-tabs{display:flex;gap:3px;background:var(--white);border:1px solid var(--border);border-radius:9px;padding:3px;}
+  .ttab{padding:6px 16px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;transition:all .15s;font-family:var(--font);white-space:nowrap;}
+  .ttab.active{background:var(--text);color:#fff;}
+  .ttab.active.t-main{background:var(--info);}
+  .ttab.active.t-secondary{background:var(--needinfo);}
+  .ttab.active.t-gpgc{background:var(--success);}
+  .ttab:not(.active):hover{color:var(--text);background:var(--bg);}
+
   /* ── TOOLBAR ── */
   .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
-  .filter-tabs{display:flex;gap:3px;background:var(--white);border:1px solid var(--border);border-radius:9px;padding:3px;}
-  .ftab{padding:6px 16px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;transition:all .15s;font-family:var(--font);white-space:nowrap;}
-  .ftab.active{background:var(--text);color:#fff;}
-  .ftab.active.f-pending{background:var(--warn);}
-  .ftab.active.f-needinfo{background:var(--needinfo);}
-  .ftab.active.f-approved{background:var(--success);}
-  .ftab.active.f-rejected{background:var(--accent);}
-  .ftab:not(.active):hover{color:var(--text);background:var(--bg);}
   .toolbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
   .filter-select{background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:12px;font-weight:600;padding:7px 10px;outline:none;cursor:pointer;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8fa8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:26px;}
   .filter-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(227,0,27,.08);}
@@ -558,22 +560,26 @@
       </div>
     </div>
 
-    <!-- TOOLBAR — status tabs + team/date dropdowns + search -->
-    <div class="toolbar">
-      <div class="filter-tabs">
-        <button class="ftab active"    onclick="setFilter('all',this)">All</button>
-        <button class="ftab f-pending" onclick="setFilter('Pending',this)">Pending</button>
-        <button class="ftab f-needinfo" onclick="setFilter('Need Info',this)">Need Info</button>
-        <button class="ftab f-approved" onclick="setFilter('Approved',this)">Approved</button>
-        <button class="ftab f-rejected" onclick="setFilter('Rejected',this)">Rejected</button>
+    <!-- TEAM TABS -->
+    <div class="team-filter-row">
+      <div class="team-tabs">
+        <button class="ttab active"      onclick="setTeamFilter('all',this)">All Teams</button>
+        <button class="ttab t-main"      onclick="setTeamFilter('Main Market',this)">🏪 Main Market</button>
+        <button class="ttab t-secondary" onclick="setTeamFilter('Secondary Market',this)">🎮 Secondary Market</button>
+        <button class="ttab t-gpgc"      onclick="setTeamFilter('Rent Time Services (GPGC)',this)">🕹️ Rent Time (GPGC)</button>
       </div>
+    </div>
+
+    <!-- TOOLBAR — progress dropdown + date dropdown + search + refresh -->
+    <div class="toolbar">
+      <select class="filter-select" id="statusSelect" onchange="setFilterFromSelect(this.value)" style="font-size:13px;padding:8px 28px 8px 12px;">
+        <option value="all">All Status</option>
+        <option value="Pending">⏳ Pending</option>
+        <option value="Need Info">🔍 Need Info</option>
+        <option value="Approved">✅ Approved</option>
+        <option value="Rejected">❌ Rejected</option>
+      </select>
       <div class="toolbar-right">
-        <select class="filter-select" id="teamSelect" onchange="setTeamFilter(this.value,null)">
-          <option value="all">All Teams</option>
-          <option value="Main Market">🏪 Main Market</option>
-          <option value="Secondary Market">🎮 Secondary Market</option>
-          <option value="Rent Time Services (GPGC)">🕹️ Rent Time (GPGC)</option>
-        </select>
         <select class="filter-select" id="dateSelect" onchange="setDateFromSelect(this.value)">
           <option value="all">All Time</option>
           <option value="today">Today</option>
@@ -930,14 +936,17 @@ function updateStats(){
 // ══════════════════════════════════════════════════════════════════════════════
 function setFilter(f,btn){
   currentFilter=f;
-  document.querySelectorAll('.ftab').forEach(function(b){ b.classList.remove('active'); });
-  if(btn) btn.classList.add('active');
+  var sel=$('statusSelect'); if(sel&&sel.value!==f) sel.value=f;
+  renderList();
+}
+function setFilterFromSelect(val){
+  currentFilter=val;
   renderList();
 }
 function setTeamFilter(team,btn){
   currentTeamFilter=team;
-  // Update select if called programmatically
-  var sel=$('teamSelect'); if(sel&&sel.value!==team) sel.value=team;
+  document.querySelectorAll('.ttab').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
   renderList();
 }
 // Returns the market team for a request — uses the stored marketTeam field if
