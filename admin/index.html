@@ -950,13 +950,15 @@ function setTeamFilter(team,btn){
   renderList();
 }
 // Returns the market team for a request — uses the stored marketTeam field if
-// available (from Apps Script col 33), otherwise derives it from product fields.
+// available (from Apps Script), otherwise derives it from product type.
+// NOTE: Layer 1 is NOT used because the form sends multi-select values like
+// "Rent Time Services, Digital Products, ..." which makes layer1 unreliable.
+// Product Type is the source of truth: "Game Pal" / "Game Coaching" → GPGC.
 function getTeamInfo(r){
   var stored=(r.marketTeam||'').trim();
   if(stored) return stored;
-  var l1=(r.layer1||'').toLowerCase();
-  var pt=(r.productType||'').toLowerCase();
-  if(l1.indexOf('rent')>-1) return 'Rent Time Services (GPGC)';
+  var pt=(r.productType||'').trim().toLowerCase();
+  if(pt==='game pal'||pt==='game coaching') return 'Rent Time Services (GPGC)';
   if(pt.indexOf('game account')>-1||pt.indexOf('skin')>-1||pt.indexOf('boost')>-1
      ||pt.indexOf('coin')>-1||pt.indexOf('item')>-1) return 'Secondary Market';
   return 'Main Market';
