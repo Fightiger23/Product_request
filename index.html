@@ -242,7 +242,19 @@
   <!-- STEP 2: Select Products -->
   <div id="step2Wrap" class="hidden">
     <button class="back-btn" onclick="backToStep1()">← Back to user details</button>
-    <div class="card">
+    <!-- Secondary market product selector — hidden, never shown in standard flow -->
+    <div class="card hidden" id="secProdCard">
+      <div class="card-header">
+        <div class="card-icon">🎮</div>
+        <div>
+          <div class="card-title">Select Products <span class="required">*</span></div>
+          <div class="card-desc">Select the secondary market products you want to list. Each becomes a separate form tab.</div>
+        </div>
+      </div>
+      <div class="layer-grid" id="secProdGrid"></div>
+    </div>
+    <!-- Standard product type card (hidden when ?market=secondary) -->
+    <div class="card" id="l1Card">
       <div class="card-header">
         <div class="card-icon">🗂️</div>
         <div>
@@ -369,40 +381,55 @@ var datasetMap={
 var selL1=[],selL2=[],selL3=[],activeTab=0,submittedTabs=[],tabStates={};
 function $(id){return document.getElementById(id);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+// ── Helpers: compute what's currently available at each layer ─────────────
+function getAvailableCats(){
+  var cats={};selL1.forEach(function(l1){Object.keys(TREE[l1]||{}).forEach(function(c){cats[c]=true;});});return cats;
+}
+function getAvailableProds(){
+  // Scan all TREE branches so shared categories (e.g. Gaming) always surface
+  // products from every branch that contains them.
+  var prods={};Object.keys(TREE).forEach(function(l1){selL2.forEach(function(cat){(TREE[l1]&&TREE[l1][cat]||[]).forEach(function(p){prods[p]=true;});});});return prods;
+}
+// Drop stale selections when a parent layer changes (without wiping everything)
+function reconcileL2(){var av=getAvailableCats();selL2=selL2.filter(function(c){return av[c];});}
+function reconcileL3(){var av=getAvailableProds();selL3=selL3.filter(function(p){return av[p];});}
+// ─────────────────────────────────────────────────────────────────────────────
 function toggleLayer(layer,btn,val){
   btn.classList.toggle('selected');
   var arr=layer===1?selL1:layer===2?selL2:selL3;
   var idx=arr.indexOf(val);if(idx>-1)arr.splice(idx,1);else arr.push(val);
   btn.querySelector('.lb-check').textContent=btn.classList.contains('selected')?'✓':'';
-  if(layer===1){selL2=[];selL3=[];renderL2();}
-  if(layer===2){selL3=[];renderL3();}
-  if(layer===3)updateSummary();
+  if(layer===1){reconcileL2();reconcileL3();renderL2();renderL3();}
+  if(layer===2){reconcileL3();renderL3();}
+  if(layer===3){updateSummary();}
 }
 function renderL2(){
   var card=$('l2Card'),grid=$('l2Grid');
   if(!selL1.length){card.classList.add('hidden');$('l3Card').classList.add('hidden');$('selSummaryCard').classList.add('hidden');return;}
   card.classList.remove('hidden');
-  var cats={};selL1.forEach(function(l1){Object.keys(TREE[l1]||{}).forEach(function(c){cats[c]=true;});});
+  var cats=getAvailableCats();
   grid.innerHTML='';
   Object.keys(cats).forEach(function(cat){
-    var btn=document.createElement('button');btn.className='layer-btn';
-    btn.innerHTML='<span class="lb-check"></span>'+cat;
+    var sel=selL2.indexOf(cat)>-1;
+    var btn=document.createElement('button');btn.className='layer-btn'+(sel?' selected':'');
+    btn.innerHTML='<span class="lb-check">'+(sel?'✓':'')+'</span>'+cat;
     btn.onclick=function(){toggleLayer(2,btn,cat);};grid.appendChild(btn);
   });
-  $('l3Card').classList.add('hidden');$('selSummaryCard').classList.add('hidden');
 }
 function renderL3(){
   var card=$('l3Card'),grid=$('l3Grid');
   if(!selL2.length){card.classList.add('hidden');$('selSummaryCard').classList.add('hidden');return;}
   card.classList.remove('hidden');
-  var prods={};selL1.forEach(function(l1){selL2.forEach(function(cat){(TREE[l1]&&TREE[l1][cat]||[]).forEach(function(p){prods[p]=true;});});});
+  var prods=getAvailableProds();
+  grid.innerHTML='';
   grid.innerHTML='';
   Object.keys(prods).forEach(function(prod){
-    var btn=document.createElement('button');btn.className='layer-btn';
-    btn.innerHTML='<span class="lb-check"></span>'+prod;
+    var sel=selL3.indexOf(prod)>-1;
+    var btn=document.createElement('button');btn.className='layer-btn'+(sel?' selected':'');
+    btn.innerHTML='<span class="lb-check">'+(sel?'✓':'')+'</span>'+prod;
     btn.onclick=function(){toggleLayer(3,btn,prod);};grid.appendChild(btn);
   });
-  $('selSummaryCard').classList.add('hidden');
+  updateSummary();
 }
 function updateSummary(){
   var card=$('selSummaryCard'),tags=$('selectionTags'),btn=$('continueToFormsBtn');
@@ -421,7 +448,8 @@ function goToStep2(){
   if(!ok)return;
   $('step1Wrap').classList.add('hidden');$('step2Wrap').classList.remove('hidden');
   $('pstep1').classList.remove('active');$('pstep1').classList.add('done');$('pstep2').classList.add('active');
-  $('progressFill').style.width='25%';window.scrollTo({top:0,behavior:'smooth'});
+  $('progressFill').style.width='25%';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 // Step 2 → Step 3: validate product selection
 function goToStep3(){
@@ -452,6 +480,7 @@ function saveTabState(){
   tabStates[activeTab]=tabStates[activeTab]||{};Object.assign(tabStates[activeTab],s);
 }
 function renderTabContent(idx){
+  if(isSecondaryProd(selL3[idx])){renderSecondaryTabContent(idx);return;}
   var prod=selL3[idx],content=$('tabContent');
   var isDone=submittedTabs.indexOf(idx)>-1;
   if(isDone){
@@ -953,6 +982,7 @@ function collectTabData(idx){
   return {
     submissionId:'G2G-'+Date.now()+'-'+idx,timestamp:new Date().toISOString(),
     sellerUsername:$('sellerUsername').value.trim(),sellerEmail:$('sellerEmail').value.trim(),
+    team:getTeam(prod),
     productType:prod,layer1:selL1.join(', '),layer2:selL2.join(', '),
     brand:($('tabBrand_'+idx)||{}).value||'',productVariation:($('tabVariation_'+idx)||{}).value||'',
     region:(tabRegions[idx]||[]).map(function(r){return r.value;}).join(', '),
@@ -990,10 +1020,11 @@ function goToStep4(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function resetAll(){
-  selL1=[];selL2=[];selL3=[];activeTab=0;submittedTabs=[];tabStates={};tabRegions={};tabTiers={};tierCounters={};denomCounts={};entryFieldCounts={};tabRefUrls={};tabRefImgs={};
+  selL1=[];selL2=[];selL3=[];activeTab=0;submittedTabs=[];tabStates={};tabRegions={};tabTiers={};tierCounters={};denomCounts={};entryFieldCounts={};tabRefUrls={};tabRefImgs={};secExtraCounts={};secCurrCounts={};
   $('step4Wrap').classList.add('hidden');$('step3Wrap').classList.add('hidden');$('step2Wrap').classList.add('hidden');$('step1Wrap').classList.remove('hidden');
   $('l2Card').classList.add('hidden');$('l3Card').classList.add('hidden');$('selSummaryCard').classList.add('hidden');
   $('l1Grid').querySelectorAll('.layer-btn').forEach(function(b){b.classList.remove('selected');b.querySelector('.lb-check').textContent='';});
+  if($('l1Card'))$('l1Card').classList.remove('hidden');
   $('sellerUsername').value='';$('sellerEmail').value='';
   ['pstep1','pstep2','pstep3','pstep4'].forEach(function(id){$(id).classList.remove('active','done');});
   $('pstep1').classList.add('active');$('progressFill').style.width='8%';window.scrollTo({top:0,behavior:'smooth'});
@@ -1010,6 +1041,295 @@ function backToStep2(){
   $('pstep3').classList.remove('active','done');$('pstep2').classList.remove('done');$('pstep2').classList.add('active');
   $('progressFill').style.width='25%';window.scrollTo({top:0,behavior:'smooth'});
 }
+// ═══════════════════════════════════════════════════════════════════
+//  SECONDARY MARKET
+// ═══════════════════════════════════════════════════════════════════
+var SECONDARY_PRODS=['Game Account','Game Boosting','Game Coins','Game Items','Game Skins'];
+var GPGC_PRODS=['Game Coaching','Game Pal'];
+
+// Auto-detect team from product — no UI selector needed
+function getTeam(prod){
+  if(GPGC_PRODS.indexOf(prod)>-1)return 'GPGC';
+  if(SECONDARY_PRODS.indexOf(prod)>-1)return 'Secondary Market';
+  return 'Primary Market';
+}
+function isSecondaryProd(prod){return SECONDARY_PRODS.indexOf(prod)>-1;}
+
+function initSecondaryStep2(){
+  // Hide the standard hierarchy cards, show the flat secondary selector
+  $('l1Card').classList.add('hidden');
+  $('l2Card').classList.add('hidden');
+  $('l3Card').classList.add('hidden');
+  $('secProdCard').classList.remove('hidden');
+  var grid=$('secProdGrid');grid.innerHTML='';
+  SECONDARY_PRODS.forEach(function(prod){
+    var sel=selL3.indexOf(prod)>-1;
+    var btn=document.createElement('button');btn.className='layer-btn'+(sel?' selected':'');
+    btn.innerHTML='<span class="lb-check">'+(sel?'✓':'')+'</span>'+prod;
+    btn.onclick=function(){
+      btn.classList.toggle('selected');
+      btn.querySelector('.lb-check').textContent=btn.classList.contains('selected')?'✓':'';
+      var i=selL3.indexOf(prod);if(i>-1)selL3.splice(i,1);else selL3.push(prod);
+      updateSummary();
+    };
+    grid.appendChild(btn);
+  });
+  updateSummary();
+}
+
+// ── Secondary market: tab content router ────────────────────────────
+function renderSecondaryTabContent(idx){
+  var prod=selL3[idx],content=$('tabContent');
+  var isDone=submittedTabs.indexOf(idx)>-1;
+  if(isDone){
+    var ni=idx+1,allDone=submittedTabs.length===selL3.length;
+    content.innerHTML='<div class="tab-submitted-banner">'
+      +'<div><div class="tab-submitted-banner-text">✅ '+esc(prod)+' submitted</div>'
+      +'<div class="tab-submitted-banner-sub">Sent to secondary market team. You\'ll be notified at '+esc($('sellerEmail').value)+'</div></div>'
+      +(allDone?'<button class="tab-submit-btn" onclick="goToStep4()">View summary →</button>'
+        :(ni<selL3.length?'<button class="next-tab-btn" onclick="switchTab('+ni+')">Next: '+esc(selL3[ni])+' →</button>':''))
+      +'</div>';
+    return;
+  }
+  var h='';
+  if(prod==='Game Account')    h=buildSecGameAccount(idx);
+  else if(prod==='Game Boosting') h=buildSecGameBoosting(idx);
+  else if(prod==='Game Coins')    h=buildSecGameCoins(idx);
+  else if(prod==='Game Items')    h=buildSecGameItems(idx);
+  else if(prod==='Game Skins')    h=buildSecGameSkins(idx);
+  h+='<div class="tab-submit-row">'
+    +'<div class="tab-progress-info">Form '+(idx+1)+' of '+selL3.length+' &nbsp;·&nbsp; '+esc(prod)+'</div>'
+    +'<button class="tab-submit-btn" onclick="submitSecondaryTab('+idx+')">Submit '+esc(prod)+' →</button>'
+    +'</div>';
+  content.innerHTML=h;
+}
+
+// ── Field builders ──────────────────────────────────────────────────
+function secField(id,label,placeholder,required,hint){
+  return '<div class="field-block">'
+    +'<label class="field-label">'+label+' '+(required?'<span class="required">*</span>':'<span class="optional-tag">optional</span>')+'</label>'
+    +(hint?'<div style="font-size:11px;color:var(--muted);margin-bottom:5px;">'+hint+'</div>':'')
+    +'<input type="text" id="'+id+'" placeholder="'+placeholder+'">'
+    +'</div>';
+}
+function secRow(fields){return '<div class="two-col" style="margin-bottom:14px;">'+fields+'</div>';}
+function secSingle(fields){return '<div style="margin-bottom:14px;">'+fields+'</div>';}
+
+function secOptRow(idx,opts){
+  // opts: array of {id, label, placeholder}
+  var cols=opts.length>1?'two-col':'';
+  var h='<div class="'+(opts.length>2?'':'two-col')+'" style="margin-bottom:14px;gap:14px;display:grid;grid-template-columns:repeat('+opts.length+',1fr);">';
+  opts.forEach(function(o){h+=secField(o.id+'_'+idx,o.label,o.placeholder,false);});
+  return h+'</div>';
+}
+
+function secDeliveryBlock(idx,methods){
+  var h='<div style="margin-bottom:14px;">'
+    +'<label class="field-label">Delivery Method <span class="required">*</span></label>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Select all that apply</div>'
+    +'<div class="options-grid" style="margin-bottom:12px;">';
+  methods.forEach(function(m){
+    h+='<label class="option"><input type="checkbox" name="secDeliv_'+idx+'" value="'+esc(m)+'" onchange="toggleSecDelivInfo('+idx+')"> '+esc(m)+'</label>';
+  });
+  h+='</div>'
+    +'<div id="secDelivInfo_'+idx+'" class="hidden" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:4px;">'
+    +'<div style="font-size:12px;font-weight:600;color:var(--label);margin-bottom:10px;">Buyer entry fields</div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;">'
+    +'<input type="text" id="secCharName_'+idx+'" placeholder="Character Name (optional)">'
+    +'<input type="text" id="secUid_'+idx+'" placeholder="UID (optional)">'
+    +'<input type="text" id="secUname_'+idx+'" placeholder="Username (optional)">'
+    +'</div></div></div>';
+  return h;
+}
+
+// Single-select delivery (radio) with required buyer entry fields
+function secDeliveryBlockSingle(idx,methods){
+  var h='<div style="margin-bottom:14px;">'
+    +'<label class="field-label">Delivery Method <span class="required">*</span></label>'
+    +'<div class="options-grid" style="margin-bottom:12px;">';
+  methods.forEach(function(m){
+    h+='<label class="option"><input type="radio" name="secDeliv_'+idx+'" value="'+esc(m)+'" onchange="toggleSecDelivInfo('+idx+')"> '+esc(m)+'</label>';
+  });
+  h+='</div>'
+    +'<div id="secDelivInfo_'+idx+'" class="hidden" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:4px;">'
+    +'<div style="font-size:12px;font-weight:600;color:var(--label);margin-bottom:10px;">Buyer entry fields</div>'
+    +'<div style="display:flex;flex-direction:column;gap:10px;">'
+    +'<div class="field-block"><label class="field-label" style="font-size:11px;">Character Name <span class="required">*</span></label>'
+    +'<input type="text" id="secCharName_'+idx+'" placeholder="e.g. PlayerOne"></div>'
+    +'<div class="field-block"><label class="field-label" style="font-size:11px;">UID <span class="required">*</span></label>'
+    +'<input type="text" id="secUid_'+idx+'" placeholder="e.g. 123456789"></div>'
+    +'<div class="field-block"><label class="field-label" style="font-size:11px;">Username <span class="required">*</span></label>'
+    +'<input type="text" id="secUname_'+idx+'" placeholder="e.g. user#1234"></div>'
+    +'</div></div></div>';
+  return h;
+}
+
+// Dynamic currency names block for Game Coins
+var secCurrCounts={};
+function secCurrNamesBlock(idx){
+  return '<div style="margin-bottom:14px;">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">'
+    +'<label class="field-label">Currency Name <span class="required">*</span></label>'
+    +'<button type="button" class="btn-add" style="width:auto;padding:4px 12px;font-size:11px;margin:0;" onclick="addSecCurrName('+idx+')">+ Add currency</button>'
+    +'</div>'
+    +'<div id="secCurrList_'+idx+'" style="display:flex;flex-direction:column;gap:8px;">'
+    +'<input type="text" id="secCurr1_'+idx+'" placeholder="e.g. Gold, Diamonds, Silver">'
+    +'</div></div>';
+}
+function addSecCurrName(idx){
+  secCurrCounts[idx]=(secCurrCounts[idx]||0)+1;var n=secCurrCounts[idx]+1;
+  var list=$('secCurrList_'+idx);if(!list)return;
+  var row=document.createElement('div');row.style.cssText='display:flex;gap:8px;align-items:center;';
+  var inp=document.createElement('input');inp.type='text';inp.id='secCurr'+n+'_'+idx;
+  inp.placeholder='e.g. Gems, Tokens';inp.style.flex='1';inp.style.fontFamily="'Inter',sans-serif";
+  var rm=document.createElement('button');rm.type='button';rm.className='btn-remove';rm.textContent='×';
+  rm.onclick=function(){row.remove();};
+  row.appendChild(inp);row.appendChild(rm);list.appendChild(row);
+}
+
+function toggleSecDelivInfo(idx){
+  var any=!!document.querySelector('input[name="secDeliv_'+idx+'"]:checked');
+  var w=$('secDelivInfo_'+idx);if(w)w.classList.toggle('hidden',!any);
+}
+
+// ── Dynamic add/delete extra fields ────────────────────────────────
+var secExtraCounts={};
+function secExtraBlock(idx){
+  return '<div class="divider"></div>'
+    +'<div style="margin-bottom:14px;">'
+    +'<label class="field-label">Additional Fields <span class="optional-tag">optional</span></label>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Add any extra information needed for this listing</div>'
+    +'<div id="secExtraList_'+idx+'" style="display:flex;flex-direction:column;gap:8px;"></div>'
+    +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addSecExtraField('+idx+')">+ Add another field</button>'
+    +'</div>';
+}
+function addSecExtraField(idx){
+  secExtraCounts[idx]=(secExtraCounts[idx]||0)+1;var n=secExtraCounts[idx];
+  var list=$('secExtraList_'+idx);if(!list)return;
+  var row=document.createElement('div');row.id='secExtraRow_'+idx+'_'+n;
+  row.style.cssText='display:flex;gap:8px;align-items:center;';
+  var inp=document.createElement('input');inp.type='text';inp.id='secExtra_'+idx+'_'+n;
+  inp.placeholder='e.g. Additional detail';inp.style.flex='1';
+  var rm=document.createElement('button');rm.type='button';rm.className='btn-remove';rm.textContent='×';
+  rm.onclick=function(){row.remove();};
+  row.appendChild(inp);row.appendChild(rm);list.appendChild(row);
+}
+
+// ── Per-product form builders ──────────────────────────────────────
+
+function buildSecGameAccount(idx){
+  return secSingle(secField('secGameName_'+idx,'Game Name','e.g. World of Warcraft, Lost Ark, FFXIV',true))
+    +secOptRow(idx,[
+      {id:'secRegion',label:'Region',placeholder:'e.g. US, EU, SEA, Global'},
+      {id:'secServer',label:'Platform / Server',placeholder:'e.g. Stormrage, Aether'}
+    ])
+    +secSingle(secField('secUrl_'+idx,'URL','https://...',false));
+}
+
+function buildSecGameBoosting(idx){
+  return secSingle(secField('secGameName_'+idx,'Game Name','e.g. World of Warcraft, Valorant, Lost Ark',true))
+    +secRow(
+      secField('secProdName_'+idx,'Product Name / Boosting Type','Rank Boost',true)
+      +secField('secProdInfo_'+idx,'Product Info','e.g. Leveling, Raid, Dungeon',false)
+    )
+    +secSingle(secField('secRegion_'+idx,'Region','e.g. US, EU, SEA',false))
+    +secSingle(secField('secUrl_'+idx,'URL','https://...',false));
+}
+
+function buildSecGameCoins(idx){
+  return secSingle(secField('secGameName_'+idx,'Game Name','e.g. World of Warcraft, Albion Online',true))
+    +secCurrNamesBlock(idx)
+    +secSingle(secField('secCurrUnits_'+idx,'Currency Units','e.g. Per unit, \'k\' for thousands, \'Mil\' for millions, \'B\' for billions',true))
+    +secOptRow(idx,[
+      {id:'secRegion',label:'Region',placeholder:'e.g. US, EU, SEA'},
+      {id:'secServer',label:'Platform / Server',placeholder:'e.g. Stormrage, Aether'}
+    ])
+    +secDeliveryBlockSingle(idx,['F2F','Auction House','Mail','Guild Bank'])
+    +secSingle(secField('secUrl_'+idx,'URL','https://...',false));
+}
+
+function buildSecGameItems(idx){
+  return secSingle(secField('secGameName_'+idx,'Game Name','e.g. World of Warcraft, Path of Exile',true))
+    +secRow(
+      secField('secItemName_'+idx,'Item Name','e.g. Excalibur, Shadow Blade',true)
+      +secField('secProdInfo_'+idx,'Product Info','e.g. Dagger, Sword, Axe',true)
+    )
+    +secOptRow(idx,[
+      {id:'secRegion',label:'Region',placeholder:'e.g. US, EU, SEA'},
+      {id:'secServer',label:'Platform / Server',placeholder:'e.g. Stormrage, Aether'}
+    ])
+    +secDeliveryBlockSingle(idx,['F2F','Auction House','Mail','Gifting','Guild Bank'])
+    +secSingle(secField('secUrl_'+idx,'URL','https://...',false));
+}
+
+function buildSecGameSkins(idx){
+  return secSingle(secField('secGameName_'+idx,'Game Name','e.g. League of Legends, Valorant, Fortnite',true))
+    +secSingle(secField('secSkinName_'+idx,'Skin Name','e.g. Dragon Slayer, Shadow Knight',true))
+    +secOptRow(idx,[
+      {id:'secRegion',label:'Region',placeholder:'e.g. US, EU, SEA, Global'},
+      {id:'secServer',label:'Platform / Server',placeholder:'e.g. PC, Xbox, PlayStation'}
+    ])
+    +secSingle(secField('secUrl_'+idx,'URL','https://...',false));
+}
+
+// ── Secondary market data collection & submit ───────────────────────
+function collectSecondaryTabData(idx){
+  var prod=selL3[idx];
+  var delivChecked=Array.from(document.querySelectorAll('input[name="secDeliv_'+idx+'"]:checked')).map(function(c){return c.value;});
+  function v(id){var el=document.getElementById(id+'_'+idx);return el?el.value.trim():'';}
+  return {
+    submissionId:'G2G-SEC-'+Date.now()+'-'+idx,
+    timestamp:new Date().toISOString(),
+    sellerUsername:$('sellerUsername').value.trim(),
+    sellerEmail:$('sellerEmail').value.trim(),
+    team:getTeam(prod),
+    productType:prod,
+    gameName:v('secGameName'),
+    productName:v('secProdName'),
+    productInfo:v('secProdInfo'),
+    itemName:v('secItemName'),
+    skinName:v('secSkinName'),
+    currencyNames:(function(){
+      var list=$('secCurrList_'+idx);
+      if(!list)return v('secCurr1');
+      return Array.from(list.querySelectorAll('input[type="text"]')).map(function(i){return i.value.trim();}).filter(Boolean).join(', ');
+    })(),
+    currencyUnits:v('secCurrUnits'),
+    region:v('secRegion'),
+    server:v('secServer'),
+    url:v('secUrl'),
+    deliveryMethod:delivChecked.join(', '),
+    characterName:v('secCharName'),
+    uid:v('secUid'),
+    username:v('secUname'),
+    refLink:(tabRefUrls[idx]||[]).join(' | '),
+    extraFields:(function(){
+      var extras=[];
+      for(var ei=1;ei<=(secExtraCounts[idx]||0);ei++){
+        var el=document.getElementById('secExtra_'+idx+'_'+ei);
+        if(el&&el.value.trim())extras.push(el.value.trim());
+      }
+      return extras.join(' | ');
+    })()
+  };
+}
+
+function submitSecondaryTab(idx){
+  var gn=document.getElementById('secGameName_'+idx);
+  if(!gn||!gn.value.trim()){alert('Please enter the Game Name.');return;}
+  var payload=collectSecondaryTabData(idx);
+  var btn=document.querySelector('.tab-submit-btn');if(btn){btn.disabled=true;btn.textContent='Submitting...';}
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(){
+      if(submittedTabs.indexOf(idx)===-1)submittedTabs.push(idx);
+      var pct=Math.round(60+(submittedTabs.length/selL3.length)*35);
+      $('progressFill').style.width=pct+'%';updateTabProgress();renderTabBar();renderTabContent(idx);
+      if(submittedTabs.length===selL3.length)setTimeout(goToStep4,1200);
+    })
+    .catch(function(){if(btn){btn.disabled=false;btn.textContent='Submit '+selL3[idx]+' →';}alert('Submission failed. Please check your connection and try again.');});
+}
+// ═══════════════════════════════════════════════════════════════════
+
 function onAcctTypeChange(idx){
   var sel=document.querySelector('input[name="acctType_'+idx+'"]:checked');
   var wrap=document.getElementById('acctProductName_'+idx);
