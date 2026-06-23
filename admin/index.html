@@ -173,7 +173,7 @@
   .stat-val.rejected{color:var(--accent);}
 
   /* ── TOOLBAR ── */
-  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
   .filter-tabs{display:flex;gap:3px;background:var(--white);border:1px solid var(--border);border-radius:9px;padding:3px;}
   .ftab{padding:6px 16px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;transition:all .15s;font-family:var(--font);white-space:nowrap;}
   .ftab.active{background:var(--text);color:#fff;}
@@ -182,42 +182,29 @@
   .ftab.active.f-approved{background:var(--success);}
   .ftab.active.f-rejected{background:var(--accent);}
   .ftab:not(.active):hover{color:var(--text);background:var(--bg);}
-  .toolbar-right{display:flex;align-items:center;gap:8px;}
+  .toolbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .filter-select{background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:12px;font-weight:600;padding:7px 10px;outline:none;cursor:pointer;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8fa8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:26px;}
+  .filter-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(227,0,27,.08);}
+  .custom-date-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:9px;}
+  .custom-date-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+  .date-input{background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:12px;padding:6px 10px;outline:none;transition:border-color .15s;cursor:pointer;}
+  .date-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(227,0,27,.08);}
+  .date-clear{background:none;border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;font-family:var(--font);padding:4px 10px;transition:all .15s;}
+  .date-clear:hover{color:var(--accent);border-color:var(--accent);}
 
-  /* ── TEAM TABS ── */
-  .team-filter-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
-  .team-tabs{display:flex;gap:3px;background:var(--white);border:1px solid var(--border);border-radius:9px;padding:3px;}
-  .ttab{padding:6px 16px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;transition:all .15s;font-family:var(--font);white-space:nowrap;}
-  .ttab.active{background:var(--text);color:#fff;}
-  .ttab.active.t-main{background:var(--info);}
-  .ttab.active.t-secondary{background:var(--needinfo);}
-  .ttab.active.t-gpgc{background:var(--success);}
-  .ttab:not(.active):hover{color:var(--text);background:var(--bg);}
+  /* ── TEAM BADGE ── */
   .team-badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;white-space:nowrap;margin-left:4px;}
   .team-badge.main{background:var(--info-light);color:var(--info);border:1px solid var(--info-border);}
   .team-badge.secondary{background:var(--needinfo-light);color:var(--needinfo);border:1px solid var(--needinfo-border);}
   .team-badge.gpgc{background:var(--success-light);color:var(--success);border:1px solid var(--success-border);}
   .search-wrap{position:relative;}
   .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--muted);pointer-events:none;}
-  .search-input{width:240px;background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:13px;padding:8px 12px 8px 32px;outline:none;transition:border-color .15s,box-shadow .15s;}
+  .search-input{width:220px;background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:13px;padding:8px 12px 8px 32px;outline:none;transition:border-color .15s,box-shadow .15s;}
   .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(227,0,27,.08);}
   .search-input::placeholder{color:var(--muted);}
   .refresh-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--white);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--label);cursor:pointer;transition:all .15s;font-family:var(--font);}
   .refresh-btn:hover{border-color:var(--accent);color:var(--accent);}
   .refresh-btn.spinning svg{animation:spin .6s linear infinite;}
-
-  /* ── DATE FILTER ── */
-  .date-filter-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
-  .date-presets{display:flex;gap:3px;background:var(--white);border:1px solid var(--border);border-radius:9px;padding:3px;}
-  .dpre{padding:5px 13px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;transition:all .15s;font-family:var(--font);white-space:nowrap;}
-  .dpre.active{background:var(--text);color:#fff;}
-  .dpre:not(.active):hover{color:var(--text);}
-  .date-range{display:flex;align-items:center;gap:8px;}
-  .date-range span{font-size:12px;color:var(--muted);}
-  .date-input{background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:12px;padding:6px 10px;outline:none;transition:border-color .15s;cursor:pointer;}
-  .date-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(227,0,27,.08);}
-  .date-clear{background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;font-family:var(--font);font-weight:600;padding:0 4px;}
-  .date-clear:hover{color:var(--accent);}
 
   /* ── CARDS ── */
   .req-list{display:flex;flex-direction:column;gap:10px;}
@@ -274,14 +261,12 @@
   .key-badge{display:inline-block;background:#fff9e6;color:#92640a;border:1px solid #fde68a;border-radius:5px;font-size:11px;font-weight:700;padding:2px 9px;}
   .flag-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#92640a;background:#fef3c7;border:1px solid #fde68a;border-radius:4px;padding:1px 6px;margin-left:6px;}
 
-  /* CHECKABLE ITEMS */
-  .check-list{display:flex;flex-direction:column;gap:4px;}
-  .check-item{display:flex;align-items:center;gap:9px;padding:6px 10px;background:var(--white);border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;transition:background .1s;user-select:none;}
-  .check-item:hover{background:#f9fafb;}
-  .check-item input[type="checkbox"]{width:15px;height:15px;accent-color:var(--success);flex-shrink:0;cursor:pointer;pointer-events:none;}
-  .check-item.checked{background:var(--success-light);border-color:var(--success-border);}
-  .check-item.checked .ci-label{color:#166534;font-weight:600;}
-  .ci-label{flex:1;}
+  /* DENOM TABLE */
+  .denom-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .denom-table th{padding:5px 10px;background:var(--bg);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);text-align:left;}
+  .denom-table td{padding:6px 10px;border-bottom:1px solid var(--border);color:var(--text);}
+  .denom-table tbody tr:last-child td{border-bottom:none;}
+  .denom-table tbody tr:hover td{background:var(--bg);}
 
   /* DENOM GROUP */
   .denom-group-header{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;padding:5px 2px 3px;}
@@ -389,9 +374,11 @@
   }
 
   /* ── DARK MODE OVERRIDES ── */
-  html.dark .check-item:hover{background:#1f2233;}
-  html.dark .check-item.checked{background:rgba(0,168,107,.08);border-color:rgba(0,168,107,.25);}
   html.dark .rfield.flagged{background:rgba(217,119,6,.08);border-color:rgba(217,119,6,.25);}
+  html.dark .denom-table th{background:rgba(255,255,255,.04);}
+  html.dark .denom-table td{border-color:rgba(255,255,255,.06);}
+  html.dark .denom-table tbody tr:hover td{background:rgba(255,255,255,.03);}
+  html.dark .filter-select{color-scheme:dark;}
   html.dark .flag-field-item:hover{background:rgba(217,119,6,.06);}
   html.dark .flag-field-item.flagged{background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.3);}
   html.dark .flag-field-item.flagged .ffi-label{color:#fbbf24;}
@@ -571,26 +558,29 @@
       </div>
     </div>
 
-    <!-- TEAM FILTER -->
-    <div class="team-filter-row">
-      <div class="team-tabs">
-        <button class="ttab active"        onclick="setTeamFilter('all',this)">All Teams</button>
-        <button class="ttab t-main"        onclick="setTeamFilter('Main Market',this)">🏪 Main Market</button>
-        <button class="ttab t-secondary"   onclick="setTeamFilter('Secondary Market',this)">🎮 Secondary Market</button>
-        <button class="ttab t-gpgc"        onclick="setTeamFilter('Rent Time Services (GPGC)',this)">🕹️ Rent Time (GPGC)</button>
-      </div>
-    </div>
-
-    <!-- TOOLBAR -->
+    <!-- TOOLBAR — status tabs + team/date dropdowns + search -->
     <div class="toolbar">
       <div class="filter-tabs">
-        <button class="ftab active"              onclick="setFilter('all',this)">All</button>
-        <button class="ftab f-pending"           onclick="setFilter('Pending',this)">Pending</button>
-        <button class="ftab f-needinfo"          onclick="setFilter('Need Info',this)">Need Info</button>
-        <button class="ftab f-approved"          onclick="setFilter('Approved',this)">Approved</button>
-        <button class="ftab f-rejected"          onclick="setFilter('Rejected',this)">Rejected</button>
+        <button class="ftab active"    onclick="setFilter('all',this)">All</button>
+        <button class="ftab f-pending" onclick="setFilter('Pending',this)">Pending</button>
+        <button class="ftab f-needinfo" onclick="setFilter('Need Info',this)">Need Info</button>
+        <button class="ftab f-approved" onclick="setFilter('Approved',this)">Approved</button>
+        <button class="ftab f-rejected" onclick="setFilter('Rejected',this)">Rejected</button>
       </div>
       <div class="toolbar-right">
+        <select class="filter-select" id="teamSelect" onchange="setTeamFilter(this.value,null)">
+          <option value="all">All Teams</option>
+          <option value="Main Market">🏪 Main Market</option>
+          <option value="Secondary Market">🎮 Secondary Market</option>
+          <option value="Rent Time Services (GPGC)">🕹️ Rent Time (GPGC)</option>
+        </select>
+        <select class="filter-select" id="dateSelect" onchange="setDateFromSelect(this.value)">
+          <option value="all">All Time</option>
+          <option value="today">Today</option>
+          <option value="week">This Week</option>
+          <option value="month">This Month</option>
+          <option value="custom">Custom Range…</option>
+        </select>
         <div class="search-wrap">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5l2.5 2.5"/></svg>
           <input type="text" class="search-input" id="searchInput" placeholder="Search brand, seller, ID…" oninput="renderList()">
@@ -602,20 +592,13 @@
       </div>
     </div>
 
-    <!-- DATE FILTER -->
-    <div class="date-filter-row">
-      <div class="date-presets">
-        <button class="dpre active" onclick="setDatePreset('all',this)">All Time</button>
-        <button class="dpre" onclick="setDatePreset('today',this)">Today</button>
-        <button class="dpre" onclick="setDatePreset('week',this)">This Week</button>
-        <button class="dpre" onclick="setDatePreset('month',this)">This Month</button>
-      </div>
-      <div class="date-range">
-        <input type="date" class="date-input" id="dateFrom" onchange="onDateRangeChange()">
-        <span>—</span>
-        <input type="date" class="date-input" id="dateTo" onchange="onDateRangeChange()">
-        <button class="date-clear hidden" id="dateClearBtn" onclick="clearDateRange()">✕ Clear</button>
-      </div>
+    <!-- CUSTOM DATE ROW — only visible when Custom Range is selected -->
+    <div class="custom-date-row hidden" id="customDateRow">
+      <span class="custom-date-label">From</span>
+      <input type="date" class="date-input" id="dateFrom" onchange="onDateRangeChange()">
+      <span class="custom-date-label">to</span>
+      <input type="date" class="date-input" id="dateTo" onchange="onDateRangeChange()">
+      <button class="date-clear" id="dateClearBtn" onclick="clearDateRange()">✕ Clear</button>
     </div>
 
     <div id="listWrap"></div>
@@ -953,8 +936,8 @@ function setFilter(f,btn){
 }
 function setTeamFilter(team,btn){
   currentTeamFilter=team;
-  document.querySelectorAll('.ttab').forEach(function(b){ b.classList.remove('active'); });
-  if(btn) btn.classList.add('active');
+  // Update select if called programmatically
+  var sel=$('teamSelect'); if(sel&&sel.value!==team) sel.value=team;
   renderList();
 }
 // Returns the market team for a request — uses the stored marketTeam field if
@@ -985,7 +968,10 @@ function renderList(){
       ||(r.sellerUsername ||'').toLowerCase().includes(search)
       ||(r.sellerEmail    ||'').toLowerCase().includes(search)
       ||(r.productType    ||'').toLowerCase().includes(search)
-      ||(r.productVariation||'').toLowerCase().includes(search);
+      ||(r.productVariation||'').toLowerCase().includes(search)
+      ||(r.gameName        ||'').toLowerCase().includes(search)
+      ||(r.productName     ||'').toLowerCase().includes(search)
+      ||(r.serviceType     ||'').toLowerCase().includes(search);
     return mf&&mt&&ms&&matchesDateFilter(r);
   });
   if(!filtered.length){
@@ -1023,14 +1009,28 @@ denomArray.forEach(function(d){
   var team=getTeamInfo(r);
   var teamClass=getTeamClass(team);
 
+  // Team-aware title / subtitle / meta prefix
+  var cardTitle, cardSub, cardMeta;
+  if(team==='Secondary Market'){
+    cardTitle = r.gameName||r.brand||'';
+    cardSub   = r.productType||r.layer2||'';
+    cardMeta  = r.productType||'';
+  } else if(team==='Rent Time Services (GPGC)'){
+    cardTitle = r.gameName||r.brand||'';
+    cardSub   = r.serviceType||r.layer2||'';
+    cardMeta  = r.serviceType||r.layer2||'';
+  } else {
+    cardTitle = r.brand||'';
+    cardSub   = r.productVariation||'';
+    cardMeta  = r.deliveryMethod||'';
+  }
+
   // Header pills
-  var regionTokens=(r.region||r.customRegionSets||'').split(/[,|]/).map(function(x){return x.trim();}).filter(Boolean);
+  var regionTokens=(r.region||'').split(/[,|]/).map(function(x){return x.trim();}).filter(Boolean);
   var platforms=(r.platforms||'').split(/[,|]/).map(function(x){return x.trim();}).filter(Boolean).join(' / ');
   var pillsHtml='';
-  if(regionTokens.length) pillsHtml+='<span class="ds-pill">'+esc(regionTokens.join(' / '))+'</span>';
-  if(isKey){
-    pillsHtml+='<span class="ds-pill key">Key</span>';
-  }
+  if(regionTokens.length) pillsHtml+='<span class="ds-pill">'+esc(regionTokens.slice(0,3).join(' / ')+(regionTokens.length>3?' +more':''))+'</span>';
+  if(isKey) pillsHtml+='<span class="ds-pill key">Key</span>';
   pillsHtml+='<span class="team-badge '+teamClass+'">'+esc(team)+'</span>';
 
   // Action buttons by status
@@ -1067,51 +1067,40 @@ denomArray.forEach(function(d){
     historyHtml='<div class="history-badge">🔄 Resubmission — version '+esc(r.version)+' (original: '+esc(r.submissionId)+')</div>';
   }
 
-  // Region body
-  var regionHtml=regionTokens.length>1
-    ?rfieldChecklist('Region',regionTokens,sid+'_reg',flaggedFields)
-    :rfield('Region',regionTokens[0]||'',!regionTokens.length,null,flaggedFields);
+  // Region (plain text)
+  var regionHtml=rfield('Region',regionTokens.join(', ')||'',!regionTokens.length,null,flaggedFields);
 
-  // Denomination body
+  // Denominations — plain read-only table (Main Market only)
   var denomHtml;
   if(isKey){
     denomHtml=rfield('Denominations','',false,'<span class="key-badge">Key — no denominations</span>',flaggedFields);
-  } else if(denomGroupOrder.length===0){
+  } else if(!Array.isArray(r.denominations)||r.denominations.length===0){
     denomHtml=rfield('Denominations','',true,null,flaggedFields);
   } else {
-    var dBodyHtml='<div class="check-list">';
-    dBodyHtml+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:4px 10px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);margin-bottom:4px;">'
-      +'<span>Product Type</span><span>Dataset</span><span>Amount</span></div>';
-    var denomsToShow=Array.isArray(r.denominations)?r.denominations:[];
-    denomsToShow.forEach(function(d,i){
-      if(!d.amount) return;
-      var cid='ci_'+sid+'_den_'+i;
-      dBodyHtml+='<div class="check-item" id="wrap_'+cid+'" onclick="toggleCheckItem(\''+cid+'\')\" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">'
-        +'<input type="checkbox" id="'+cid+'" style="display:none;">'
-        +'<span class="ci-label">'+esc(d.productType||'—')+'</span>'
-        +'<span class="ci-label">'+esc(d.dataset||'—')+'</span>'
-        +'<span class="ci-label">'+esc(d.amount||'—')+'</span>'
-        +'</div>';
-    });
-    dBodyHtml+='</div>';
+    var denomsToShow=r.denominations.filter(function(d){return d.amount;});
     var isFlagged=flaggedFields.indexOf('Denominations')>-1;
-    denomHtml='<div class="rfield'+(isFlagged?' flagged':'')+'"><div class="rfield-label">Denominations'+(isFlagged?'<span class="flag-pill">⚑ Flagged</span>':'')+'</div><div class="rfield-val">'+dBodyHtml+'</div></div>';
+    var tHtml='<table class="denom-table"><thead><tr><th>Product Type</th><th>Dataset</th><th>Amount</th></tr></thead><tbody>';
+    denomsToShow.forEach(function(d){
+      tHtml+='<tr><td>'+esc(d.productType||'—')+'</td><td>'+esc(d.dataset||'—')+'</td><td>'+esc(d.amount||'—')+'</td></tr>';
+    });
+    tHtml+='</tbody></table>';
+    denomHtml='<div class="rfield'+(isFlagged?' flagged':'')+'"><div class="rfield-label">Denominations'+(isFlagged?'<span class="flag-pill">⚑ Flagged</span>':'')+'</div><div class="rfield-val">'+tHtml+'</div></div>';
   }
 
-  // Entry fields
+  // Entry fields (plain)
   var ef1=r.entryField1||'',ef2=r.entryField2||'',ef3=r.entryField3||'',ef4=r.entryField4||'',ef5=r.entryField5||'';
   var entryHtml='';
-  if(ef1) entryHtml+=rfieldCheck('Entry Field 1',ef1,sid+'_ef1',flaggedFields);
-  if(ef2) entryHtml+=rfieldCheck('Entry Field 2',ef2,sid+'_ef2',flaggedFields);
-  if(ef3) entryHtml+=rfieldCheck('Entry Field 3',ef3,sid+'_ef3',flaggedFields);
-  if(ef4) entryHtml+=rfieldCheck('Entry Field 4',ef4,sid+'_ef4',flaggedFields);
-  if(ef5) entryHtml+=rfieldCheck('Entry Field 5',ef5,sid+'_ef5',flaggedFields);
+  if(ef1) entryHtml+=rfield('Entry Field 1',ef1,false,null,flaggedFields);
+  if(ef2) entryHtml+=rfield('Entry Field 2',ef2,false,null,flaggedFields);
+  if(ef3) entryHtml+=rfield('Entry Field 3',ef3,false,null,flaggedFields);
+  if(ef4) entryHtml+=rfield('Entry Field 4',ef4,false,null,flaggedFields);
+  if(ef5) entryHtml+=rfield('Entry Field 5',ef5,false,null,flaggedFields);
   if(!ef1&&!ef2&&!ef3&&!ef4&&!ef5) entryHtml=rfield('Entry Fields','',true,null,flaggedFields);
 
-  var acctHtml=r.accountType?rfieldCheck('Account Type',r.accountType,sid+'_acct',flaggedFields):'';
+  var acctHtml=r.accountType?rfield('Account Type',r.accountType,false,null,flaggedFields):'';
   var crossHtml=r.crossPlatform==='Yes'?rfield('Cross-Platform','',false,'<span class="key-badge" style="background:#eff6ff;border-color:#bfdbfe;color:#0c447c;">Yes</span>',flaggedFields):'';
   var keyHtml=isKey?rfield('Key','',false,'<span class="key-badge">Yes — digital key product</span>',flaggedFields):'';
-  var reviewedInfo=r.reviewedBy?'Reviewed by '+r.reviewedBy+(r.reviewedAt?' · '+r.reviewedAt:''):'';
+  var reviewedInfo=r.reviewedAt?'Reviewed · '+r.reviewedAt:'';
 
   var urls=(r.refLink||'').split('|').map(function(u){return u.trim();}).filter(Boolean);
   var urlChips=urls.map(function(u){
@@ -1125,10 +1114,10 @@ denomArray.forEach(function(d){
         +'<span class="req-id">'+esc(r.submissionId||'')+'</span>'
         +'<div class="req-header-info">'
           +'<div class="req-title-row">'
-            +'<span class="req-brand">'+esc(r.brand||'')+'</span>'
-            +(r.productVariation?'<span class="req-variation">— '+esc(r.productVariation)+'</span>':'')
+            +'<span class="req-brand">'+esc(cardTitle)+'</span>'
+            +(cardSub?'<span class="req-variation">— '+esc(cardSub)+'</span>':'')
           +'</div>'
-          +'<div class="req-meta-row">'+esc(r.deliveryMethod||'')+' · '+esc(r.timestamp?String(r.timestamp).substring(0,16).replace('T',' '):'')+(r.sellerUsername?'<span style="margin-left:6px;color:var(--info)">@'+esc(r.sellerUsername)+'</span>':'')+(r.sellerEmail?'<span style="margin-left:4px;color:var(--muted)"> · '+esc(r.sellerEmail)+'</span>':'')+'</div>'
+          +'<div class="req-meta-row">'+esc(cardMeta||'')+' · '+esc(r.timestamp?String(r.timestamp).substring(0,16).replace('T',' '):'')+(r.sellerUsername?'<span style="margin-left:6px;color:var(--info)">@'+esc(r.sellerUsername)+'</span>':'')+(r.sellerEmail?'<span style="margin-left:4px;color:var(--muted)"> · '+esc(r.sellerEmail)+'</span>':'')+'</div>'
           +(pillsHtml?'<div class="req-dataset-row">'+pillsHtml+'</div>':'')
         +'</div>'
       +'</div>'
@@ -1142,24 +1131,55 @@ denomArray.forEach(function(d){
       +'<div class="seller-row"><div class="seller-avatar">'+initials+'</div>'
         +'<div><div class="seller-name">@'+esc(r.sellerUsername||'')+'</div>'
         +'<div class="seller-email">'+esc(r.sellerEmail||'')+'</div></div></div>'
-      +'<div class="review-fields">'
-        +rfield('Game Name',r.brand||'',!r.brand,null,flaggedFields)
-        +rfield('Series / Variation',r.productVariation||'',!r.productVariation,null,flaggedFields)
-        +regionHtml
-        +rfield('Delivery Method',r.deliveryMethod||'',!r.deliveryMethod,null,flaggedFields)
-        +denomHtml
-        +entryHtml
-        +acctHtml
-        +rfield('Platform',platforms||'',!platforms,null,flaggedFields)
-        +crossHtml
-        +keyHtml
-      +'</div>'
+      +buildCardFieldsHTML(r,sid,flaggedFields,team,{regionHtml:regionHtml,denomHtml:denomHtml,entryHtml:entryHtml,acctHtml:acctHtml,crossHtml:crossHtml,keyHtml:keyHtml,platforms:platforms})
       +(urlChips?'<div class="ref-section"><div class="ref-section-label">Reference URLs</div>'+urlChips+'</div>':'')
       +(r.refImages?'<div class="ref-section"><div class="ref-section-label">Reference Images</div><span style="font-size:12px;color:var(--label);">'+esc(r.refImages)+'</span></div>':'')
       +notesHtml
       +'<div class="action-row">'+(reviewedInfo?'<span class="reviewed-info">'+esc(reviewedInfo)+'</span>':'')+actionBtns+'</div>'
     +'</div>'
   +'</div>';
+}
+
+// ── TEAM-SPECIFIC CARD FIELDS ─────────────────────────────────────────────────
+function buildCardFieldsHTML(r,sid,flaggedFields,team,main){
+  if(team==='Secondary Market'){
+    return '<div class="review-fields">'
+      +rfield('Game Name',r.gameName||r.brand||'',!(r.gameName||r.brand),null,flaggedFields)
+      +rfield('Product Type',r.productType||'',!r.productType,null,flaggedFields)
+      +rfield('Product Name',r.productName||'',!r.productName,null,flaggedFields)
+      +rfield('Product Units',r.productUnits||'',!r.productUnits,null,flaggedFields)
+      +rfield('Product Info',r.productInfo||'',!r.productInfo,null,flaggedFields)
+      +rfield('Region',r.region||'',!r.region,null,flaggedFields)
+      +rfield('Server',r.server||'',!r.server,null,flaggedFields)
+      +rfield('Platform',r.platforms||'',!r.platforms,null,flaggedFields)
+      +rfield('Delivery Method',r.deliveryMethod||'',!r.deliveryMethod,null,flaggedFields)
+      +rfield('Character Name',r.characterName||'',!r.characterName,null,flaggedFields)
+      +rfield('UID',r.uid||'',!r.uid,null,flaggedFields)
+      +rfield('In-game Username',r.ingameUsername||'',!r.ingameUsername,null,flaggedFields)
+      +'</div>';
+  }
+  if(team==='Rent Time Services (GPGC)'){
+    return '<div class="review-fields">'
+      +rfield('Product Type',r.productType||'',!r.productType,null,flaggedFields)
+      +rfield('Game Name',r.gameName||r.brand||'',!(r.gameName||r.brand),null,flaggedFields)
+      +rfield('Product Variation',r.productVariation||'',!r.productVariation,null,flaggedFields)
+      +rfield('Region',r.region||'',!r.region,null,flaggedFields)
+      +rfield('Service Details',r.serviceDetails||'',!r.serviceDetails,null,flaggedFields)
+      +'</div>';
+  }
+  // Default — Main Market
+  return '<div class="review-fields">'
+    +rfield('Brand / Game Name',r.brand||'',!r.brand,null,flaggedFields)
+    +rfield('Series / Variation',r.productVariation||'',!r.productVariation,null,flaggedFields)
+    +main.regionHtml
+    +rfield('Delivery Method',r.deliveryMethod||'',!r.deliveryMethod,null,flaggedFields)
+    +main.denomHtml
+    +main.entryHtml
+    +main.acctHtml
+    +rfield('Platform',main.platforms||'',!main.platforms,null,flaggedFields)
+    +main.crossHtml
+    +main.keyHtml
+    +'</div>';
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1202,7 +1222,17 @@ function toggleCard(id){ var c=document.getElementById('card-'+id); if(c) c.clas
 function openApproveModal(id){
   var r=allRequests.find(function(x){return x.submissionId===id;}); if(!r) return;
   currentApproveId=id;
-  $('approveDetail').innerHTML='<strong>'+esc(r.brand)+'</strong>'+(r.productVariation?' — '+esc(r.productVariation):'')+'<br>Seller: @'+esc(r.sellerUsername)+' · '+esc(r.sellerEmail)+'<br>Category: '+esc(r.category)+' · '+esc(r.deliveryMethod);
+  var t=getTeamInfo(r);
+  var aTitle = (t==='Secondary Market'||t==='Rent Time Services (GPGC)') ? (r.gameName||r.brand||'') : (r.brand||'');
+  var aSub   = t==='Rent Time Services (GPGC)' ? (r.serviceType||'')
+             : t==='Secondary Market'          ? (r.productType||r.productName||'')
+             : (r.productVariation||'');
+  var aExtra = t==='Rent Time Services (GPGC)' ? (r.serviceType?'Service: '+r.serviceType:'')
+             : t==='Secondary Market'          ? (r.deliveryMethod?'Delivery: '+r.deliveryMethod:'')
+             : (r.deliveryMethod?'Delivery: '+r.deliveryMethod:'');
+  $('approveDetail').innerHTML='<strong>'+esc(aTitle)+'</strong>'+(aSub?' — '+esc(aSub):'')
+    +'<br>Seller: @'+esc(r.sellerUsername)+' · '+esc(r.sellerEmail)
+    +'<br>Category: '+esc(r.layer1||'')+(aExtra?'<br>'+esc(aExtra):'');
   $('approveModal').classList.remove('hidden');
 }
 function closeApproveModal(){ $('approveModal').classList.add('hidden'); currentApproveId=null; }
@@ -1266,18 +1296,28 @@ function confirmReject(){
 // ══════════════════════════════════════════════════════════════════════════════
 // NEED INFO  — with flagged fields checklist
 // ══════════════════════════════════════════════════════════════════════════════
-var ALL_REVIEWABLE_FIELDS=['Game Name','Series / Variation','Region','Delivery Method','Denominations','Entry Field 1','Entry Field 2','Entry Field 3','Entry Field 4','Entry Field 5','Account Type','Platform','Cross-Platform','Reference URLs'];
+var currentNeedInfoFields=[];
+function getReviewableFields(r){
+  var t=getTeamInfo(r);
+  if(t==='Secondary Market')
+    return ['Game Name','Product Type','Product Name','Product Units','Product Info','Region','Server','Platform','Delivery Method','Character Name','UID','In-game Username','Reference URLs'];
+  if(t==='Rent Time Services (GPGC)')
+    return ['Product Type','Game Name','Product Variation','Region','Service Details','Reference URLs'];
+  return ['Brand / Game Name','Series / Variation','Region','Delivery Method','Denominations','Entry Field 1','Entry Field 2','Entry Field 3','Entry Field 4','Entry Field 5','Account Type','Platform','Cross-Platform','Reference URLs'];
+}
 
 function openNeedInfoModal(id){
   var r=allRequests.find(function(x){return x.submissionId===id;}); if(!r) return;
   currentNeedInfoId=id;
-  $('needInfoModalSub').textContent=r.brand+' ('+id+') — seller: '+r.sellerEmail;
+  var niTitle=getTeamInfo(r)==='Main Market'?(r.brand||id):(r.gameName||r.brand||id);
+  $('needInfoModalSub').textContent=niTitle+' ('+id+') — seller: '+r.sellerEmail;
   $('needInfoPreviewTo').textContent='To: '+r.sellerEmail;
   $('needInfoReasonInput').value='';
   $('needInfoReasonInput').classList.remove('error'); $('needInfoReasonErr').style.display='none';
 
-  // Build flagged fields checklist
-  var listHtml=ALL_REVIEWABLE_FIELDS.map(function(f,i){
+  // Build flagged fields checklist (team-specific)
+  currentNeedInfoFields=getReviewableFields(r);
+  var listHtml=currentNeedInfoFields.map(function(f,i){
     var fid='ff_'+i;
     return '<div class="flag-field-item" id="ffi_'+fid+'" onclick="toggleFlagField(\''+fid+'\',\''+esc(f)+'\')">'
       +'<input type="checkbox" id="'+fid+'"><span class="ffi-label">'+esc(f)+'</span></div>';
@@ -1296,7 +1336,7 @@ function toggleFlagField(fid,label){
 }
 function getCheckedFlagFields(){
   var checked=[];
-  ALL_REVIEWABLE_FIELDS.forEach(function(f,i){
+  currentNeedInfoFields.forEach(function(f,i){
     var cb=document.getElementById('ff_'+i);
     if(cb&&cb.checked) checked.push(f);
   });
@@ -1314,8 +1354,9 @@ function updateNeedInfoPreview(){
   }
   // Build resubmit link with flagged fields encoded
   var resubmitLink=SELLER_FORM_URL+'?resubmit='+encodeURIComponent(r.submissionId)+'&flagged='+encodeURIComponent(flagged.join('|'));
+  var niName=getTeamInfo(r)==='Main Market'?(r.brand||'your product'):(r.gameName||r.brand||'your product');
   $('needInfoPreviewBody').innerHTML='Hi <strong>'+esc(r.sellerUsername)+'</strong>,<br><br>'
-    +'Thank you for submitting your product listing request for <strong>'+esc(r.brand)+'</strong>.<br><br>'
+    +'Thank you for submitting your product listing request for <strong>'+esc(niName)+'</strong>.<br><br>'
     +'We need some additional clarification before we can proceed:<br><br>'
     +(flagHtml)
     +'<span style="background:#f5f3ff;padding:6px 10px;border-radius:4px;border-left:3px solid #7c3aed;display:block;margin:4px 0;white-space:pre-wrap;">'+esc(q)+'</span><br>'
@@ -1379,25 +1420,30 @@ function showToast(msg,type){
 // DATE FILTER
 // ══════════════════════════════════════════════════════════════════════════════
 var currentDatePreset='all';
-function setDatePreset(preset,btn){
-  currentDatePreset=preset;
-  document.querySelectorAll('.dpre').forEach(function(b){b.classList.remove('active');});
-  if(btn) btn.classList.add('active');
+function setDateFromSelect(val){
+  var row=$('customDateRow');
+  if(val==='custom'){
+    row.classList.remove('hidden');
+    return;
+  }
+  row.classList.add('hidden');
+  currentDatePreset=val;
   var today=new Date();
-  if(preset==='today'){ var d=fmtDate(today); $('dateFrom').value=d; $('dateTo').value=d; $('dateClearBtn').classList.remove('hidden'); }
-  else if(preset==='week'){ var day=today.getDay(),diff=today.getDate()-day+(day===0?-6:1); var mon=new Date(new Date().setDate(diff)); $('dateFrom').value=fmtDate(mon); $('dateTo').value=fmtDate(new Date()); $('dateClearBtn').classList.remove('hidden'); }
-  else if(preset==='month'){ $('dateFrom').value=fmtDate(new Date(today.getFullYear(),today.getMonth(),1)); $('dateTo').value=fmtDate(new Date()); $('dateClearBtn').classList.remove('hidden'); }
-  else{ $('dateFrom').value=''; $('dateTo').value=''; $('dateClearBtn').classList.add('hidden'); }
+  if(val==='today'){ var d=fmtDate(today); $('dateFrom').value=d; $('dateTo').value=d; }
+  else if(val==='week'){ var day=today.getDay(),diff=today.getDate()-day+(day===0?-6:1); var mon=new Date(new Date().setDate(diff)); $('dateFrom').value=fmtDate(mon); $('dateTo').value=fmtDate(today); }
+  else if(val==='month'){ $('dateFrom').value=fmtDate(new Date(today.getFullYear(),today.getMonth(),1)); $('dateTo').value=fmtDate(today); }
+  else{ $('dateFrom').value=''; $('dateTo').value=''; }
   renderList();
 }
 function onDateRangeChange(){
   currentDatePreset='custom';
-  document.querySelectorAll('.dpre').forEach(function(b){b.classList.remove('active');});
-  var show=$('dateFrom').value||$('dateTo').value; $('dateClearBtn').classList.toggle('hidden',!show); renderList();
+  renderList();
 }
 function clearDateRange(){
-  $('dateFrom').value=''; $('dateTo').value=''; $('dateClearBtn').classList.add('hidden'); currentDatePreset='all';
-  document.querySelectorAll('.dpre').forEach(function(b,i){b.classList.toggle('active',i===0);}); renderList();
+  $('dateFrom').value=''; $('dateTo').value=''; currentDatePreset='all';
+  var sel=$('dateSelect'); if(sel) sel.value='all';
+  $('customDateRow').classList.add('hidden');
+  renderList();
 }
 function matchesDateFilter(r){
   var from=$('dateFrom').value,to=$('dateTo').value; if(!from&&!to) return true;
