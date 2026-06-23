@@ -725,9 +725,8 @@ function renderDeliveryFields(idx,method,prod){
     h+='<div style="margin-bottom:14px;">'
       +'<label class="field-label">Service Details <span class="required">*</span></label>'
       +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Provide details about the service being offered.</div>'
-      +'<div id="entryContainer_'+idx+'" data-fields="2" style="display:flex;flex-direction:column;gap:8px;">'
-      +'<input type="text" id="ef1_'+idx+'" placeholder="Game Name (e.g. Mobile Legends, Valorant)">'
-      +'<input type="text" id="ef2_'+idx+'" placeholder="Service details (e.g. hours, rank boost level)">'
+      +'<div id="entryContainer_'+idx+'" data-fields="1" style="display:flex;flex-direction:column;gap:8px;">'
+      +'<input type="text" id="ef1_'+idx+'" placeholder="e.g. hours, rank boost level, coaching style">'
       +'</div>'
       +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addEntryField('+idx+')">+ Add more details</button>'
       +'</div>';
