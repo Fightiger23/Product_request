@@ -223,12 +223,12 @@
       <div class="two-col">
         <div class="field-block">
           <label class="field-label">G2G Username <span class="required">*</span></label>
-          <input type="text" id="sellerUsername" placeholder="e.g. seller_abc123">
+          <input type="text" id="sellerUsername" placeholder="e.g. seller_abc123" maxlength="300">
           <div class="field-err-msg" id="usernameErr">Please enter your G2G username</div>
         </div>
         <div class="field-block">
           <label class="field-label">Registered Email <span class="required">*</span></label>
-          <input type="email" id="sellerEmail" placeholder="e.g. seller@email.com">
+          <input type="email" id="sellerEmail" placeholder="e.g. seller@email.com" maxlength="300">
           <div class="field-err-msg" id="emailErr">Please enter a valid email address</div>
         </div>
       </div>
@@ -1336,6 +1336,26 @@ function onAcctTypeChange(idx){
 loadFormConfig(null);
 $('sellerUsername').addEventListener('input',function(){this.classList.remove('field-error');$('usernameErr').style.display='none';});
 $('sellerEmail').addEventListener('input',function(){this.classList.remove('field-error');$('emailErr').style.display='none';});
+
+// ── Enforce 300-char limit on all inputs (static + dynamic) ─
+function applyMaxLength(root){
+  (root||document).querySelectorAll('input[type="text"],input[type="email"],input[type="url"],textarea').forEach(function(el){
+    if(!el.hasAttribute('maxlength'))el.setAttribute('maxlength','300');
+  });
+}
+applyMaxLength();
+new MutationObserver(function(mutations){
+  mutations.forEach(function(m){
+    m.addedNodes.forEach(function(n){
+      if(n.nodeType===1){
+        if((n.tagName==='INPUT'&&/^(text|email|url)$/i.test(n.type||''))||n.tagName==='TEXTAREA'){
+          if(!n.hasAttribute('maxlength'))n.setAttribute('maxlength','300');
+        }
+        applyMaxLength(n);
+      }
+    });
+  });
+}).observe(document.body,{childList:true,subtree:true});
 </script>
 </body>
 </html>
