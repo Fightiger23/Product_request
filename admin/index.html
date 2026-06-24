@@ -151,7 +151,7 @@
 
   /* ── CONTENT AREA ── */
   .content-area{flex:1;overflow-y:auto;}
-  .main{max-width:1060px;margin:0 auto;padding:28px 20px 100px;}
+  .main{max-width:100%;padding:20px 24px 60px;}
 
   /* ── STATS ── */
   .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:26px;}
@@ -443,6 +443,110 @@
   .theme-toggle{display:flex;align-items:center;gap:7px;padding:6px 12px;background:none;border:1px solid rgba(255,255,255,.12);border-radius:7px;cursor:pointer;font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,.55);transition:all .15s;}
   .theme-toggle:hover{color:#fff;border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.06);}
   .theme-toggle .tt-icon{font-size:14px;line-height:1;}
+
+  /* ── SHEET TABS ──────────────────────────────────────────────────────────── */
+  .sheet-tabs-bar{display:flex;gap:0;border-bottom:2px solid var(--border);margin:0 0 0 0;padding:0;overflow-x:auto;background:var(--bg);}
+  .sheet-tab{padding:9px 20px;font-size:12px;font-weight:600;color:var(--muted);background:transparent;border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0;cursor:pointer;font-family:var(--font);transition:all .15s;white-space:nowrap;position:relative;top:2px;margin-right:2px;}
+  .sheet-tab:hover{color:var(--text);background:var(--white);}
+  .sheet-tab.active{color:var(--text);background:var(--white);border-color:var(--border);border-bottom-color:var(--white);font-weight:700;}
+  .sheet-tab.t-main.active{border-top:3px solid var(--info);padding-top:7px;}
+  .sheet-tab.t-secondary.active{border-top:3px solid var(--needinfo);padding-top:7px;}
+  .sheet-tab.t-gpgc.active{border-top:3px solid var(--success);padding-top:7px;}
+
+  /* ── SPREADSHEET TABLE ───────────────────────────────────────────────────── */
+  .sheet-wrap{border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;background:var(--white);overflow:auto;max-height:calc(100vh - 320px);min-height:300px;}
+  .sheet-tbl{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12px;}
+  /* Sticky header — sticks to top of .sheet-wrap scroll container */
+  .sheet-tbl thead{position:sticky;top:0;z-index:10;}
+  .sheet-tbl th{background:var(--bg);color:var(--label);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;border:1px solid var(--border);white-space:nowrap;user-select:none;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 4px rgba(0,0,0,.06);}
+  .sheet-tbl td{padding:10px 12px;border:1px solid var(--border);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text);font-size:13px;}
+  /* Submission separator gap rows */
+  .sheet-tbl tbody tr.gap-row td{height:10px;background:var(--bg);padding:0;border-left:1px solid var(--border);border-right:1px solid var(--border);border-top:2px solid var(--border);border-bottom:none;}
+  /* Data rows */
+  .sheet-tbl tbody tr.data-row{cursor:pointer;}
+  .sheet-tbl tbody tr.data-row:hover td{background:rgba(59,130,246,.05);}
+  .sheet-tbl tbody tr.data-row.expanded td{background:#eef4ff;border-bottom:none;}
+  .sheet-tbl tbody tr.detail-row td{border-top:none;}
+
+  .sheet-tbl td.col-id{font-family:var(--mono);font-size:11px;color:var(--info);font-weight:600;letter-spacing:-.2px;}
+  .sheet-tbl th.col-actions,.sheet-tbl td.col-actions{text-align:center;}
+
+  .row-act-btns{display:flex;gap:4px;justify-content:center;flex-wrap:nowrap;}
+  .row-act-btn{padding:4px 8px;font-size:11px;font-weight:600;border-radius:5px;border:1px solid;cursor:pointer;font-family:var(--font);transition:all .12s;white-space:nowrap;}
+  .row-btn-approve{background:#f0fdf4;color:#166534;border-color:#bbf7d0;}
+  .row-btn-approve:hover{background:#dcfce7;}
+  .row-btn-reject{background:#fff0f0;color:#991b1b;border-color:#fecaca;}
+  .row-btn-reject:hover{background:#fee2e2;}
+  .row-btn-needinfo{background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe;}
+  .row-btn-needinfo:hover{background:#ede9fe;}
+  .row-btn-reopen{background:var(--warn-light);color:var(--warn);border-color:var(--warn-border);}
+  .row-btn-unapprove{background:var(--info-light);color:var(--info);border-color:var(--info-border);}
+
+  .st-badge{display:inline-block;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;white-space:nowrap;}
+  .st-badge.pending{background:#fff9e6;color:#92640a;}
+  .st-badge.approved{background:#f0fdf4;color:#166534;}
+  .st-badge.rejected{background:#fff0f0;color:#991b1b;}
+  .st-badge.needinfo{background:#f5f3ff;color:#6d28d9;}
+
+  .td-sub{font-size:10px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .expand-arrow{float:right;color:var(--muted);font-size:10px;transition:transform .15s;}
+  .data-row.expanded .expand-arrow{transform:rotate(180deg);}
+
+  /* ── DETAIL PANEL (expanded row) ─────────────────────────────────────────── */
+  .detail-row td{padding:0;border-top:none;}
+  .detail-panel{padding:20px 24px 10px;background:#fff;border-top:2px solid #c7d6f5;display:flex;flex-wrap:wrap;gap:12px;box-shadow:inset 0 4px 12px rgba(59,130,246,.06);}
+
+  /* Bracketed field boxes */
+  .detail-field{min-width:160px;flex:1;}
+  .detail-field-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;}
+  .detail-field-val{font-size:13px;color:var(--text);word-break:break-word;white-space:normal;
+    border:1px solid var(--border);border-radius:6px;padding:7px 10px;background:var(--bg);min-height:34px;line-height:1.4;}
+  .detail-field-val.empty{color:var(--muted);font-style:italic;background:transparent;border-style:dashed;}
+
+  .detail-actions{width:100%;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding:14px 0 10px;margin-top:6px;}
+  .detail-reviewed{font-size:12px;color:var(--muted);}
+  .detail-notes{background:var(--warn-light);border:1px solid var(--warn-border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--warn);width:100%;}
+  .detail-notes.needinfo{background:var(--needinfo-light);border-color:var(--needinfo-border);color:var(--needinfo);}
+  .detail-notes.rejected{background:var(--accent-light);border-color:#fecaca;color:#991b1b;}
+
+  /* Inline field editing (Product Name, Product Info, etc.) */
+  .field-edit-btn{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--white);color:var(--label);cursor:pointer;font-family:var(--font);margin-left:6px;vertical-align:middle;transition:all .12s;}
+  .field-edit-btn:hover{background:var(--info-light);color:var(--info);border-color:var(--info-border);}
+  .field-edit-wrap{margin-top:6px;}
+  .field-edit-input{width:100%;border:1px solid var(--info-border);border-radius:6px;padding:7px 10px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;resize:vertical;min-height:58px;background:var(--white);box-sizing:border-box;}
+  .field-edit-input:focus{border-color:var(--info);box-shadow:0 0 0 2px rgba(59,130,246,.12);}
+  .field-edit-actions{display:flex;gap:6px;margin-top:6px;}
+  .field-edit-save{font-size:12px;font-weight:600;padding:5px 14px;border-radius:6px;border:none;cursor:pointer;font-family:var(--font);background:var(--info);color:#fff;}
+  .field-edit-save:hover{opacity:.88;}
+  .field-edit-cancel{font-size:12px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-family:var(--font);background:var(--bg);color:var(--label);}
+
+  /* Denomination table — editable */
+  .denom-section{width:100%;min-width:100%;}
+  .denom-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .denom-section-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
+  .denom-edit-btn{font-size:11px;font-weight:600;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--white);color:var(--label);cursor:pointer;font-family:var(--font);transition:all .12s;}
+  .denom-edit-btn:hover{background:var(--info-light);color:var(--info);border-color:var(--info-border);}
+  .denom-mini{width:100%;font-size:12px;border-collapse:collapse;border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .denom-mini thead tr{background:var(--bg);}
+  .denom-mini th{padding:8px 12px;text-align:left;font-weight:700;font-size:11px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);color:var(--label);}
+  .denom-mini th:last-child{border-right:none;}
+  .denom-mini td{padding:7px 12px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);font-size:13px;}
+  .denom-mini td:last-child{border-right:none;}
+  .denom-mini tbody tr:last-child td{border-bottom:none;}
+  .denom-mini tbody tr:hover td{background:rgba(59,130,246,.04);}
+  /* Editable denom cells */
+  .denom-cell-input{width:100%;border:none;background:transparent;font-size:13px;font-family:var(--font);color:var(--text);outline:none;padding:0;}
+  .denom-mini.editing td{background:#fffbeb;padding:4px 8px;}
+  .denom-mini.editing .denom-cell-input{background:#fff;border:1px solid #fbbf24;border-radius:4px;padding:4px 7px;}
+  .denom-add-row{width:100%;margin-top:4px;font-size:11px;font-weight:600;color:var(--info);background:none;border:1px dashed var(--info-border);border-radius:5px;padding:5px;cursor:pointer;font-family:var(--font);}
+  .denom-add-row:hover{background:var(--info-light);}
+  .denom-save-row{display:flex;gap:6px;margin-top:8px;}
+  .denom-save-btn{font-size:12px;font-weight:600;padding:5px 14px;border-radius:6px;border:none;cursor:pointer;font-family:var(--font);}
+  .denom-save-btn.save{background:var(--info);color:#fff;}
+  .denom-save-btn.cancel{background:var(--bg);color:var(--label);border:1px solid var(--border);}
+
+  .sheet-empty{padding:60px;text-align:center;color:var(--muted);font-size:13px;}
+  .sheet-count{font-size:11px;color:var(--muted);padding:7px 12px;text-align:right;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;background:var(--bg);}
 </style>
 </head>
 <body>
@@ -560,14 +664,11 @@
       </div>
     </div>
 
-    <!-- TEAM TABS -->
-    <div class="team-filter-row">
-      <div class="team-tabs">
-        <button class="ttab active"      onclick="setTeamFilter('all',this)">All Teams</button>
-        <button class="ttab t-main"      onclick="setTeamFilter('Main Market',this)">🏪 Main Market</button>
-        <button class="ttab t-secondary" onclick="setTeamFilter('Secondary Market',this)">🎮 Secondary Market</button>
-        <button class="ttab t-gpgc"      onclick="setTeamFilter('Rent Time Services (GPGC)',this)">🕹️ Rent Time (GPGC)</button>
-      </div>
+    <!-- SHEET TABS -->
+    <div class="sheet-tabs-bar">
+      <button class="sheet-tab t-main active" onclick="setTeamTab('Main Market',this)">🏪 Main Market</button>
+      <button class="sheet-tab t-secondary"   onclick="setTeamTab('Secondary Market',this)">🎮 Secondary Market</button>
+      <button class="sheet-tab t-gpgc"        onclick="setTeamTab('Rent Time Services (GPGC)',this)">🕹️ Rent Time (GPGC)</button>
     </div>
 
     <!-- TOOLBAR — progress dropdown + date dropdown + search + refresh -->
@@ -805,12 +906,13 @@ function _pjsSha256(ascii){
 var SAVED_KEY         = 'g2g_bd_saved_creds';
 var SESSION_KEY       = 'g2g_bd_session';
 var currentFilter     = 'all';
-var currentTeamFilter = 'all';
+var currentTeamFilter = 'Main Market';
 var allRequests       = [];
 var currentRejectId   = null;
 var currentApproveId  = null;
 var currentNeedInfoId = null;
 var loggedInName      = '';
+var loggedInEmail     = '';
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HELPERS
@@ -855,6 +957,7 @@ function doLogin(){
 }
 function activatePanel(match){
   loggedInName=match.name;
+  loggedInEmail=match.email;
   $('loggedInUser').textContent=match.email;
   if($('sidebarUserName')) $('sidebarUserName').textContent=match.email;
   $('loginPage').classList.add('hidden');
@@ -943,11 +1046,332 @@ function setFilterFromSelect(val){
   currentFilter=val;
   renderList();
 }
-function setTeamFilter(team,btn){
+function setTeamFilter(team,btn){ setTeamTab(team,btn); } // legacy alias
+function setTeamTab(team,btn){
   currentTeamFilter=team;
-  document.querySelectorAll('.ttab').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.sheet-tab').forEach(function(b){ b.classList.remove('active'); });
   if(btn) btn.classList.add('active');
   renderList();
+}
+
+// ── VISIBLE COLUMNS (fit to screen — click row to see all details) ────────────
+// These are the summary columns shown in the table. Full details expand on click.
+var TEAM_COLS={
+  'Main Market':[
+    {h:'Submission ID', w:'12%', cls:'col-id', f:function(r){return r.submissionId||'';}},
+    {h:'Status',        w:'7%',  badge:true,    f:function(r){return r.status||'Pending';}},
+    {h:'Submitted',     w:'10%',               f:function(r){return r.timestamp?String(r.timestamp).substring(0,16).replace('T',' '):'';}},
+    {h:'Seller',        w:'10%', sub:function(r){return r.sellerEmail||'';}, f:function(r){return r.sellerUsername||'';}},
+    {h:'Layer 1',       w:'8%',                f:function(r){return r.layer1||'';}},
+    {h:'Layer 2',       w:'8%',                f:function(r){return r.layer2||'';}},
+    {h:'Product Type',  w:'10%',               f:function(r){return r.productType||'';}},
+    {h:'Brand / Game',  w:'10%',               f:function(r){return r.brand||'';}},
+    {h:'Region',        w:'8%',                f:function(r){return r.region||'';}},
+  ],
+  'Secondary Market':[
+    {h:'Submission ID', w:'12%', cls:'col-id', f:function(r){return r.submissionId||'';}},
+    {h:'Status',        w:'7%',  badge:true,    f:function(r){return r.status||'Pending';}},
+    {h:'Submitted',     w:'10%',               f:function(r){return r.timestamp?String(r.timestamp).substring(0,16).replace('T',' '):'';}},
+    {h:'Seller',        w:'10%', sub:function(r){return r.sellerEmail||'';}, f:function(r){return r.sellerUsername||'';}},
+    {h:'Layer 1',       w:'8%',                f:function(r){return r.layer1||'';}},
+    {h:'Layer 2',       w:'8%',                f:function(r){return r.layer2||'';}},
+    {h:'Product Type',  w:'10%',               f:function(r){return r.productType||'';}},
+    {h:'Game Name',     w:'10%',               f:function(r){return r.gameName||r.brand||'';}},
+    {h:'Region',        w:'8%',                f:function(r){return r.region||'';}},
+  ],
+  'Rent Time Services (GPGC)':[
+    {h:'Submission ID', w:'12%', cls:'col-id', f:function(r){return r.submissionId||'';}},
+    {h:'Status',        w:'7%',  badge:true,    f:function(r){return r.status||'Pending';}},
+    {h:'Submitted',     w:'10%',               f:function(r){return r.timestamp?String(r.timestamp).substring(0,16).replace('T',' '):'';}},
+    {h:'Seller',        w:'10%', sub:function(r){return r.sellerEmail||'';}, f:function(r){return r.sellerUsername||'';}},
+    {h:'Layer 1',       w:'9%',                f:function(r){return r.layer1||'';}},
+    {h:'Layer 2',       w:'9%',                f:function(r){return r.layer2||'';}},
+    {h:'Product Type',  w:'11%',               f:function(r){return r.productType||'';}},
+    {h:'Game Name',     w:'11%',               f:function(r){return r.gameName||r.brand||'';}},
+    {h:'Region',        w:'8%',                f:function(r){return r.region||'';}},
+  ]
+};
+
+// ── DETAIL PANEL PER TEAM (shown when row is expanded) ────────────────────────
+function buildDetailPanel(r, team){
+  var status=r.status||'Pending';
+  var sc=status.toLowerCase().replace(/\s+/g,'');
+  var sid=r.submissionId;
+
+  function df(label,val){
+    var empty=!val||val==='—'||val==='No'&&label!=='Is Key'&&label!=='Cross Platform';
+    return '<div class="detail-field"><div class="detail-field-label">'+esc(label)+'</div>'
+      +'<div class="detail-field-val'+(empty?' empty':'')+'">'+esc(val||'—')+'</div></div>';
+  }
+  function dfEditable(label,val,fieldKey){
+    var viewId='fv-'+sid+'-'+fieldKey;
+    var editId='fe-'+sid+'-'+fieldKey;
+    var empty=!val||val==='—';
+    return '<div class="detail-field">'
+      +'<div class="detail-field-label">'+esc(label)
+        +'<button class="field-edit-btn" onclick="toggleFieldEdit(\''+esc(sid)+'\',\''+fieldKey+'\');event.stopPropagation()">✏️</button>'
+      +'</div>'
+      +'<div class="detail-field-val'+(empty?' empty':'')+'" id="'+viewId+'">'+(empty?'—':esc(val))+'</div>'
+      +'<div class="field-edit-wrap hidden" id="'+editId+'">'
+        +'<textarea class="field-edit-input">'+esc(val||'')+'</textarea>'
+        +'<div class="field-edit-actions">'
+          +'<button class="field-edit-save" onclick="saveField(\''+esc(sid)+'\',\''+fieldKey+'\');event.stopPropagation()">💾 Save</button>'
+          +'<button class="field-edit-cancel" onclick="toggleFieldEdit(\''+esc(sid)+'\',\''+fieldKey+'\');event.stopPropagation()">Cancel</button>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }
+  function dfLink(label,val){
+    if(!val) return '<div class="detail-field" style="flex:2"><div class="detail-field-label">'+esc(label)+'</div><div class="detail-field-val empty">—</div></div>';
+    var urls=val.split('|').map(function(u){return u.trim();}).filter(Boolean);
+    var links=urls.map(function(u){return '<a href="'+esc(u)+'" target="_blank" style="color:var(--info);text-decoration:underline;font-size:13px;">🔗 '+esc(u)+'</a>';}).join('<br>');
+    return '<div class="detail-field" style="flex:2"><div class="detail-field-label">'+esc(label)+'</div><div class="detail-field-val">'+links+'</div></div>';
+  }
+
+  // Notes banner at top
+  var notesBanner='';
+  if(r.reviewerNotes&&sc==='rejected')
+    notesBanner='<div class="detail-notes rejected" style="width:100%"><strong>Rejection Reason:</strong> '+esc(r.reviewerNotes)+'</div>';
+  else if(r.reviewerNotes&&sc==='needinfo')
+    notesBanner='<div class="detail-notes needinfo" style="width:100%"><strong>Info Requested:</strong> '+esc(r.reviewerNotes)+'</div>';
+  else if(r.reviewerNotes)
+    notesBanner='<div class="detail-notes" style="width:100%"><strong>Notes:</strong> '+esc(r.reviewerNotes)+'</div>';
+
+  var fields='';
+
+  if(team==='Main Market'){
+    // Exact fields as specified
+    fields+=df('Brand Name',r.brand||'');
+    fields+=df('Product Variation',r.productVariation||'');
+    fields+=df('Region',r.region||'');
+    fields+=df('Shared Region',r.sharedRegion||'');
+    fields+=df('Tiered Region',r.tieredRegion||'');
+    fields+=df('Delivery Method',r.deliveryMethod||'');
+    fields+=df('Account Type',r.accountType||'');
+    fields+=df('Platforms',r.platforms||'');
+    fields+=df('Cross Platform',r.crossPlatform||'');
+    fields+=df('Is Key',r.isKey||'No');
+
+    // Denominations — editable table
+    var denoms=(r.denominations||[]).filter(function(d){return d.amount;});
+    var denomRows=denoms.length?denoms:[{productType:'',dataset:'',amount:''}];
+    var denomId='denom-'+sid.replace(/[^a-zA-Z0-9]/g,'_');
+    var dt='<div class="denom-section" data-original-denoms="'+esc(JSON.stringify(denoms))+'">'
+      +'<div class="denom-section-header">'
+        +'<span class="denom-section-label">Denominations</span>'
+        +'<button class="denom-edit-btn" onclick="toggleDenomEdit(\''+denomId+'\',\''+esc(sid)+'\');event.stopPropagation()">✏️ Edit</button>'
+      +'</div>'
+      +'<table class="denom-mini" id="'+denomId+'">'
+        +'<thead><tr><th>Denom Product Type</th><th>Denom Dataset</th><th>Denom Amount</th></tr></thead>'
+        +'<tbody id="'+denomId+'-body">';
+    denomRows.forEach(function(d,i){
+      dt+='<tr data-idx="'+i+'">'
+        +'<td><span class="denom-view">'+esc(d.productType||'—')+'</span><input class="denom-cell-input denom-edit hidden" data-field="productType" value="'+esc(d.productType||'')+'" placeholder="Product Type"></td>'
+        +'<td><span class="denom-view">'+esc(d.dataset||'—')+'</span><input class="denom-cell-input denom-edit hidden" data-field="dataset" value="'+esc(d.dataset||'')+'" placeholder="Dataset"></td>'
+        +'<td><span class="denom-view">'+esc(d.amount||'—')+'</span><input class="denom-cell-input denom-edit hidden" data-field="amount" value="'+esc(d.amount||'')+'" placeholder="Amount"></td>'
+      +'</tr>';
+    });
+    dt+='</tbody></table>'
+      +'<button class="denom-add-row hidden denom-edit" onclick="denomAddRow(\''+denomId+'\');event.stopPropagation()">+ Add Row</button>'
+      +'<div class="denom-save-row hidden denom-edit">'
+        +'<button class="denom-save-btn save" onclick="saveDenoms(\''+denomId+'\',\''+esc(sid)+'\');event.stopPropagation()">💾 Save</button>'
+        +'<button class="denom-save-btn cancel" onclick="toggleDenomEdit(\''+denomId+'\',\''+esc(sid)+'\');event.stopPropagation()">Cancel</button>'
+      +'</div>'
+    +'</div>';
+    fields+=dt;
+
+    fields+=df('Entry Field 1',r.entryField1||'');
+    fields+=df('Entry Field 2',r.entryField2||'');
+    fields+=df('Entry Field 3',r.entryField3||'');
+    fields+=df('Entry Field 4',r.entryField4||'');
+    fields+=df('Entry Field 5',r.entryField5||'');
+    fields+=dfLink('Reference URLs',r.refLink||'');
+    fields+=df('Reference Images',r.refImages||'');
+    fields+=df('Reviewer Notes',r.reviewerNotes||'');
+    fields+=df('Reviewed At',r.reviewedAt||'');
+    fields+=df('Flagged Fields',r.flaggedFields||'');
+
+  } else if(team==='Secondary Market'){
+    fields+=df('Game Name',r.gameName||r.brand||'');
+    fields+=dfEditable('Product Name',r.productName||'','productName');
+    fields+=df('Product Units',r.productUnits||'');
+    fields+=dfEditable('Product Info',r.productInfo||'','productInfo');
+    fields+=df('Region',r.region||'');
+    fields+=df('Server',r.server||'');
+    fields+=df('Platform',r.platforms||'');
+    fields+=df('Delivery Method',r.deliveryMethod||'');
+    fields+=df('Character Name',r.characterName||'');
+    fields+=df('UID',r.uid||'');
+    fields+=df('In-game Username',r.ingameUsername||'');
+    fields+=dfLink('Reference URLs',r.refLink||'');
+    fields+=df('Reference Images',r.refImages||'');
+    fields+=df('Reviewer Notes',r.reviewerNotes||'');
+    fields+=df('Reviewed At',r.reviewedAt||'');
+    fields+=df('Flagged Fields',r.flaggedFields||'');
+
+  } else { // GPGC
+    fields+=df('Game Name',r.gameName||r.brand||'');
+    fields+=df('Product Variation',r.productVariation||'');
+    fields+=df('Region',r.region||'');
+    fields+=df('Service Details',r.serviceDetails||'');
+    fields+=dfLink('Reference URLs',r.refLink||'');
+    fields+=df('Reference Images',r.refImages||'');
+    fields+=df('Reviewer Notes',r.reviewerNotes||'');
+    fields+=df('Reviewed At',r.reviewedAt||'');
+    fields+=df('Flagged Fields',r.flaggedFields||'');
+  }
+
+  // Action buttons in footer
+  var btns='';
+  if(status==='Pending'||status==='Need Info'){
+    btns='<button class="row-act-btn row-btn-approve" onclick="openApproveModal(\''+sid+'\');event.stopPropagation()">✅ Approve</button>'
+        +'<button class="row-act-btn row-btn-needinfo" onclick="openNeedInfoModal(\''+sid+'\');event.stopPropagation()">🔍 Need Info</button>'
+        +'<button class="row-act-btn row-btn-reject" onclick="openRejectModal(\''+sid+'\');event.stopPropagation()">❌ Reject</button>';
+  } else if(status==='Approved'){
+    btns='<button class="row-act-btn row-btn-unapprove" onclick="confirmUnapprove(\''+sid+'\');event.stopPropagation()">↩ Undo Approve</button>'
+        +'<button class="row-act-btn row-btn-needinfo" onclick="openNeedInfoModal(\''+sid+'\');event.stopPropagation()">🔍 Need Info</button>'
+        +'<button class="row-act-btn row-btn-reject" onclick="openRejectModal(\''+sid+'\');event.stopPropagation()">❌ Reject</button>';
+  } else {
+    btns='<button class="row-act-btn row-btn-reopen" onclick="confirmUnapprove(\''+sid+'\');event.stopPropagation()">↩ Reopen</button>'
+        +'<button class="row-act-btn row-btn-needinfo" onclick="openNeedInfoModal(\''+sid+'\');event.stopPropagation()">🔍 Need Info</button>';
+  }
+  var reviewedInfo=r.reviewedAt?'Reviewed · '+r.reviewedAt:'';
+
+  return '<div class="detail-panel">'
+    +notesBanner
+    +fields
+    +'<div class="detail-actions">'
+      +'<span class="detail-reviewed">'+esc(reviewedInfo)+'</span>'
+      +'<div class="row-act-btns">'+btns+'</div>'
+    +'</div>'
+    +'</div>';
+}
+
+function toggleDetailRow(sid){
+  var dataRow=document.getElementById('dr-'+sid);
+  var detailRow=document.getElementById('det-'+sid);
+  if(!dataRow||!detailRow) return;
+  var isOpen=dataRow.classList.contains('expanded');
+  dataRow.classList.toggle('expanded',!isOpen);
+  detailRow.classList.toggle('hidden',isOpen);
+}
+
+// ── INLINE FIELD EDITING (Product Name, Product Info, etc.) ──────────────────
+function toggleFieldEdit(sid, fieldKey){
+  var viewEl=document.getElementById('fv-'+sid+'-'+fieldKey);
+  var editEl=document.getElementById('fe-'+sid+'-'+fieldKey);
+  if(!viewEl||!editEl) return;
+  var isEditing=!editEl.classList.contains('hidden');
+  viewEl.classList.toggle('hidden',!isEditing);
+  editEl.classList.toggle('hidden',isEditing);
+  if(!isEditing){
+    // Pre-fill textarea with current displayed value
+    var ta=editEl.querySelector('textarea');
+    if(ta) ta.value=(viewEl.textContent==='—')?'':viewEl.textContent;
+    setTimeout(function(){ if(ta) ta.focus(); },50);
+  }
+}
+
+function saveField(sid, fieldKey){
+  var editEl=document.getElementById('fe-'+sid+'-'+fieldKey);
+  var viewEl=document.getElementById('fv-'+sid+'-'+fieldKey);
+  if(!editEl) return;
+  var ta=editEl.querySelector('textarea');
+  var value=ta?ta.value.trim():'';
+  var saveBtn=editEl.querySelector('.field-edit-save');
+  if(saveBtn){ saveBtn.disabled=true; saveBtn.textContent='Saving…'; }
+
+  var url=SCRIPT_URL+'?action=updateField'
+    +'&id='+encodeURIComponent(sid)
+    +'&field='+encodeURIComponent(fieldKey)
+    +'&value='+encodeURIComponent(value)
+    +'&editor='+encodeURIComponent(loggedInEmail);
+  fetch(url,{method:'GET',redirect:'follow'})
+    .then(function(res){return res.json();})
+    .then(function(data){
+      if(data.status==='success'){
+        showToast('✅ Field updated','success');
+        // Update local data
+        var rec=allRequests.find(function(x){return x.submissionId===sid;});
+        if(rec) rec[fieldKey]=value;
+        // Update view span
+        if(viewEl){ viewEl.textContent=value||'—'; viewEl.classList.toggle('empty',!value); }
+        toggleFieldEdit(sid,fieldKey);
+        if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent='💾 Save'; }
+      } else {
+        showToast('Error: '+(data.message||'Could not save.'),'error');
+        if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent='💾 Save'; }
+      }
+    })
+    .catch(function(){ showToast('Network error. Please try again.','error'); if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='💾 Save';} });
+}
+
+// ── DENOMINATION EDITING ──────────────────────────────────────────────────────
+function toggleDenomEdit(denomId, sid){
+  var tbl=document.getElementById(denomId);
+  if(!tbl) return;
+  var isEditing=tbl.classList.contains('editing');
+  tbl.classList.toggle('editing',!isEditing);
+  var section=tbl.closest('.denom-section');
+  if(!section) return;
+  // Show/hide view text spans
+  section.querySelectorAll('.denom-view').forEach(function(el){ el.classList.toggle('hidden',!isEditing); });
+  // Show/hide all edit elements (inputs, Add Row btn, Save/Cancel row)
+  section.querySelectorAll('.denom-edit').forEach(function(el){ el.classList.toggle('hidden',isEditing); });
+  // Update edit button label
+  var btn=section.querySelector('.denom-edit-btn');
+  if(btn) btn.textContent=isEditing?'✏️ Edit':'✖ Cancel';
+}
+
+function denomAddRow(denomId){
+  var tbody=document.getElementById(denomId+'-body');
+  if(!tbody) return;
+  var rowCount=tbody.querySelectorAll('tr').length;
+  var tr=document.createElement('tr');
+  tr.setAttribute('data-idx',rowCount);
+  tr.innerHTML='<td><span class="denom-view hidden">—</span><input class="denom-cell-input denom-edit" data-field="productType" placeholder="Product Type"></td>'
+    +'<td><span class="denom-view hidden">—</span><input class="denom-cell-input denom-edit" data-field="dataset" placeholder="Dataset"></td>'
+    +'<td><span class="denom-view hidden">—</span><input class="denom-cell-input denom-edit" data-field="amount" placeholder="Amount"></td>';
+  tbody.appendChild(tr);
+}
+
+function saveDenoms(denomId, sid){
+  var tbody=document.getElementById(denomId+'-body');
+  if(!tbody) return;
+  var denoms=[];
+  tbody.querySelectorAll('tr').forEach(function(row){
+    var inputs={};
+    row.querySelectorAll('input[data-field]').forEach(function(inp){ inputs[inp.getAttribute('data-field')]=inp.value.trim(); });
+    if(inputs.amount||inputs.productType) denoms.push(inputs);
+  });
+  var section=document.getElementById(denomId).closest('.denom-section');
+  var oldDenomsJson=section?section.getAttribute('data-original-denoms'):'[]';
+  var saveBtn=section?section.querySelector('.denom-save-btn.save'):null;
+  if(saveBtn){ saveBtn.disabled=true; saveBtn.textContent='Saving…'; }
+
+  var url=SCRIPT_URL+'?action=updateDenoms'
+    +'&id='+encodeURIComponent(sid)
+    +'&denoms='+encodeURIComponent(JSON.stringify(denoms))
+    +'&editor='+encodeURIComponent(loggedInEmail)
+    +'&oldDenoms='+encodeURIComponent(oldDenomsJson);
+  fetch(url,{method:'GET',redirect:'follow'})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.status==='success'){
+        showToast('✅ Denominations updated successfully','success');
+        // Update local data and re-render detail
+        var r=allRequests.find(function(x){return x.submissionId===sid;});
+        if(r) r.denominations=denoms.map(function(d){return{productType:d.productType||'',dataset:d.dataset||'',amount:d.amount||''};});
+        // Update the stored original so the next edit log has the right baseline
+        if(section) section.setAttribute('data-original-denoms',JSON.stringify(denoms));
+        toggleDenomEdit(denomId,sid); // exit edit mode
+        if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent='💾 Save'; }
+      } else {
+        showToast('Error: '+(data.message||'Could not save.'),'error');
+        if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent='💾 Save'; }
+      }
+    })
+    .catch(function(){ showToast('Network error. Please try again.','error'); if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent='💾 Save'; } });
 }
 // Returns the market team for a request — uses the stored marketTeam field if
 // available (from Apps Script), otherwise derives it from product type.
@@ -970,9 +1394,10 @@ function getTeamClass(team){
 }
 function renderList(){
   var search=($('searchInput').value||'').toLowerCase().trim();
+  var team=currentTeamFilter;
   var filtered=allRequests.filter(function(r){
+    var mt=getTeamInfo(r)===team;
     var mf=currentFilter==='all'||r.status===currentFilter;
-    var mt=currentTeamFilter==='all'||getTeamInfo(r)===currentTeamFilter;
     var ms=!search
       ||(r.submissionId   ||'').toLowerCase().includes(search)
       ||(r.brand          ||'').toLowerCase().includes(search)
@@ -982,17 +1407,78 @@ function renderList(){
       ||(r.productVariation||'').toLowerCase().includes(search)
       ||(r.gameName        ||'').toLowerCase().includes(search)
       ||(r.productName     ||'').toLowerCase().includes(search)
-      ||(r.serviceType     ||'').toLowerCase().includes(search);
-    return mf&&mt&&ms&&matchesDateFilter(r);
+      ||(r.serviceDetails  ||'').toLowerCase().includes(search);
+    return mt&&mf&&ms&&matchesDateFilter(r);
   });
+
   if(!filtered.length){
-    $('listWrap').innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No requests found</div><div class="empty-sub">Try a different filter or search term.</div></div>';
+    $('listWrap').innerHTML='<div class="sheet-wrap"><div class="sheet-empty">📭 No requests found for this team with the current filters.</div></div>';
     return;
   }
-  var html='<div class="req-list">';
-  filtered.forEach(function(r,i){ html+=buildCardHTML(r,i); });
-  html+='</div>';
-  $('listWrap').innerHTML=html;
+
+  var cols=TEAM_COLS[team]||TEAM_COLS['Main Market'];
+  var totalCols=cols.length+1; // +1 for Actions
+
+  // Header
+  var thead='<thead><tr>';
+  cols.forEach(function(col){
+    thead+='<th'+(col.cls?' class="'+col.cls+'"':'')+(col.w?' style="width:'+col.w+'"':'')+'>'+esc(col.h)+'</th>';
+  });
+  thead+='<th class="col-actions" style="width:14%">Actions</th></tr></thead>';
+
+  // Rows — each submission gets a data row + a hidden detail row
+  var tbody='<tbody>';
+  filtered.forEach(function(r){
+    var status=r.status||'Pending';
+    var sc=status.toLowerCase().replace(/\s+/g,'');
+    var sid=r.submissionId;
+
+    // Summary row (clickable)
+    tbody+='<tr class="data-row" id="dr-'+esc(sid)+'" onclick="toggleDetailRow(\''+esc(sid)+'\')">';
+    cols.forEach(function(col){
+      var val=col.f(r);
+      var tdCls=col.cls||'';
+      if(col.badge){
+        tbody+='<td><span class="st-badge '+sc+'">'+esc(val)+'</span></td>';
+      } else if(col.sub){
+        var sub=col.sub(r);
+        tbody+='<td class="'+tdCls+'" title="'+esc(val)+'">'
+          +'<div style="font-weight:500">'+esc(val)+'</div>'
+          +(sub?'<div class="td-sub">'+esc(sub)+'</div>':'')
+          +'</td>';
+      } else {
+        tbody+='<td class="'+tdCls+'" title="'+esc(val)+'">'+esc(val)+'</td>';
+      }
+    });
+    // Inline action buttons (stop propagation so clicking them doesn't toggle row)
+    var btns='';
+    if(status==='Pending'||status==='Need Info'){
+      btns='<button class="row-act-btn row-btn-approve" onclick="openApproveModal(\''+sid+'\');event.stopPropagation()">✅</button>'
+          +'<button class="row-act-btn row-btn-needinfo" onclick="openNeedInfoModal(\''+sid+'\');event.stopPropagation()">🔍</button>'
+          +'<button class="row-act-btn row-btn-reject" onclick="openRejectModal(\''+sid+'\');event.stopPropagation()">❌</button>';
+    } else if(status==='Approved'){
+      btns='<button class="row-act-btn row-btn-unapprove" onclick="confirmUnapprove(\''+sid+'\');event.stopPropagation()">↩</button>'
+          +'<button class="row-act-btn row-btn-needinfo" onclick="openNeedInfoModal(\''+sid+'\');event.stopPropagation()">🔍</button>'
+          +'<button class="row-act-btn row-btn-reject" onclick="openRejectModal(\''+sid+'\');event.stopPropagation()">❌</button>';
+    } else {
+      btns='<button class="row-act-btn row-btn-reopen" onclick="confirmUnapprove(\''+sid+'\');event.stopPropagation()">↩</button>'
+          +'<button class="row-act-btn row-btn-needinfo" onclick="openNeedInfoModal(\''+sid+'\');event.stopPropagation()">🔍</button>';
+    }
+    tbody+='<td class="col-actions"><div class="row-act-btns">'+btns+'<span class="expand-arrow">▼</span></div></td>';
+    tbody+='</tr>';
+
+    // Detail row (hidden until row is clicked)
+    tbody+='<tr class="detail-row hidden" id="det-'+esc(sid)+'">'
+      +'<td colspan="'+totalCols+'">'+buildDetailPanel(r,team)+'</td>'
+      +'</tr>';
+    // Spacer row — visual gap between submissions
+    tbody+='<tr class="gap-row"><td colspan="'+totalCols+'"></td></tr>';
+  });
+  tbody+='</tbody>';
+
+  $('listWrap').innerHTML=
+    '<div class="sheet-wrap"><table class="sheet-tbl">'+thead+tbody+'</table></div>'
+   +'<div class="sheet-count">'+filtered.length+' row'+(filtered.length!==1?'s':'')+' · '+esc(team)+'</div>';
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
