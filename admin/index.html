@@ -494,18 +494,26 @@
 
   /* ── DETAIL PANEL (expanded row) ─────────────────────────────────────────── */
   .detail-row td{padding:0;border-top:none;}
-  .detail-panel{padding:20px 24px 10px;background:#fff;border-top:2px solid #c7d6f5;display:flex;flex-wrap:wrap;gap:12px;box-shadow:inset 0 4px 12px rgba(59,130,246,.06);}
+  .detail-panel{padding:20px 24px 12px;background:#fff;border-top:2px solid #c7d6f5;display:flex;flex-direction:column;gap:14px;box-shadow:inset 0 4px 12px rgba(59,130,246,.06);}
+
+  /* Three-column body: left-a | left-b | right */
+  .detail-panel-body{display:grid;grid-template-columns:1fr 1fr 220px;gap:0 20px;align-items:start;}
+  .detail-panel-left-a{display:flex;flex-direction:column;gap:8px;}
+  .detail-panel-left-b{display:flex;flex-direction:column;gap:8px;padding-left:16px;border-left:1px solid var(--border);}
+  .detail-panel-right{display:flex;flex-direction:column;gap:8px;padding-left:16px;border-left:1px solid var(--border);}
 
   /* Bracketed field boxes */
-  .detail-field{min-width:160px;flex:1;}
+  .detail-field{width:100%;}
   .detail-field-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;}
   .detail-field-val{font-size:13px;color:var(--text);word-break:break-word;white-space:normal;
     border:1px solid var(--border);border-radius:6px;padding:7px 10px;background:var(--bg);min-height:34px;line-height:1.4;}
   .detail-field-val.empty{color:var(--muted);font-style:italic;background:transparent;border-style:dashed;}
+  /* Empty field — greyed out until BD adds input */
+  .detail-field.empty-field{opacity:.28;transition:opacity .15s;}
+  .detail-field.empty-field:hover{opacity:.55;}
 
-  .detail-actions{width:100%;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding:14px 0 10px;margin-top:6px;}
-  .detail-reviewed{font-size:12px;color:var(--muted);}
-  .detail-notes{background:var(--warn-light);border:1px solid var(--warn-border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--warn);width:100%;}
+  .detail-actions{display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--border);padding:12px 0 6px;margin-top:2px;}
+  .detail-notes{background:var(--warn-light);border:1px solid var(--warn-border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--warn);}
   .detail-notes.needinfo{background:var(--needinfo-light);border-color:var(--needinfo-border);color:var(--needinfo);}
   .detail-notes.rejected{background:var(--accent-light);border-color:#fecaca;color:#991b1b;}
 
@@ -521,7 +529,7 @@
   .field-edit-cancel{font-size:12px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-family:var(--font);background:var(--bg);color:var(--label);}
 
   /* Denomination table — editable */
-  .denom-section{width:100%;min-width:100%;}
+  .denom-section{width:auto;max-width:520px;}
   .denom-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
   .denom-section-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
   .denom-edit-btn{font-size:11px;font-weight:600;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--white);color:var(--label);cursor:pointer;font-family:var(--font);transition:all .12s;}
@@ -544,6 +552,11 @@
   .denom-save-btn{font-size:12px;font-weight:600;padding:5px 14px;border-radius:6px;border:none;cursor:pointer;font-family:var(--font);}
   .denom-save-btn.save{background:var(--info);color:#fff;}
   .denom-save-btn.cancel{background:var(--bg);color:var(--label);border:1px solid var(--border);}
+  .denom-del-col{width:28px;text-align:center;padding:0 4px !important;}
+  .denom-del-btn{background:none;border:none;color:#dc2626;font-size:15px;font-weight:700;cursor:pointer;padding:0 4px;line-height:1;border-radius:3px;transition:background .1s;}
+  .denom-del-btn:hover{background:#fee2e2;}
+  /* Product type color chips in table */
+  .pt-chip{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
 
   .sheet-empty{padding:60px;text-align:center;color:var(--muted);font-size:13px;}
   .sheet-count{font-size:11px;color:var(--muted);padding:7px 12px;text-align:right;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;background:var(--bg);}
@@ -1056,39 +1069,57 @@ function setTeamTab(team,btn){
 
 // ── VISIBLE COLUMNS (fit to screen — click row to see all details) ────────────
 // These are the summary columns shown in the table. Full details expand on click.
+// Product-type → colour chip (bg / text)
+function ptColor(pt){
+  var p=(pt||'').toLowerCase();
+  if(p.indexOf('top up')>-1||p.indexOf('topup')>-1)          return {bg:'#dbeafe',c:'#1d4ed8'};
+  if(p.indexOf('gift card')>-1||p.indexOf('voucher')>-1)      return {bg:'#dcfce7',c:'#15803d'};
+  if(p.indexOf('e-wallet')>-1||p.indexOf('wallet')>-1||p.indexOf('credit')>-1) return {bg:'#cffafe',c:'#0e7490'};
+  if(p.indexOf('software')>-1||p.indexOf('app')>-1)           return {bg:'#e0e7ff',c:'#3730a3'};
+  if(p.indexOf('streaming')>-1||p.indexOf('subscription')>-1) return {bg:'#ffedd5',c:'#c2410c'};
+  if(p.indexOf('game point')>-1||p.indexOf('point')>-1)       return {bg:'#f3e8ff',c:'#7e22ce'};
+  if(p.indexOf('game account')>-1)                            return {bg:'#fee2e2',c:'#b91c1c'};
+  if(p.indexOf('skin')>-1)                                    return {bg:'#fce7f3',c:'#be185d'};
+  if(p.indexOf('boost')>-1)                                   return {bg:'#fef3c7',c:'#b45309'};
+  if(p.indexOf('coin')>-1||p.indexOf('currency')>-1)          return {bg:'#fefce8',c:'#a16207'};
+  if(p.indexOf('item')>-1)                                    return {bg:'#ccfbf1',c:'#0f766e'};
+  if(p==='game pal'||p.indexOf('game pal')>-1)                return {bg:'#f3e8ff',c:'#7e22ce'};
+  if(p.indexOf('coaching')>-1)                                return {bg:'#d1fae5',c:'#065f46'};
+  return {bg:'#f1f5f9',c:'#475569'};
+}
+
+function fmtTs(r){ return r.timestamp?String(r.timestamp).substring(0,16).replace('T',' '):''; }
+
 var TEAM_COLS={
   'Main Market':[
-    {h:'Submission ID', w:'12%', cls:'col-id', f:function(r){return r.submissionId||'';}},
-    {h:'Status',        w:'7%',  badge:true,    f:function(r){return r.status||'Pending';}},
-    {h:'Submitted',     w:'10%',               f:function(r){return r.timestamp?String(r.timestamp).substring(0,16).replace('T',' '):'';}},
-    {h:'Seller',        w:'10%', sub:function(r){return r.sellerEmail||'';}, f:function(r){return r.sellerUsername||'';}},
-    {h:'Layer 1',       w:'8%',                f:function(r){return r.layer1||'';}},
-    {h:'Layer 2',       w:'8%',                f:function(r){return r.layer2||'';}},
-    {h:'Product Type',  w:'10%',               f:function(r){return r.productType||'';}},
-    {h:'Brand / Game',  w:'10%',               f:function(r){return r.brand||'';}},
-    {h:'Region',        w:'8%',                f:function(r){return r.region||'';}},
+    {h:'Submission ID', w:'14%', cls:'col-id', sub:fmtTs, f:function(r){return r.submissionId||'';}},
+    {h:'Status',        w:'7%',  badge:true,               f:function(r){return r.status||'Pending';}},
+    {h:'Seller',        w:'11%', sub:function(r){return r.sellerEmail||'';}, f:function(r){return r.sellerUsername||'';}},
+    {h:'Layer 1',       w:'8%',                             f:function(r){return r.layer1||'';}},
+    {h:'Layer 2',       w:'8%',                             f:function(r){return r.layer2||'';}},
+    {h:'Product Type',  w:'12%', chip:true,                 f:function(r){return r.productType||'';}},
+    {h:'Delivery Method',w:'11%',                           f:function(r){return r.deliveryMethod||'';}},
+    {h:'Region',        w:'9%',                             f:function(r){return r.region||'';}},
   ],
   'Secondary Market':[
-    {h:'Submission ID', w:'12%', cls:'col-id', f:function(r){return r.submissionId||'';}},
-    {h:'Status',        w:'7%',  badge:true,    f:function(r){return r.status||'Pending';}},
-    {h:'Submitted',     w:'10%',               f:function(r){return r.timestamp?String(r.timestamp).substring(0,16).replace('T',' '):'';}},
-    {h:'Seller',        w:'10%', sub:function(r){return r.sellerEmail||'';}, f:function(r){return r.sellerUsername||'';}},
-    {h:'Layer 1',       w:'8%',                f:function(r){return r.layer1||'';}},
-    {h:'Layer 2',       w:'8%',                f:function(r){return r.layer2||'';}},
-    {h:'Product Type',  w:'10%',               f:function(r){return r.productType||'';}},
-    {h:'Game Name',     w:'10%',               f:function(r){return r.gameName||r.brand||'';}},
-    {h:'Region',        w:'8%',                f:function(r){return r.region||'';}},
+    {h:'Submission ID', w:'14%', cls:'col-id', sub:fmtTs, f:function(r){return r.submissionId||'';}},
+    {h:'Status',        w:'7%',  badge:true,               f:function(r){return r.status||'Pending';}},
+    {h:'Seller',        w:'11%', sub:function(r){return r.sellerEmail||'';}, f:function(r){return r.sellerUsername||'';}},
+    {h:'Layer 1',       w:'8%',                             f:function(r){return r.layer1||'';}},
+    {h:'Layer 2',       w:'8%',                             f:function(r){return r.layer2||'';}},
+    {h:'Product Type',  w:'12%', chip:true,                 f:function(r){return r.productType||'';}},
+    {h:'Game Name',     w:'11%',                            f:function(r){return r.gameName||r.brand||'';}},
+    {h:'Region',        w:'9%',                             f:function(r){return r.region||'';}},
   ],
   'Rent Time Services (GPGC)':[
-    {h:'Submission ID', w:'12%', cls:'col-id', f:function(r){return r.submissionId||'';}},
-    {h:'Status',        w:'7%',  badge:true,    f:function(r){return r.status||'Pending';}},
-    {h:'Submitted',     w:'10%',               f:function(r){return r.timestamp?String(r.timestamp).substring(0,16).replace('T',' '):'';}},
-    {h:'Seller',        w:'10%', sub:function(r){return r.sellerEmail||'';}, f:function(r){return r.sellerUsername||'';}},
-    {h:'Layer 1',       w:'9%',                f:function(r){return r.layer1||'';}},
-    {h:'Layer 2',       w:'9%',                f:function(r){return r.layer2||'';}},
-    {h:'Product Type',  w:'11%',               f:function(r){return r.productType||'';}},
-    {h:'Game Name',     w:'11%',               f:function(r){return r.gameName||r.brand||'';}},
-    {h:'Region',        w:'8%',                f:function(r){return r.region||'';}},
+    {h:'Submission ID', w:'14%', cls:'col-id', sub:fmtTs, f:function(r){return r.submissionId||'';}},
+    {h:'Status',        w:'7%',  badge:true,               f:function(r){return r.status||'Pending';}},
+    {h:'Seller',        w:'11%', sub:function(r){return r.sellerEmail||'';}, f:function(r){return r.sellerUsername||'';}},
+    {h:'Layer 1',       w:'9%',                             f:function(r){return r.layer1||'';}},
+    {h:'Layer 2',       w:'9%',                             f:function(r){return r.layer2||'';}},
+    {h:'Product Type',  w:'12%', chip:true,                 f:function(r){return r.productType||'';}},
+    {h:'Game Name',     w:'11%',                            f:function(r){return r.gameName||r.brand||'';}},
+    {h:'Region',        w:'9%',                             f:function(r){return r.region||'';}},
   ]
 };
 
@@ -1098,16 +1129,19 @@ function buildDetailPanel(r, team){
   var sc=status.toLowerCase().replace(/\s+/g,'');
   var sid=r.submissionId;
 
+  // ── helpers ──────────────────────────────────────────────────────────────────
   function df(label,val){
-    var empty=!val||val==='—'||val==='No'&&label!=='Is Key'&&label!=='Cross Platform';
-    return '<div class="detail-field"><div class="detail-field-label">'+esc(label)+'</div>'
-      +'<div class="detail-field-val'+(empty?' empty':'')+'">'+esc(val||'—')+'</div></div>';
+    var empty=!val||val==='—'||(val==='No'&&label!=='Is Key'&&label!=='Cross Platform');
+    return '<div class="detail-field'+(empty?' empty-field':'')+'">'
+      +'<div class="detail-field-label">'+esc(label)+'</div>'
+      +'<div class="detail-field-val'+(empty?' empty':'')+'">'+esc(val||'—')+'</div>'
+      +'</div>';
   }
   function dfEditable(label,val,fieldKey){
     var viewId='fv-'+sid+'-'+fieldKey;
     var editId='fe-'+sid+'-'+fieldKey;
     var empty=!val||val==='—';
-    return '<div class="detail-field">'
+    return '<div class="detail-field'+(empty?' empty-field':'')+'">'
       +'<div class="detail-field-label">'+esc(label)
         +'<button class="field-edit-btn" onclick="toggleFieldEdit(\''+esc(sid)+'\',\''+fieldKey+'\');event.stopPropagation()">✏️</button>'
       +'</div>'
@@ -1122,37 +1156,68 @@ function buildDetailPanel(r, team){
     +'</div>';
   }
   function dfLink(label,val){
-    if(!val) return '<div class="detail-field" style="flex:2"><div class="detail-field-label">'+esc(label)+'</div><div class="detail-field-val empty">—</div></div>';
+    if(!val) return '<div class="detail-field empty-field"><div class="detail-field-label">'+esc(label)+'</div><div class="detail-field-val empty">—</div></div>';
     var urls=val.split('|').map(function(u){return u.trim();}).filter(Boolean);
-    var links=urls.map(function(u){return '<a href="'+esc(u)+'" target="_blank" style="color:var(--info);text-decoration:underline;font-size:13px;">🔗 '+esc(u)+'</a>';}).join('<br>');
-    return '<div class="detail-field" style="flex:2"><div class="detail-field-label">'+esc(label)+'</div><div class="detail-field-val">'+links+'</div></div>';
+    var links=urls.map(function(u){return '<a href="'+esc(u)+'" target="_blank" style="color:var(--info);text-decoration:underline;font-size:13px;word-break:break-all;">🔗 '+esc(u)+'</a>';}).join('<br>');
+    return '<div class="detail-field"><div class="detail-field-label">'+esc(label)+'</div><div class="detail-field-val">'+links+'</div></div>';
+  }
+  function fmtDate(val){
+    if(!val) return '—';
+    try{
+      var d=new Date(val);
+      if(isNaN(d.getTime())) return String(val);
+      var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var h=d.getHours(),m=d.getMinutes(),ampm=h>=12?'pm':'am';
+      h=h%12||12;
+      return d.getDate()+' '+mo[d.getMonth()]+' '+d.getFullYear()+' · '+h+':'+(m<10?'0':'')+m+ampm;
+    }catch(e){return String(val);}
   }
 
-  // Notes banner at top
+  // ── notes banner (full-width top strip) ──────────────────────────────────────
   var notesBanner='';
   if(r.reviewerNotes&&sc==='rejected')
-    notesBanner='<div class="detail-notes rejected" style="width:100%"><strong>Rejection Reason:</strong> '+esc(r.reviewerNotes)+'</div>';
+    notesBanner='<div class="detail-notes rejected"><strong>Rejection Reason:</strong> '+esc(r.reviewerNotes)+'</div>';
   else if(r.reviewerNotes&&sc==='needinfo')
-    notesBanner='<div class="detail-notes needinfo" style="width:100%"><strong>Info Requested:</strong> '+esc(r.reviewerNotes)+'</div>';
-  else if(r.reviewerNotes)
-    notesBanner='<div class="detail-notes" style="width:100%"><strong>Notes:</strong> '+esc(r.reviewerNotes)+'</div>';
+    notesBanner='<div class="detail-notes needinfo"><strong>Info Requested:</strong> '+esc(r.reviewerNotes)+'</div>';
 
-  var fields='';
+  // ── RIGHT column — always the same across all teams ──────────────────────────
+  var right='';
+  right+=dfLink('Reference URLs',r.refLink||'');
+  right+=df('Reference Images',r.refImages||'');
+  right+=df('Reviewer Notes',r.reviewerNotes||'');
+  right+='<div class="detail-field'+(r.reviewedAt?'':' empty-field')+'"><div class="detail-field-label">Reviewed At</div>'
+    +'<div class="detail-field-val'+(r.reviewedAt?'':' empty')+'">'+fmtDate(r.reviewedAt)+'</div></div>';
+  right+=df('Flagged Fields',r.flaggedFields||'');
+  // Seller edit link — stored by onFormSubmit, shown to BD for reference
+  var canEdit=(status==='Pending'||status==='Need Info');
+  if(r.editUrl){
+    right+='<div class="detail-field" style="margin-top:4px">'
+      +'<div class="detail-field-label">Seller Edit Link</div>'
+      +'<div class="detail-field-val" style="font-size:11px">'
+        +(canEdit
+          ?'<a href="'+esc(r.editUrl)+'" target="_blank" style="color:var(--info);text-decoration:underline">🔗 Open form (editable)</a>'
+          :'<span style="color:var(--muted)">Locked — submission '+status.toLowerCase()+'</span>')
+      +'</div>'
+    +'</div>';
+  }
+
+  // ── LEFT columns — team-specific main fields split across two sub-columns ─────
+  var leftA='', leftB='';
 
   if(team==='Main Market'){
-    // Exact fields as specified
-    fields+=df('Brand Name',r.brand||'');
-    fields+=df('Product Variation',r.productVariation||'');
-    fields+=df('Region',r.region||'');
-    fields+=df('Shared Region',r.sharedRegion||'');
-    fields+=df('Tiered Region',r.tieredRegion||'');
-    fields+=df('Delivery Method',r.deliveryMethod||'');
-    fields+=df('Account Type',r.accountType||'');
-    fields+=df('Platforms',r.platforms||'');
-    fields+=df('Cross Platform',r.crossPlatform||'');
-    fields+=df('Is Key',r.isKey||'No');
+    // Col A: core product fields
+    leftA+=df('Brand Name',r.brand||'');
+    leftA+=df('Product Variation',r.productVariation||'');
+    leftA+=df('Region',r.region||'');
+    leftA+=df('Shared Region',r.sharedRegion||'');
+    leftA+=df('Tiered Region',r.tieredRegion||'');
+    leftA+=df('Delivery Method',r.deliveryMethod||'');
+    leftA+=df('Account Type',r.accountType||'');
+    leftA+=df('Platforms',r.platforms||'');
+    leftA+=df('Cross Platform',r.crossPlatform||'');
+    leftA+=df('Is Key',r.isKey||'No');
 
-    // Denominations — editable table
+    // Col B: denominations + entry fields
     var denoms=(r.denominations||[]).filter(function(d){return d.amount;});
     var denomRows=denoms.length?denoms:[{productType:'',dataset:'',amount:''}];
     var denomId='denom-'+sid.replace(/[^a-zA-Z0-9]/g,'_');
@@ -1162,13 +1227,14 @@ function buildDetailPanel(r, team){
         +'<button class="denom-edit-btn" onclick="toggleDenomEdit(\''+denomId+'\',\''+esc(sid)+'\');event.stopPropagation()">✏️ Edit</button>'
       +'</div>'
       +'<table class="denom-mini" id="'+denomId+'">'
-        +'<thead><tr><th>Denom Product Type</th><th>Denom Dataset</th><th>Denom Amount</th></tr></thead>'
+        +'<thead><tr><th>Denom Product Type</th><th>Denom Dataset</th><th>Denom Amount</th><th class="denom-del-col denom-edit hidden"></th></tr></thead>'
         +'<tbody id="'+denomId+'-body">';
     denomRows.forEach(function(d,i){
       dt+='<tr data-idx="'+i+'">'
         +'<td><span class="denom-view">'+esc(d.productType||'—')+'</span><input class="denom-cell-input denom-edit hidden" data-field="productType" value="'+esc(d.productType||'')+'" placeholder="Product Type"></td>'
         +'<td><span class="denom-view">'+esc(d.dataset||'—')+'</span><input class="denom-cell-input denom-edit hidden" data-field="dataset" value="'+esc(d.dataset||'')+'" placeholder="Dataset"></td>'
         +'<td><span class="denom-view">'+esc(d.amount||'—')+'</span><input class="denom-cell-input denom-edit hidden" data-field="amount" value="'+esc(d.amount||'')+'" placeholder="Amount"></td>'
+        +'<td class="denom-del-col"><button class="denom-del-btn denom-edit hidden" onclick="this.closest(\'tr\').remove();event.stopPropagation()" title="Remove row">×</button></td>'
       +'</tr>';
     });
     dt+='</tbody></table>'
@@ -1178,50 +1244,36 @@ function buildDetailPanel(r, team){
         +'<button class="denom-save-btn cancel" onclick="toggleDenomEdit(\''+denomId+'\',\''+esc(sid)+'\');event.stopPropagation()">Cancel</button>'
       +'</div>'
     +'</div>';
-    fields+=dt;
-
-    fields+=df('Entry Field 1',r.entryField1||'');
-    fields+=df('Entry Field 2',r.entryField2||'');
-    fields+=df('Entry Field 3',r.entryField3||'');
-    fields+=df('Entry Field 4',r.entryField4||'');
-    fields+=df('Entry Field 5',r.entryField5||'');
-    fields+=dfLink('Reference URLs',r.refLink||'');
-    fields+=df('Reference Images',r.refImages||'');
-    fields+=df('Reviewer Notes',r.reviewerNotes||'');
-    fields+=df('Reviewed At',r.reviewedAt||'');
-    fields+=df('Flagged Fields',r.flaggedFields||'');
+    leftB+=dt;
+    leftB+=df('Entry Field 1',r.entryField1||'');
+    leftB+=df('Entry Field 2',r.entryField2||'');
+    leftB+=df('Entry Field 3',r.entryField3||'');
+    leftB+=df('Entry Field 4',r.entryField4||'');
+    leftB+=df('Entry Field 5',r.entryField5||'');
 
   } else if(team==='Secondary Market'){
-    fields+=df('Game Name',r.gameName||r.brand||'');
-    fields+=dfEditable('Product Name',r.productName||'','productName');
-    fields+=df('Product Units',r.productUnits||'');
-    fields+=dfEditable('Product Info',r.productInfo||'','productInfo');
-    fields+=df('Region',r.region||'');
-    fields+=df('Server',r.server||'');
-    fields+=df('Platform',r.platforms||'');
-    fields+=df('Delivery Method',r.deliveryMethod||'');
-    fields+=df('Character Name',r.characterName||'');
-    fields+=df('UID',r.uid||'');
-    fields+=df('In-game Username',r.ingameUsername||'');
-    fields+=dfLink('Reference URLs',r.refLink||'');
-    fields+=df('Reference Images',r.refImages||'');
-    fields+=df('Reviewer Notes',r.reviewerNotes||'');
-    fields+=df('Reviewed At',r.reviewedAt||'');
-    fields+=df('Flagged Fields',r.flaggedFields||'');
+    // Col A: identity + product fields
+    leftA+=df('Game Name',r.gameName||r.brand||'');
+    leftA+=dfEditable('Product Name',r.productName||'','productName');
+    leftA+=df('Product Units',r.productUnits||'');
+    leftA+=dfEditable('Product Info',r.productInfo||'','productInfo');
+    leftA+=df('Region',r.region||'');
+    // Col B: account / delivery details
+    leftB+=df('Server',r.server||'');
+    leftB+=df('Platform',r.platforms||'');
+    leftB+=df('Delivery Method',r.deliveryMethod||'');
+    leftB+=df('Character Name',r.characterName||'');
+    leftB+=df('UID',r.uid||'');
+    leftB+=df('In-game Username',r.ingameUsername||'');
 
-  } else { // GPGC
-    fields+=df('Game Name',r.gameName||r.brand||'');
-    fields+=df('Product Variation',r.productVariation||'');
-    fields+=df('Region',r.region||'');
-    fields+=df('Service Details',r.serviceDetails||'');
-    fields+=dfLink('Reference URLs',r.refLink||'');
-    fields+=df('Reference Images',r.refImages||'');
-    fields+=df('Reviewer Notes',r.reviewerNotes||'');
-    fields+=df('Reviewed At',r.reviewedAt||'');
-    fields+=df('Flagged Fields',r.flaggedFields||'');
+  } else { // GPGC — only 4 fields, split evenly
+    leftA+=df('Game Name',r.gameName||r.brand||'');
+    leftA+=df('Product Variation',r.productVariation||'');
+    leftB+=df('Region',r.region||'');
+    leftB+=df('Service Details',r.serviceDetails||'');
   }
 
-  // Action buttons in footer
+  // ── action buttons ────────────────────────────────────────────────────────────
   var btns='';
   if(status==='Pending'||status==='Need Info'){
     btns='<button class="row-act-btn row-btn-approve" onclick="openApproveModal(\''+sid+'\');event.stopPropagation()">✅ Approve</button>'
@@ -1235,15 +1287,15 @@ function buildDetailPanel(r, team){
     btns='<button class="row-act-btn row-btn-reopen" onclick="confirmUnapprove(\''+sid+'\');event.stopPropagation()">↩ Reopen</button>'
         +'<button class="row-act-btn row-btn-needinfo" onclick="openNeedInfoModal(\''+sid+'\');event.stopPropagation()">🔍 Need Info</button>';
   }
-  var reviewedInfo=r.reviewedAt?'Reviewed · '+r.reviewedAt:'';
 
   return '<div class="detail-panel">'
-    +notesBanner
-    +fields
-    +'<div class="detail-actions">'
-      +'<span class="detail-reviewed">'+esc(reviewedInfo)+'</span>'
-      +'<div class="row-act-btns">'+btns+'</div>'
+    +(notesBanner||'')
+    +'<div class="detail-panel-body">'
+      +'<div class="detail-panel-left-a">'+leftA+'</div>'
+      +'<div class="detail-panel-left-b">'+leftB+'</div>'
+      +'<div class="detail-panel-right">'+right+'</div>'
     +'</div>'
+    +'<div class="detail-actions"><div class="row-act-btns">'+btns+'</div></div>'
     +'</div>';
 }
 
@@ -1331,7 +1383,8 @@ function denomAddRow(denomId){
   tr.setAttribute('data-idx',rowCount);
   tr.innerHTML='<td><span class="denom-view hidden">—</span><input class="denom-cell-input denom-edit" data-field="productType" placeholder="Product Type"></td>'
     +'<td><span class="denom-view hidden">—</span><input class="denom-cell-input denom-edit" data-field="dataset" placeholder="Dataset"></td>'
-    +'<td><span class="denom-view hidden">—</span><input class="denom-cell-input denom-edit" data-field="amount" placeholder="Amount"></td>';
+    +'<td><span class="denom-view hidden">—</span><input class="denom-cell-input denom-edit" data-field="amount" placeholder="Amount"></td>'
+    +'<td class="denom-del-col"><button class="denom-del-btn" onclick="this.closest(\'tr\').remove();event.stopPropagation()" title="Remove row">×</button></td>';
   tbody.appendChild(tr);
 }
 
@@ -1440,10 +1493,15 @@ function renderList(){
       var tdCls=col.cls||'';
       if(col.badge){
         tbody+='<td><span class="st-badge '+sc+'">'+esc(val)+'</span></td>';
+      } else if(col.chip){
+        var cc=ptColor(val);
+        tbody+='<td style="padding:6px 10px" title="'+esc(val)+'">'
+          +(val?'<span class="pt-chip" style="background:'+cc.bg+';color:'+cc.c+'">'+esc(val)+'</span>':'<span style="color:var(--muted);font-size:11px">—</span>')
+          +'</td>';
       } else if(col.sub){
         var sub=col.sub(r);
         tbody+='<td class="'+tdCls+'" title="'+esc(val)+'">'
-          +'<div style="font-weight:500">'+esc(val)+'</div>'
+          +'<div style="font-weight:600">'+esc(val)+'</div>'
           +(sub?'<div class="td-sub">'+esc(sub)+'</div>':'')
           +'</td>';
       } else {
