@@ -497,7 +497,7 @@
   .detail-panel{padding:20px 24px 12px;background:#fff;border-top:2px solid #c7d6f5;display:flex;flex-direction:column;gap:14px;box-shadow:inset 0 4px 12px rgba(59,130,246,.06);}
 
   /* Three-column body: left-a | left-b | right */
-  .detail-panel-body{display:grid;grid-template-columns:1fr 1fr 220px;gap:0 20px;align-items:start;}
+  .detail-panel-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 20px;align-items:start;}
   .detail-panel-left-a{display:flex;flex-direction:column;gap:8px;}
   .detail-panel-left-b{display:flex;flex-direction:column;gap:8px;padding-left:16px;border-left:1px solid var(--border);}
   .detail-panel-right{display:flex;flex-direction:column;gap:8px;padding-left:16px;border-left:1px solid var(--border);}
@@ -529,16 +529,16 @@
   .field-edit-cancel{font-size:12px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-family:var(--font);background:var(--bg);color:var(--label);}
 
   /* Denomination table — editable */
-  .denom-section{width:auto;max-width:520px;}
+  .denom-section{width:100%;}
   .denom-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
   .denom-section-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
   .denom-edit-btn{font-size:11px;font-weight:600;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--white);color:var(--label);cursor:pointer;font-family:var(--font);transition:all .12s;}
   .denom-edit-btn:hover{background:var(--info-light);color:var(--info);border-color:var(--info-border);}
-  .denom-mini{width:100%;font-size:12px;border-collapse:collapse;border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .denom-mini{width:100%;font-size:12px;border-collapse:collapse;border:1px solid var(--border);border-radius:6px;overflow:hidden;table-layout:fixed;}
   .denom-mini thead tr{background:var(--bg);}
-  .denom-mini th{padding:8px 12px;text-align:left;font-weight:700;font-size:11px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);color:var(--label);}
+  .denom-mini th{padding:8px 12px;text-align:left;font-weight:700;font-size:11px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);color:var(--label);width:33.33%;}
   .denom-mini th:last-child{border-right:none;}
-  .denom-mini td{padding:7px 12px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);font-size:13px;}
+  .denom-mini td{padding:7px 12px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);font-size:13px;word-break:break-word;overflow-wrap:break-word;white-space:normal;}
   .denom-mini td:last-child{border-right:none;}
   .denom-mini tbody tr:last-child td{border-bottom:none;}
   .denom-mini tbody tr:hover td{background:rgba(59,130,246,.04);}
