@@ -309,8 +309,8 @@
   .loading-text{font-size:13px;color:var(--muted);}
 
   /* ── MODALS ── */
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;backdrop-filter:blur(4px);}
-  .modal-box{background:var(--white);border-radius:16px;padding:32px;max-width:520px;width:100%;box-shadow:var(--shadow-lg);animation:modalIn .2s ease;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-start;justify-content:center;z-index:200;padding:20px;backdrop-filter:blur(4px);overflow-y:auto;}
+  .modal-box{background:var(--white);border-radius:16px;padding:32px;max-width:520px;width:100%;box-shadow:var(--shadow-lg);animation:modalIn .2s ease;margin:auto;}
   .modal-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:20px;}
   .modal-header-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
   .modal-header-icon.reject-icon{background:var(--accent-light);}
@@ -331,7 +331,7 @@
   .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
 
   /* approve modal */
-  .approve-modal-box{background:var(--white);border-radius:16px;padding:36px;max-width:460px;width:100%;box-shadow:var(--shadow-lg);animation:modalIn .2s ease;text-align:center;}
+  .approve-modal-box{background:var(--white);border-radius:16px;padding:36px;max-width:460px;width:100%;box-shadow:var(--shadow-lg);animation:modalIn .2s ease;text-align:center;margin:auto;}
   .approve-icon{width:52px;height:52px;border-radius:14px;background:var(--success-light);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 18px;}
   .approve-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.3px;}
   .approve-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
