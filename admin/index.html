@@ -215,7 +215,8 @@
   .req-card.status-pending  {border-left:3px solid var(--warn);}
   .req-card.status-approved {border-left:3px solid var(--success);}
   .req-card.status-rejected {border-left:3px solid var(--accent);}
-  .req-card.status-needinfo {border-left:3px solid var(--needinfo);}
+  .req-card.status-needinfo     {border-left:3px solid var(--needinfo);}
+  .req-card.status-resubmitted  {border-left:3px solid #0ea5e9;}
 
   /* CARD HEADER */
   .req-card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;gap:12px;flex-wrap:wrap;}
@@ -238,7 +239,8 @@
   .status-badge.pending  {background:var(--warn-light);color:#92640a;}
   .status-badge.approved {background:var(--success-light);color:#166534;}
   .status-badge.rejected {background:var(--accent-light);color:#991b1b;}
-  .status-badge.needinfo {background:var(--needinfo-light);color:#5b21b6;}
+  .status-badge.needinfo      {background:var(--needinfo-light);color:#5b21b6;}
+  .status-badge.resubmitted   {background:#f0f9ff;color:#0c4a6e;}
   .expand-icon{font-size:11px;color:var(--muted);transition:transform .2s;}
   .req-card.expanded .expand-icon{transform:rotate(180deg);}
 
@@ -690,6 +692,7 @@
         <option value="all">All Status</option>
         <option value="Pending">⏳ Pending</option>
         <option value="Need Info">🔍 Need Info</option>
+        <option value="Resubmitted">♻️ Resubmitted</option>
         <option value="Approved">✅ Approved</option>
         <option value="Rejected">❌ Rejected</option>
       </select>
@@ -1036,7 +1039,7 @@ function loadRequests(){
 // STATS
 // ══════════════════════════════════════════════════════════════════════════════
 function updateStats(){
-  var pending=allRequests.filter(function(r){ return r.status==='Pending'; }).length;
+  var pending=allRequests.filter(function(r){ return r.status==='Pending'||r.status==='Resubmitted'; }).length;
   var needinfo=allRequests.filter(function(r){ return r.status==='Need Info'; }).length;
   $('statTotal').textContent    = allRequests.length;
   $('statPending').textContent  = pending;
@@ -1175,10 +1178,13 @@ function buildDetailPanel(r, team){
 
   // ── notes banner (full-width top strip) ──────────────────────────────────────
   var notesBanner='';
-  if(r.reviewerNotes&&sc==='rejected')
+  if(sc==='resubmitted'){
+    notesBanner='<div class="history-badge" style="margin-bottom:14px">♻️ Seller resubmitted — awaiting review'+(r.reviewerNotes?' &nbsp;·&nbsp; <em>Prev note:</em> '+esc(r.reviewerNotes):'')+'</div>';
+  } else if(r.reviewerNotes&&sc==='rejected'){
     notesBanner='<div class="detail-notes rejected"><strong>Rejection Reason:</strong> '+esc(r.reviewerNotes)+'</div>';
-  else if(r.reviewerNotes&&sc==='needinfo')
+  } else if(r.reviewerNotes&&sc==='needinfo'){
     notesBanner='<div class="detail-notes needinfo"><strong>Info Requested:</strong> '+esc(r.reviewerNotes)+'</div>';
+  }
 
   // ── RIGHT column — always the same across all teams ──────────────────────────
   var right='';
@@ -1189,7 +1195,7 @@ function buildDetailPanel(r, team){
     +'<div class="detail-field-val'+(r.reviewedAt?'':' empty')+'">'+fmtDate(r.reviewedAt)+'</div></div>';
   right+=df('Flagged Fields',r.flaggedFields||'');
   // Seller edit link — stored by onFormSubmit, shown to BD for reference
-  var canEdit=(status==='Pending'||status==='Need Info');
+  var canEdit=(status==='Pending'||status==='Need Info'||status==='Resubmitted');
   if(r.editUrl){
     right+='<div class="detail-field" style="margin-top:4px">'
       +'<div class="detail-field-label">Seller Edit Link</div>'
@@ -1275,7 +1281,7 @@ function buildDetailPanel(r, team){
 
   // ── action buttons ────────────────────────────────────────────────────────────
   var btns='';
-  if(status==='Pending'||status==='Need Info'){
+  if(status==='Pending'||status==='Need Info'||status==='Resubmitted'){
     btns='<button class="row-act-btn row-btn-approve" onclick="openApproveModal(\''+sid+'\');event.stopPropagation()">✅ Approve</button>'
         +'<button class="row-act-btn row-btn-needinfo" onclick="openNeedInfoModal(\''+sid+'\');event.stopPropagation()">🔍 Need Info</button>'
         +'<button class="row-act-btn row-btn-reject" onclick="openRejectModal(\''+sid+'\');event.stopPropagation()">❌ Reject</button>';
@@ -1510,7 +1516,7 @@ function renderList(){
     });
     // Inline action buttons (stop propagation so clicking them doesn't toggle row)
     var btns='';
-    if(status==='Pending'||status==='Need Info'){
+    if(status==='Pending'||status==='Need Info'||status==='Resubmitted'){
       btns='<button class="row-act-btn row-btn-approve" onclick="openApproveModal(\''+sid+'\');event.stopPropagation()">✅</button>'
           +'<button class="row-act-btn row-btn-needinfo" onclick="openNeedInfoModal(\''+sid+'\');event.stopPropagation()">🔍</button>'
           +'<button class="row-act-btn row-btn-reject" onclick="openRejectModal(\''+sid+'\');event.stopPropagation()">❌</button>';
@@ -1590,7 +1596,7 @@ denomArray.forEach(function(d){
 
   // Action buttons by status
   var actionBtns='';
-  if(rawStatus==='Pending'||rawStatus==='Need Info'){
+  if(rawStatus==='Pending'||rawStatus==='Need Info'||rawStatus==='Resubmitted'){
     actionBtns=
       '<button class="btn-approve"   onclick="openApproveModal(\''+r.submissionId+'\');event.stopPropagation();">✅ Approve</button>'
      +'<button class="btn-needinfo"  onclick="openNeedInfoModal(\''+r.submissionId+'\');event.stopPropagation();">🔍 Need Info</button>'
