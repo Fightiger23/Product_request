@@ -44,10 +44,11 @@
   .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .field-block{display:flex;flex-direction:column;}
   .field-label{font-size:12px;font-weight:600;color:var(--label);margin-bottom:5px;display:block;}
-  input[type="text"],input[type="email"],input[type="url"]{width:100%;background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:10px 14px;outline:none;transition:border-color .15s,box-shadow .15s;}
-  input:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(227,0,27,.1);}
-  input::placeholder{color:var(--muted);font-weight:300;}
-  input.field-error{border-color:var(--accent);}
+  input[type="text"],input[type="email"],input[type="url"],textarea{width:100%;background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:10px 14px;outline:none;transition:border-color .15s,box-shadow .15s;}
+  textarea{resize:none;overflow:hidden;line-height:1.5;min-height:42px;display:block;}
+  input:focus,textarea:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(227,0,27,.1);}
+  input::placeholder,textarea::placeholder{color:var(--muted);font-weight:300;}
+  input.field-error,textarea.field-error{border-color:var(--accent);}
   .field-err-msg{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
   .identity-note{margin-top:12px;padding:9px 12px;background:#fffbeb;border-left:3px solid var(--warning);border-radius:0 6px 6px 0;font-size:11px;color:#92640a;line-height:1.6;}
   .verify-pending{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;font-weight:600;color:#92640a;background:#fff9e6;border:1px solid #fde68a;border-radius:20px;padding:4px 10px;}
@@ -223,12 +224,12 @@
       <div class="two-col">
         <div class="field-block">
           <label class="field-label">G2G Username <span class="required">*</span></label>
-          <input type="text" id="sellerUsername" placeholder="e.g. seller_abc123" maxlength="300">
+          <input type="text" id="sellerUsername" placeholder="e.g. seller_abc123">
           <div class="field-err-msg" id="usernameErr">Please enter your G2G username</div>
         </div>
         <div class="field-block">
           <label class="field-label">Registered Email <span class="required">*</span></label>
-          <input type="email" id="sellerEmail" placeholder="e.g. seller@email.com" maxlength="300">
+          <input type="email" id="sellerEmail" placeholder="e.g. seller@email.com" maxlength="300" style="max-height:42px;">
           <div class="field-err-msg" id="emailErr">Please enter a valid email address</div>
         </div>
       </div>
@@ -1337,22 +1338,69 @@ loadFormConfig(null);
 $('sellerUsername').addEventListener('input',function(){this.classList.remove('field-error');$('usernameErr').style.display='none';});
 $('sellerEmail').addEventListener('input',function(){this.classList.remove('field-error');$('emailErr').style.display='none';});
 
-// ── Enforce 300-char limit on all inputs (static + dynamic) ─
-function applyMaxLength(root){
-  (root||document).querySelectorAll('input[type="text"],input[type="email"],input[type="url"],textarea').forEach(function(el){
-    if(!el.hasAttribute('maxlength'))el.setAttribute('maxlength','300');
-  });
+// ── Auto-resize textarea as user types ───────────────────
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=Math.max(42,el.scrollHeight)+'px';
 }
-applyMaxLength();
+
+// ── Upgrade input[type="text"] → wrapping textarea ────────
+// Excluded: dropdown search boxes, ref-url paste field (special key handling)
+function shouldUpgrade(input){
+  if(input._upgraded)return false;
+  if(input.classList.contains('ref-url-input'))return false;
+  if(input.closest&&input.closest('.dropdown-search'))return false;
+  return true;
+}
+function upgradeToTextarea(input){
+  if(!shouldUpgrade(input))return;
+  var ta=document.createElement('textarea');
+  ta._upgraded=true;
+  // Copy identity & appearance
+  if(input.id)ta.id=input.id;
+  if(input.name)ta.name=input.name;
+  ta.className=input.className;
+  ta.placeholder=input.placeholder||'';
+  ta.value=input.value||'';
+  ta.setAttribute('maxlength','300');
+  ta.rows=1;
+  // Copy inline event attributes
+  ['onkeydown','oninput','onpaste','onclick','onfocus','onblur'].forEach(function(a){
+    if(input.hasAttribute(a))ta.setAttribute(a,input.getAttribute(a));
+  });
+  // Copy data-* and other custom attributes
+  Array.from(input.attributes).forEach(function(a){
+    if(!ta.hasAttribute(a.name)&&a.name!=='type'&&a.name!=='value')
+      ta.setAttribute(a.name,a.value);
+  });
+  ta.style.cssText=input.style.cssText;
+  ta.addEventListener('input',function(){autoResize(this);});
+  input.parentNode.replaceChild(ta,input);
+  autoResize(ta);
+}
+
+// Apply to all existing text inputs on load
+document.querySelectorAll('input[type="text"]').forEach(upgradeToTextarea);
+
+// Apply maxlength=300 to email/url inputs (not converted)
+document.querySelectorAll('input[type="email"],input[type="url"]').forEach(function(el){
+  if(!el.hasAttribute('maxlength'))el.setAttribute('maxlength','300');
+});
+
+// Watch for dynamically added inputs and upgrade them
 new MutationObserver(function(mutations){
   mutations.forEach(function(m){
     m.addedNodes.forEach(function(n){
-      if(n.nodeType===1){
-        if((n.tagName==='INPUT'&&/^(text|email|url)$/i.test(n.type||''))||n.tagName==='TEXTAREA'){
-          if(!n.hasAttribute('maxlength'))n.setAttribute('maxlength','300');
-        }
-        applyMaxLength(n);
+      if(n.nodeType!==1)return;
+      if(n.tagName==='INPUT'){
+        if(n.type==='text')upgradeToTextarea(n);
+        else if(!n.hasAttribute('maxlength'))n.setAttribute('maxlength','300');
+        return;
       }
+      n.querySelectorAll('input[type="text"]').forEach(upgradeToTextarea);
+      n.querySelectorAll('input[type="email"],input[type="url"]').forEach(function(el){
+        if(!el.hasAttribute('maxlength'))el.setAttribute('maxlength','300');
+      });
     });
   });
 }).observe(document.body,{childList:true,subtree:true});
