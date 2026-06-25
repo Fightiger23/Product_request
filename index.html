@@ -305,6 +305,7 @@
   <!-- STEP 3: Fill Forms -->
   <div id="step3Wrap" class="hidden">
     <button class="back-btn" onclick="backToStep2()">← Back to products</button>
+    <div id="editBanner" class="hidden" style="background:#fff9e6;border:1.5px solid #f59e0b;border-radius:var(--radius);padding:14px 18px;margin-bottom:12px;display:flex;align-items:flex-start;gap:12px;"></div>
     <div style="margin-bottom:12px;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
       <span>Submitting as <strong style="color:var(--text)" id="identitySummary"></strong></span>
       <span id="tabProgressSummary" style="color:var(--muted);"></span>
@@ -328,6 +329,8 @@
 <script>
 var SCRIPT_URL='https://script.google.com/macros/s/AKfycbzWMRr34s08mgfRliKfFUKwvp6QiHSmewYTapN63Z7Ok64TKe1pDUNkTdoYkLCNVKgceg/exec';
 var CONFIG_URL='https://raw.githubusercontent.com/fightiger23/Product_request/main/config.json';
+var resubmitSid=null,resubmitToken=null,resubmitFlagged=[];
+(function(){var p=new URLSearchParams(window.location.search);resubmitSid=p.get('resubmit')||null;resubmitToken=p.get('token')||null;var f=p.get('flagged');resubmitFlagged=f?f.split('|').filter(Boolean):[];})();
 var TREE={
   'Digital Products':{
     'Gaming':['Game Account','Game Boosting','Game Coins','Game Items','Game Skins','Game Top Up & Gift Cards'],
@@ -459,6 +462,7 @@ function goToStep3(){
   $('identitySummary').textContent=$('sellerUsername').value.trim()+' · '+$('sellerEmail').value.trim();
   activeTab=0;submittedTabs=[];tabStates={};
   if(!configLoaded)loadFormConfig(function(){buildTabs();});else buildTabs();
+  if(resubmitSid){var eb=$('editBanner');eb.classList.remove('hidden');eb.innerHTML='<span style="font-size:20px;">✏️</span><div><div style="font-size:14px;font-weight:700;color:#92400e;margin-bottom:2px;">Edit &amp; Resubmit Mode</div><div style="font-size:12px;color:#92400e;">Editing submission <strong>'+esc(resubmitSid)+'</strong>'+(resubmitFlagged.length?' &mdash; Fields flagged: <strong>'+resubmitFlagged.map(function(f){return esc(f.trim());}).join(', ')+'</strong>':'')+'.</div></div>';}
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function buildTabs(){renderTabBar();renderTabContent(activeTab);updateTabProgress();}
@@ -979,7 +983,7 @@ function collectTabData(idx){
   var tiers=[];
   if(tabTiers[idx])Object.keys(tabTiers[idx]).forEach(function(tid){var r=tabTiers[idx][tid];if(r&&r.length)tiers.push(r.map(function(x){return x.value;}).join(', '));});
   return {
-    submissionId:'G2G-'+Date.now()+'-'+idx,timestamp:new Date().toISOString(),
+    submissionId:resubmitSid||('G2G-'+Date.now()+'-'+idx),timestamp:new Date().toISOString(),
     sellerUsername:$('sellerUsername').value.trim(),sellerEmail:$('sellerEmail').value.trim(),
     team:getTeam(prod),
     productType:prod,layer1:selL1.join(', '),layer2:selL2.join(', '),
@@ -992,7 +996,9 @@ function collectTabData(idx){
     denominations:(isKey&&!isGiftCardLocked)?'Key':denoms.map(function(d){return d.productType+':'+d.dataset+':'+d.amount;}).join(' | '),
     entryField1:ef[0]||'',entryField2:ef[1]||'',entryField3:ef[2]||'',entryField4:ef[3]||'',entryField5:ef[4]||'',
     refLink:(tabRefUrls[idx]||[]).join(' | '),
-    refImages:(tabRefImgs[idx]||[]).map(function(f){return f.name;}).join(', ')
+    refImages:(tabRefImgs[idx]||[]).map(function(f){return f.name;}).join(', '),
+    isResubmit:resubmitSid?'true':'',
+    editToken:resubmitToken||''
   };
 }
 function submitTab(idx){
@@ -1048,9 +1054,9 @@ var GPGC_PRODS=['Game Coaching','Game Pal'];
 
 // Auto-detect team from product — no UI selector needed
 function getTeam(prod){
-  if(GPGC_PRODS.indexOf(prod)>-1)return 'GPGC';
+  if(GPGC_PRODS.indexOf(prod)>-1)return 'Rent Time Services';
   if(SECONDARY_PRODS.indexOf(prod)>-1)return 'Secondary Market';
-  return 'Primary Market';
+  return 'Main Market';
 }
 function isSecondaryProd(prod){return SECONDARY_PRODS.indexOf(prod)>-1;}
 
@@ -1276,32 +1282,33 @@ function collectSecondaryTabData(idx){
   var prod=selL3[idx];
   var delivChecked=Array.from(document.querySelectorAll('input[name="secDeliv_'+idx+'"]:checked')).map(function(c){return c.value;});
   function v(id){var el=document.getElementById(id+'_'+idx);return el?el.value.trim():'';}
+  var currencyNamesValue=(function(){
+    var list=$('secCurrList_'+idx);
+    if(!list)return v('secCurr1');
+    return Array.from(list.querySelectorAll('input[type="text"]')).map(function(i){return i.value.trim();}).filter(Boolean).join(', ');
+  })();
+  var productNameValue=v('secProdName')||v('secItemName')||v('secSkinName')||currencyNamesValue;
+  var productInfoValue=v('secProdInfo')||v('secCurrUnits');
+  var urlValue=v('secUrl');
+  var refLinkValue=[urlValue].concat(tabRefUrls[idx]||[]).filter(Boolean).join(' | ');
+  var sid=resubmitSid||('G2G-SEC-'+Date.now()+'-'+idx);
   return {
-    submissionId:'G2G-SEC-'+Date.now()+'-'+idx,
+    submissionId:sid,
     timestamp:new Date().toISOString(),
     sellerUsername:$('sellerUsername').value.trim(),
     sellerEmail:$('sellerEmail').value.trim(),
     team:getTeam(prod),
     productType:prod,
     gameName:v('secGameName'),
-    productName:v('secProdName'),
-    productInfo:v('secProdInfo'),
-    itemName:v('secItemName'),
-    skinName:v('secSkinName'),
-    currencyNames:(function(){
-      var list=$('secCurrList_'+idx);
-      if(!list)return v('secCurr1');
-      return Array.from(list.querySelectorAll('input[type="text"]')).map(function(i){return i.value.trim();}).filter(Boolean).join(', ');
-    })(),
-    currencyUnits:v('secCurrUnits'),
+    productName:productNameValue,
+    productInfo:productInfoValue,
     region:v('secRegion'),
     server:v('secServer'),
-    url:v('secUrl'),
     deliveryMethod:delivChecked.join(', '),
     characterName:v('secCharName'),
     uid:v('secUid'),
-    username:v('secUname'),
-    refLink:(tabRefUrls[idx]||[]).join(' | '),
+    ingameUsername:v('secUname'),
+    refLink:refLinkValue,
     extraFields:(function(){
       var extras=[];
       for(var ei=1;ei<=(secExtraCounts[idx]||0);ei++){
@@ -1309,7 +1316,9 @@ function collectSecondaryTabData(idx){
         if(el&&el.value.trim())extras.push(el.value.trim());
       }
       return extras.join(' | ');
-    })()
+    })(),
+    isResubmit:resubmitSid?'true':'',
+    editToken:resubmitToken||''
   };
 }
 
