@@ -355,10 +355,10 @@ var DELIVERY_MAP={
   'Game Items':{type:'game',methods:['Game Items']},
   'Game Skins':{type:'game',methods:['Game Skins']},
   'Game Top Up & Gift Cards':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'AI & Tools':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Ebooks':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Live Streaming & Social':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
-  'Video & Music':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'AI & Tools':{type:'giftcard',methods:['Account','Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Ebooks':{type:'giftcard',methods:['Account','Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Live Streaming & Social':{type:'giftcard',methods:['Account','Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
+  'Video & Music':{type:'giftcard',methods:['Account','Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'Dining & Food':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'eCommerce':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
   'Education':{type:'giftcard',methods:['Activation Links','Gift Cards','Platform Engagement','Direct Top Up','Manual Top Up']},
@@ -817,7 +817,9 @@ function onDeliveryChange(idx){var sel=document.querySelector('input[name="deliv
 function renderDeliveryFields(idx,method,prod){
   var wrap=$('deliveryFields_'+idx);if(!wrap)return;
   var h='';
-  if(method==='Activation Links'){
+  if(method==='Account'){
+    h+=accountDeliveryHTML(idx);
+  }else if(method==='Activation Links'){
     h+='<div style="margin-bottom:14px;">'
       +'<label class="field-label">Product Name <span class="required">*</span></label>'
       +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Enter the exact product name as it will appear to buyers.</div>'
@@ -867,6 +869,27 @@ function renderDeliveryFields(idx,method,prod){
   wrap.innerHTML=h;
   if(h.includes('denomList_'+idx))initDenom(idx);
   if(h.includes('entryContainer_'+idx))initEntry(idx);
+}
+
+// ── ACCOUNT DELIVERY (Software & Apps) ───────────────────────────────────────
+function accountDeliveryHTML(idx){
+  return '<div style="margin-bottom:14px;">'
+    +'<label class="field-label">Account Type <span class="required">*</span></label>'
+    +'<div class="options-grid" id="acctTypeGroup_'+idx+'" style="margin-bottom:10px;">'
+    +'<label class="option"><input type="radio" name="acctType_'+idx+'" value="Private Account" onchange="showAcctDenoms('+idx+')"> Private Account</label>'
+    +'<label class="option"><input type="radio" name="acctType_'+idx+'" value="Shared Account" onchange="showAcctDenoms('+idx+')"> Shared Account</label>'
+    +'</div>'
+    +'<div id="acctDelivDenoms_'+idx+'" class="hidden">'
+    +denomHTML(idx,false,false)
+    +'</div>'
+    +'</div>';
+}
+function showAcctDenoms(idx){
+  var wrap=$('acctDelivDenoms_'+idx);if(!wrap)return;
+  if(wrap.classList.contains('hidden')){
+    wrap.classList.remove('hidden');
+    if(!denomCounts.hasOwnProperty(idx)||denomCounts[idx]===0)initDenom(idx);
+  }
 }
 
 function toggleGCOthersDropdown(idx){
@@ -1489,7 +1512,13 @@ function unlockSection(idx,label,tc){
   }
   else if(label==='delivery method'){
     en('input[name="delivery_'+idx+'"]');en('input[name="secDeliv_'+idx+'"]');
-    enWrap($('deliveryFields_'+idx));
+    var dfWrap=$('deliveryFields_'+idx);
+    if(dfWrap){
+      // Must remove 'locked' CSS class from denom wraps before enWrap, otherwise
+      // the CSS class pointer-events:none overrides the cleared inline style
+      dfWrap.querySelectorAll('.denom-rows-wrap').forEach(function(el){el.classList.remove('locked');});
+      enWrap(dfWrap);
+    }
     if(isSec){showDelivInfo();enWrap($('secDelivInfo_'+idx));}
   }
   else if(label==='denominations'){
@@ -1500,7 +1529,7 @@ function unlockSection(idx,label,tc){
     tc.querySelectorAll('.ref-url-pill-rm').forEach(function(e){e.style.pointerEvents='';e.style.opacity='';});
   }
   else if(label==='reference image'||label==='reference images'){enWrap($('refZone_'+idx));}
-  else if(label==='platforms'){
+  else if(label==='platforms'||label==='platform'){
     en('input[name="plat_'+idx+'"]');en('input[name="pcPlat_'+idx+'"]');en('#crossPlat_'+idx);
     enWrap($('pcSub_'+idx));
   }
@@ -1513,9 +1542,14 @@ function unlockSection(idx,label,tc){
   else if(label==='entry field 4'){enEl(document.getElementById('ef4_'+idx));}
   else if(label==='entry field 5'){enEl(document.getElementById('ef5_'+idx));}
   else if(label==='account type'){en('input[name="acctType_'+idx+'"]');}
+  // Main market product name (Activation Links → prodName; Gift Cards → giftCardAmt)
+  else if(label==='product name'&&!isSec){
+    enEl(document.getElementById('prodName_'+idx));
+    enEl(document.getElementById('giftCardAmt_'+idx));
+  }
   // ── Secondary Market ─────────────────────────────────────────────────────────
   else if(label==='game name'){en('#secGameName_'+idx);}
-  else if(label==='product name'||label==='account name'||label==='service name'||label==='currency name'||label==='item name'||label==='skin name'){en('#secProdName_'+idx);}
+  else if((label==='product name'||label==='account name'||label==='service name'||label==='currency name'||label==='item name'||label==='skin name')&&isSec){en('#secProdName_'+idx);}
   else if(label==='product info'||label==='additional info'){en('#secProdInfo_'+idx);}
   // Admin sends 'Product Units'; form labels it 'Currency Units' — handle both
   else if(label==='product units'||label==='currency units'){en('#secProdUnits_'+idx);}
