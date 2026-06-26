@@ -206,9 +206,9 @@
   </div>
   <div class="progress-wrap">
     <div class="progress-steps">
-      <div class="pstep active" id="pstep1"><div class="pstep-num">1</div><span>Select products</span></div>
+      <div class="pstep active" id="pstep1"><div class="pstep-num">1</div><span>User information</span></div>
       <div class="pstep-arrow">›</div>
-      <div class="pstep" id="pstep2"><div class="pstep-num">2</div><span>Seller details</span></div>
+      <div class="pstep" id="pstep2"><div class="pstep-num">2</div><span>Select products</span></div>
       <div class="pstep-arrow">›</div>
       <div class="pstep" id="pstep3"><div class="pstep-num">3</div><span>Fill forms</span></div>
       <div class="pstep-arrow">›</div>
@@ -217,8 +217,38 @@
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:8%"></div></div>
   </div>
 
-  <!-- STEP 1 -->
+  <!-- STEP 1: User Information -->
   <div id="step1Wrap">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">👤</div>
+        <div>
+          <div class="card-title">User Information <span class="required">*</span></div>
+          <div class="card-desc">Enter your G2G registered details. These apply to all your submissions in this session.</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field-block">
+          <label class="field-label">G2G Username <span class="required">*</span></label>
+          <input type="text" id="sellerUsername" placeholder="e.g. seller_abc123">
+          <div class="field-err-msg" id="usernameErr">Please enter your G2G username</div>
+        </div>
+        <div class="field-block">
+          <label class="field-label">Registered Email <span class="required">*</span></label>
+          <input type="email" id="sellerEmail" placeholder="e.g. seller@email.com">
+          <div class="field-err-msg" id="emailErr">Please enter a valid email address</div>
+        </div>
+      </div>
+      <div class="verify-pending">⏳ Live verification coming soon — ensure details match your G2G account</div>
+      <div class="identity-note">Your username and email will be used to notify you of each request's status. Make sure these match your registered G2G seller account exactly.</div>
+      <div style="height:16px;"></div>
+      <button class="continue-btn" onclick="goToStep2()">Continue to product selection →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Select Products -->
+  <div id="step2Wrap" class="hidden">
+    <button class="back-btn" onclick="backToStep1()">← Back</button>
     <div class="card">
       <div class="card-header">
         <div class="card-icon">🗂️</div>
@@ -262,43 +292,13 @@
       </div>
       <div class="selection-tags" id="selectionTags"></div>
       <div style="height:16px;"></div>
-      <button class="continue-btn" id="continueToIdentityBtn" disabled onclick="goToStep2()">Continue →</button>
-    </div>
-  </div>
-
-  <!-- STEP 2 -->
-  <div id="step2Wrap" class="hidden">
-    <button class="back-btn" onclick="backToStep1()">← Back</button>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon">👤</div>
-        <div>
-          <div class="card-title">Seller Identity <span class="required">*</span></div>
-          <div class="card-desc">Enter your G2G registered details. These apply to all your submissions in this session.</div>
-        </div>
-      </div>
-      <div class="two-col">
-        <div class="field-block">
-          <label class="field-label">G2G Username <span class="required">*</span></label>
-          <input type="text" id="sellerUsername" placeholder="e.g. seller_abc123">
-          <div class="field-err-msg" id="usernameErr">Please enter your G2G username</div>
-        </div>
-        <div class="field-block">
-          <label class="field-label">Registered Email <span class="required">*</span></label>
-          <input type="email" id="sellerEmail" placeholder="e.g. seller@email.com">
-          <div class="field-err-msg" id="emailErr">Please enter a valid email address</div>
-        </div>
-      </div>
-      <div class="verify-pending">⏳ Live verification coming soon — ensure details match your G2G account</div>
-      <div class="identity-note">Your username and email will be used to notify you of each request's status. Make sure these match your registered G2G seller account exactly.</div>
-      <div style="height:16px;"></div>
-      <button class="continue-btn" onclick="goToStep3()">Continue to forms →</button>
+      <button class="continue-btn" id="continueToIdentityBtn" disabled onclick="goToStep3()">Continue →</button>
     </div>
   </div>
 
   <!-- STEP 3 -->
   <div id="step3Wrap" class="hidden">
-    <button class="back-btn" id="step3BackBtn" onclick="backToStep2()">← Back to seller details</button>
+    <button class="back-btn" id="step3BackBtn" onclick="backToStep2()">← Back to product selection</button>
     <!-- Edit banner (hidden by default, shown in resubmit mode) -->
     <div class="edit-banner hidden" id="editBanner"></div>
     <div style="margin-bottom:12px;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
@@ -441,14 +441,17 @@ function updateSummary(){
 }
 
 function goToStep2(){
+  // Validate user info before proceeding to product selection
+  var u=$('sellerUsername').value.trim(),e=$('sellerEmail').value.trim();
+  if(!u){$('sellerUsername').classList.add('field-error');$('usernameErr').style.display='block';return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){$('sellerEmail').classList.add('field-error');$('emailErr').style.display='block';return;}
   $('step1Wrap').classList.add('hidden');$('step2Wrap').classList.remove('hidden');
   $('pstep1').classList.remove('active');$('pstep1').classList.add('done');$('pstep2').classList.add('active');
   $('progressFill').style.width='45%';window.scrollTo({top:0,behavior:'smooth'});
 }
 function goToStep3(){
+  // User info already validated in goToStep2; products already selected
   var u=$('sellerUsername').value.trim(),e=$('sellerEmail').value.trim();
-  if(!u){$('sellerUsername').classList.add('field-error');$('usernameErr').style.display='block';return;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){$('sellerEmail').classList.add('field-error');$('emailErr').style.display='block';return;}
   $('step2Wrap').classList.add('hidden');$('step3Wrap').classList.remove('hidden');
   $('pstep2').classList.remove('active');$('pstep2').classList.add('done');$('pstep3').classList.add('active');
   $('progressFill').style.width='60%';$('identitySummary').textContent=u+' · '+e;
@@ -586,54 +589,100 @@ function renderSecondaryTabContent(idx){
       +'</div>';
     return;
   }
-  // Field labels by product type
-  var prodLabel={
-    'Game Account':'Account Name','Game Boosting':'Service Name','Game Coins':'Currency Name',
-    'Game Items':'Item Name','Game Skins':'Skin Name'
-  }[prod]||'Product Name';
-  var delivMethods=['In-game delivery','Trade','Account info delivery','Gift/Send','Other'];
+
+  var hasDelivery=(prod==='Game Coins'||prod==='Game Items');
+  var delivMethods={'Game Coins':['F2F','Auction House','Mail','Guild Bank'],'Game Items':['F2F','Auction House','Mail','Gifting','Guild Bank']}[prod]||[];
   var h='';
+
+  // ── Game Name (all product types) ──────────────────────────────────────────
   h+='<div style="margin-bottom:14px;"><label class="field-label">Game Name <span class="required">*</span></label>'
     +'<input type="text" id="secGameName_'+idx+'" placeholder="e.g. Mobile Legends, Genshin Impact"></div>';
-  h+='<div class="two-col" style="margin-bottom:14px;">'
-    +'<div class="field-block"><label class="field-label">'+prodLabel+' <span class="required">*</span></label>'
-    +'<input type="text" id="secProdName_'+idx+'" placeholder="Enter '+prodLabel.toLowerCase()+'"></div>'
-    +'<div class="field-block"><label class="field-label">Region <span class="required">*</span></label>'
-    +'<input type="text" id="secRegion_'+idx+'" placeholder="e.g. SEA, Global, NA"></div>'
-    +'</div>';
-  h+='<div class="two-col" style="margin-bottom:14px;">'
-    +'<div class="field-block"><label class="field-label">Server <span class="optional-tag">optional</span></label>'
-    +'<input type="text" id="secServer_'+idx+'" placeholder="e.g. Asia, EU West"></div>'
-    +'<div class="field-block"><label class="field-label">Platform <span class="optional-tag">optional</span></label>'
-    +'<input type="text" id="secPlatform_'+idx+'" placeholder="e.g. PC, Mobile, Console"></div>'
-    +'</div>';
+
+  // ── Per-product field layout ────────────────────────────────────────────────
   if(prod==='Game Coins'){
+    // Currency Name + Currency Units on same row
     h+='<div class="two-col" style="margin-bottom:14px;">'
+      +'<div class="field-block"><label class="field-label">Currency Name <span class="required">*</span></label>'
+      +'<input type="text" id="secProdName_'+idx+'" placeholder="e.g. Gold, Diamonds, Silver"></div>'
       +'<div class="field-block"><label class="field-label">Currency Units <span class="optional-tag">optional</span></label>'
-      +'<input type="text" id="secProdUnits_'+idx+'" placeholder="e.g. 1000, 5000"></div>'
-      +'<div class="field-block"><label class="field-label">Additional Info <span class="optional-tag">optional</span></label>'
-      +'<input type="text" id="secProdInfo_'+idx+'" placeholder="Any extra details"></div>'
+      +'<input type="text" id="secProdUnits_'+idx+'" placeholder="e.g. Per unit, K, Mil, B"></div>'
       +'</div>';
-  }else{
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Region <span class="optional-tag">optional</span></label>'
+      +'<input type="text" id="secRegion_'+idx+'" placeholder="e.g. SEA, Global, NA"></div>';
+    // Platform and Server combined into one bracket
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Platform / Server <span class="optional-tag">optional</span></label>'
+      +'<input type="text" id="secServer_'+idx+'" placeholder="e.g. PC, Mobile, Asia, EU West"></div>';
+
+  } else if(prod==='Game Items'){
+    // Item Name — bigger textarea
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Item Name <span class="required">*</span></label>'
+      +'<textarea id="secProdName_'+idx+'" rows="2" style="width:100%;box-sizing:border-box;resize:vertical;" placeholder="Enter item name"></textarea></div>';
+    // Product Info
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Product Info <span class="optional-tag">optional</span></label>'
+      +'<input type="text" id="secProdInfo_'+idx+'" placeholder="e.g. Dagger, Sword, Axe"></div>';
+    // Region + Server optional (two-col)
+    h+='<div class="two-col" style="margin-bottom:14px;">'
+      +'<div class="field-block"><label class="field-label">Region <span class="optional-tag">optional</span></label>'
+      +'<input type="text" id="secRegion_'+idx+'" placeholder="e.g. SEA, Global, NA"></div>'
+      +'<div class="field-block"><label class="field-label">Server <span class="optional-tag">optional</span></label>'
+      +'<input type="text" id="secServer_'+idx+'" placeholder="e.g. Asia, EU West"></div>'
+      +'</div>';
+
+  } else if(prod==='Game Boosting'){
+    // Boosting Type — bigger textarea
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Boosting Type <span class="required">*</span></label>'
+      +'<textarea id="secProdName_'+idx+'" rows="2" style="width:100%;box-sizing:border-box;resize:vertical;" placeholder="Describe the boosting service"></textarea></div>';
+    // Product Info
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Product Info <span class="optional-tag">optional</span></label>'
+      +'<input type="text" id="secProdInfo_'+idx+'" placeholder="e.g. Leveling, Raid, Dungeon"></div>';
+    // Region optional
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Region <span class="optional-tag">optional</span></label>'
+      +'<input type="text" id="secRegion_'+idx+'" placeholder="e.g. SEA, Global, NA"></div>';
+
+  } else if(prod==='Game Account'){
+    // Additional Info — bigger textarea
     h+='<div style="margin-bottom:14px;"><label class="field-label">Additional Info <span class="optional-tag">optional</span></label>'
-      +'<input type="text" id="secProdInfo_'+idx+'" placeholder="e.g. condition, level, stats, description"></div>';
+      +'<textarea id="secProdInfo_'+idx+'" rows="3" style="width:100%;box-sizing:border-box;resize:vertical;" placeholder="e.g. account level, rank, items included"></textarea></div>';
+    // Region optional
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Region <span class="optional-tag">optional</span></label>'
+      +'<input type="text" id="secRegion_'+idx+'" placeholder="e.g. SEA, Global, NA"></div>';
+    // Platform / Server combined optional
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Platform / Server <span class="optional-tag">optional</span></label>'
+      +'<input type="text" id="secServer_'+idx+'" placeholder="e.g. PC, Mobile, Asia, EU West"></div>';
+
+  } else if(prod==='Game Skins'){
+    // Additional Info — bigger textarea
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Additional Info <span class="optional-tag">optional</span></label>'
+      +'<textarea id="secProdInfo_'+idx+'" rows="3" style="width:100%;box-sizing:border-box;resize:vertical;" placeholder="e.g. skin name, rarity, bundle contents"></textarea></div>';
+    // Region optional
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Region <span class="optional-tag">optional</span></label>'
+      +'<input type="text" id="secRegion_'+idx+'" placeholder="e.g. SEA, Global, NA"></div>';
+    // Platform / Server combined optional
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Platform / Server <span class="optional-tag">optional</span></label>'
+      +'<input type="text" id="secServer_'+idx+'" placeholder="e.g. PC, Mobile, Asia, EU West"></div>';
   }
-  h+='<div style="margin-bottom:14px;"><label class="field-label">Delivery Method <span class="required">*</span></label>'
-    +'<div class="options-grid single-col" id="secDelivGroup_'+idx+'">';
-  delivMethods.forEach(function(m){
-    h+='<label class="option"><input type="radio" name="secDeliv_'+idx+'" value="'+esc(m)+'" onchange="toggleSecDelivInfo('+idx+')">'+esc(m)+'</label>';
-  });
-  h+='</div></div>';
-  h+='<div id="secDelivInfo_'+idx+'" class="hidden" style="margin-bottom:14px;">'
-    +'<div class="two-col">'
-    +'<div class="field-block"><label class="field-label">Character Name <span class="optional-tag">optional</span></label>'
-    +'<input type="text" id="secCharName_'+idx+'" placeholder="Buyer\'s in-game name"></div>'
-    +'<div class="field-block"><label class="field-label">UID / Player ID <span class="optional-tag">optional</span></label>'
-    +'<input type="text" id="secUid_'+idx+'" placeholder="Buyer\'s UID or Player ID"></div>'
-    +'</div>'
-    +'<div style="margin-top:10px;"><label class="field-label">In-game Username <span class="optional-tag">optional</span></label>'
-    +'<input type="text" id="secUname_'+idx+'" placeholder="Buyer\'s in-game username"></div>'
-    +'</div>';
+
+  // ── Delivery Method + Buyer Info (Game Coins & Game Items only) ─────────────
+  if(hasDelivery){
+    h+='<div style="margin-bottom:14px;"><label class="field-label">Delivery Method <span class="required">*</span></label>'
+      +'<div class="options-grid single-col" id="secDelivGroup_'+idx+'">';
+    delivMethods.forEach(function(m){
+      h+='<label class="option"><input type="radio" name="secDeliv_'+idx+'" value="'+esc(m)+'" onchange="toggleSecDelivInfo('+idx+')">'+esc(m)+'</label>';
+    });
+    h+='</div></div>';
+    // Buyer info — hidden until a delivery method is selected, then drops down
+    h+='<div id="secDelivInfo_'+idx+'" class="hidden" style="margin-bottom:14px;">'
+      +'<div class="two-col">'
+      +'<div class="field-block"><label class="field-label">Character Name <span class="required">*</span></label>'
+      +'<input type="text" id="secCharName_'+idx+'" placeholder="Buyer\'s in-game name"></div>'
+      +'<div class="field-block"><label class="field-label">UID / Player ID <span class="required">*</span></label>'
+      +'<input type="text" id="secUid_'+idx+'" placeholder="Buyer\'s UID or Player ID"></div>'
+      +'</div>'
+      +'<div style="margin-top:10px;"><label class="field-label">In-game Username <span class="required">*</span></label>'
+      +'<input type="text" id="secUname_'+idx+'" placeholder="Buyer\'s in-game username"></div>'
+      +'</div>';
+  }
+
   h+=refSectionHTML(idx);
   h+='<div class="tab-submit-row">'
     +'<div class="tab-progress-info">Form '+(idx+1)+' of '+selL3.length+' &nbsp;·&nbsp; '+esc(prod)+'</div>'
@@ -646,7 +695,12 @@ function renderSecondaryTabContent(idx){
 function toggleSecDelivInfo(idx){
   var sel=document.querySelector('input[name="secDeliv_'+idx+'"]:checked');
   var info=$('secDelivInfo_'+idx);if(!info)return;
-  var showInfo=sel&&(sel.value==='In-game delivery'||sel.value==='Trade'||sel.value==='Gift/Send');
+  // For Game Coins/Items: show buyer info whenever any delivery method is selected
+  if(selL3[idx]==='Game Coins'||selL3[idx]==='Game Items'){
+    info.classList.toggle('hidden',!sel);
+    return;
+  }
+  var showInfo=sel&&(['In-game delivery','Trade','Gift/Send','F2F','Mail','Gifting'].indexOf(sel.value)>-1);
   info.classList.toggle('hidden',!showInfo);
 }
 
@@ -1115,11 +1169,27 @@ function submitTab(idx){
   var isSec=isSecondaryProd(prod);
   if(isSec){
     var gn=($('secGameName_'+idx)||{}).value||'';
-    var pn=($('secProdName_'+idx)||{}).value||'';
-    var rg=($('secRegion_'+idx)||{}).value||'';
     if(!gn.trim()){showTabError(idx,'Please enter the Game Name.');return;}
-    if(!pn.trim()){showTabError(idx,'Please enter the product name.');return;}
-    if(!rg.trim()){showTabError(idx,'Please enter the Region.');return;}
+    // Per-product required fields
+    if(prod==='Game Coins'){
+      var pn=($('secProdName_'+idx)||{}).value||'';
+      if(!pn.trim()){showTabError(idx,'Please enter the Currency Name.');return;}
+    } else if(prod==='Game Items'){
+      var pn=($('secProdName_'+idx)||{}).value||'';
+      if(!pn.trim()){showTabError(idx,'Please enter the Item Name.');return;}
+    } else if(prod==='Game Boosting'){
+      var pn=($('secProdName_'+idx)||{}).value||'';
+      if(!pn.trim()){showTabError(idx,'Please enter the Boosting Type.');return;}
+    }
+    // Delivery method + buyer info (Game Coins & Game Items)
+    if(prod==='Game Coins'||prod==='Game Items'){
+      var dm=document.querySelector('input[name="secDeliv_'+idx+'"]:checked');
+      if(!dm){showTabError(idx,'Please select a Delivery Method.');return;}
+      var cn=($('secCharName_'+idx)||{}).value||'';
+      var uid=($('secUid_'+idx)||{}).value||'';
+      var uname=($('secUname_'+idx)||{}).value||'';
+      if(!cn.trim()&&!uid.trim()&&!uname.trim()){showTabError(idx,'Please provide at least one buyer info field (Character Name, UID, or In-game Username).');return;}
+    }
     if(!(tabRefUrls[idx]&&tabRefUrls[idx].length)){$('refHint_'+idx)&&$('refHint_'+idx).classList.remove('hidden');showTabError(idx,'Please add at least one reference URL.');return;}
   }else{
     var brand=($('tabBrand_'+idx)||{}).value||'';
