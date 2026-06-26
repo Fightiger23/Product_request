@@ -1871,8 +1871,16 @@ function confirmReject(){
 var currentNeedInfoFields=[];
 function getReviewableFields(r){
   var t=getTeamInfo(r);
-  if(t==='Secondary Market')
-    return ['Game Name','Product Type','Product Name','Product Units','Product Info','Region','Server','Platform','Delivery Method','Character Name','UID','In-game Username','Reference URLs'];
+  if(t==='Secondary Market'){
+    var base=['Game Name','Product Name','Product Info','Region','Server','Platform','Reference URLs'];
+    // Only Game Coins and Game Items have a delivery method + buyer-info fields
+    if(r.productType==='Game Coins'||r.productType==='Game Items'){
+      base.splice(4,0,'Delivery Method','Character Name','UID','In-game Username');
+    }
+    // Only Game Coins has Product Units
+    if(r.productType==='Game Coins') base.splice(2,0,'Product Units');
+    return base;
+  }
   if(t==='Rent Time Services (GPGC)')
     return ['Product Type','Game Name','Product Variation','Region','Service Details','Reference URLs'];
   return ['Brand / Game Name','Series / Variation','Region','Delivery Method','Denominations','Entry Field 1','Entry Field 2','Entry Field 3','Entry Field 4','Entry Field 5','Account Type','Platform','Cross-Platform','Reference URLs'];
