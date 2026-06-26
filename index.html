@@ -1397,8 +1397,8 @@ function prefillMainTab(idx,d){
   if(d.deliveryMethod){
     var foundR=null;
     document.querySelectorAll('input[name="delivery_'+idx+'"]').forEach(function(r){if(r.value===d.deliveryMethod)foundR=r;});
-    if(foundR){foundR.checked=true;renderDeliveryFields(idx,d.deliveryMethod,selL3[idx]);setTimeout(function(){prefillDeliverySubFields(idx,d);if(resubmitFlagged.length>0)setTimeout(function(){applyFieldLocking(idx);},60);},180);}
-    else{var dm2=DELIVERY_MAP[selL3[idx]];if(dm2&&dm2.methods.length===1)setTimeout(function(){prefillDeliverySubFields(idx,d);if(resubmitFlagged.length>0)setTimeout(function(){applyFieldLocking(idx);},60);},180);}
+    if(foundR){foundR.checked=true;renderDeliveryFields(idx,d.deliveryMethod,selL3[idx]);setTimeout(function(){prefillDeliverySubFields(idx,d);if(resubmitFlagged.length>0)setTimeout(function(){applyFieldLocking(idx);},350);},180);}
+    else{var dm2=DELIVERY_MAP[selL3[idx]];if(dm2&&dm2.methods.length===1)setTimeout(function(){prefillDeliverySubFields(idx,d);if(resubmitFlagged.length>0)setTimeout(function(){applyFieldLocking(idx);},350);},180);}
   }
   // Ref URLs
   if(d.refLink){tabRefUrls[idx]=d.refLink.split(' | ').filter(Boolean);renderRefUrls(idx);}
@@ -1522,7 +1522,15 @@ function unlockSection(idx,label,tc){
     if(isSec){showDelivInfo();enWrap($('secDelivInfo_'+idx));}
   }
   else if(label==='denominations'){
-    var drw=$('denomRowsWrap_'+idx);if(drw){drw.classList.remove('locked');enWrap(drw);}
+    var drw=$('denomRowsWrap_'+idx);
+    if(drw){
+      drw.classList.remove('locked');enWrap(drw);
+      // applyAll checkbox lives in a sibling (.denom-col-headers), outside the wrap — re-enable explicitly
+      var aa=$('applyAll_'+idx);if(aa)aa.disabled=false;
+      // keyCheck / keyRow if present
+      var kc=$('keyCheck_'+idx);if(kc)kc.disabled=false;
+      var kr=$('keyRow_'+idx);if(kr){kr.style.pointerEvents='';kr.style.opacity='';}
+    }
   }
   else if(label==='reference url'||label==='reference urls'){
     en('#refUrlInput_'+idx);enWrap($('refUrlList_'+idx));
@@ -1530,8 +1538,8 @@ function unlockSection(idx,label,tc){
   }
   else if(label==='reference image'||label==='reference images'){enWrap($('refZone_'+idx));}
   else if(label==='platforms'||label==='platform'){
-    en('input[name="plat_'+idx+'"]');en('input[name="pcPlat_'+idx+'"]');en('#crossPlat_'+idx);
-    enWrap($('pcSub_'+idx));
+    if(isSec){en('#secServer_'+idx);}  // secondary market stores platform/server in same field
+    else{en('input[name="plat_'+idx+'"]');en('input[name="pcPlat_'+idx+'"]');en('#crossPlat_'+idx);enWrap($('pcSub_'+idx));}
   }
   else if(label==='cross-platform'){en('#crossPlat_'+idx);enWrap($('pcSub_'+idx));}
   else if(label==='entry fields'){enWrap($('entryContainer_'+idx));}
@@ -1548,19 +1556,24 @@ function unlockSection(idx,label,tc){
     enEl(document.getElementById('giftCardAmt_'+idx));
   }
   // ── Secondary Market ─────────────────────────────────────────────────────────
-  else if(label==='game name'){en('#secGameName_'+idx);}
+  else if(label==='game name'){
+    if(isGPGCProd(selL3[idx])){enEl(document.getElementById('ef1_'+idx));}
+    else{en('#secGameName_'+idx);}
+  }
   else if((label==='product name'||label==='account name'||label==='service name'||label==='currency name'||label==='item name'||label==='skin name')&&isSec){en('#secProdName_'+idx);}
   else if(label==='product info'||label==='additional info'){en('#secProdInfo_'+idx);}
   // Admin sends 'Product Units'; form labels it 'Currency Units' — handle both
   else if(label==='product units'||label==='currency units'){en('#secProdUnits_'+idx);}
   else if(label==='server'){en('#secServer_'+idx);}
-  else if(label==='platform'){en('#secPlatform_'+idx);}
   // Delivery-info sub-fields: must reveal the container before enabling
   else if(label==='character name'){showDelivInfo();en('#secCharName_'+idx);}
   else if(label==='uid'||label==='uid / player id'){showDelivInfo();en('#secUid_'+idx);}
   else if(label==='in-game username'||label==='ingame username'){showDelivInfo();en('#secUname_'+idx);}
-  // ── GPGC (Service Details lives in the Additional Info slot visually) ────────
-  else if(label==='service details'){en('#secProdInfo_'+idx);}
+  // ── GPGC (Game Name = ef1, Service Details = ef2) ────────────────────────────
+  else if(label==='service details'){
+    if(isGPGCProd(selL3[idx])){enEl(document.getElementById('ef2_'+idx));}
+    else{en('#secProdInfo_'+idx);}
+  }
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
