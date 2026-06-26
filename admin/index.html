@@ -944,12 +944,13 @@ function pad(n){ return String(n).padStart(2,'0'); }
 function loadSavedCreds(){
   try{
     var s=localStorage.getItem(SAVED_KEY);
-    if(s){ var c=JSON.parse(s); $('loginEmail').value=c.email||''; $('loginPassword').value=c.password||''; $('rememberMe').checked=true; }
+    // Store email only — never store the password
+    if(s){ var c=JSON.parse(s); $('loginEmail').value=c.email||''; $('rememberMe').checked=true; }
   }catch(e){}
 }
-function saveCredsIfNeeded(email,pw){
+function saveCredsIfNeeded(email){
   try{
-    if($('rememberMe').checked){ localStorage.setItem(SAVED_KEY,JSON.stringify({email:email,password:pw})); }
+    if($('rememberMe').checked){ localStorage.setItem(SAVED_KEY,JSON.stringify({email:email})); }
     else{ localStorage.removeItem(SAVED_KEY); }
   }catch(e){}
 }
@@ -965,8 +966,9 @@ function doLogin(){
   if(!candidate){ $('loginErr').style.display='block'; $('loginPassword').classList.add('error'); return; }
   sha256(pw).then(function(hashed){
     if(hashed!==candidate.hash){ $('loginErr').style.display='block'; $('loginPassword').classList.add('error'); return; }
-    saveCredsIfNeeded($('loginEmail').value.trim(),pw);
-    try{ localStorage.setItem(SESSION_KEY,JSON.stringify({email:candidate.email,name:candidate.name})); }catch(e){}
+    saveCredsIfNeeded($('loginEmail').value.trim());
+    // Session expires in 12 hours
+    try{ localStorage.setItem(SESSION_KEY,JSON.stringify({email:candidate.email,name:candidate.name,expires:Date.now()+43200000})); }catch(e){}
     activatePanel(candidate);
     loadRequests();
   });
@@ -993,6 +995,8 @@ function restoreSession(){
     var s=localStorage.getItem(SESSION_KEY);
     if(!s) return false;
     var sess=JSON.parse(s);
+    // Check session expiry (12-hour window)
+    if(sess.expires&&Date.now()>sess.expires){ localStorage.removeItem(SESSION_KEY); return false; }
     var match=ADMIN_CREDENTIALS.find(function(c){ return c.email===sess.email; });
     if(!match) return false;
     activatePanel(match);
@@ -1432,6 +1436,13 @@ function saveDenoms(denomId, sid){
     })
     .catch(function(){ showToast('Network error. Please try again.','error'); if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent='💾 Save'; } });
 }
+// Returns the best display title for a request regardless of team
+function getRequestTitle(r){
+  var team=getTeamInfo(r);
+  if(team==='Secondary Market'||team==='Rent Time Services (GPGC)') return r.gameName||r.brand||'(no title)';
+  return r.brand||'(no title)';
+}
+
 // Returns the market team for a request — uses the stored marketTeam field if
 // available (from Apps Script), otherwise derives it from product type.
 // NOTE: Layer 1 is NOT used because the form sends multi-select values like
@@ -1622,10 +1633,10 @@ denomArray.forEach(function(d){
     notesHtml='<div class="reviewer-notes-row"><div class="reviewer-notes-label">Notes</div>'+esc(r.reviewerNotes)+'</div>';
   }
 
-  // Resubmission history badge
+  // Resubmission history badge — triggered by 'Resubmitted' status (r.version never populated)
   var historyHtml='';
-  if(r.version&&r.version>1){
-    historyHtml='<div class="history-badge">🔄 Resubmission — version '+esc(r.version)+' (original: '+esc(r.submissionId)+')</div>';
+  if(r.status==='Resubmitted'){
+    historyHtml='<div class="history-badge">♻️ Seller resubmitted — awaiting your review</div>';
   }
 
   // Region (plain text)
@@ -1806,7 +1817,7 @@ function confirmApprove(){
       if(data.status==='success'){
         r.status='Approved'; r.reviewedBy=loggedInName; r.reviewedAt=new Date().toLocaleDateString();
         updateStats(); renderList();
-        showToast('✅ Approved — '+r.brand+'. Seller notified at '+r.sellerEmail,'success');
+        showToast('✅ Approved — '+getRequestTitle(r)+'. Seller notified at '+r.sellerEmail,'success');
       } else { showToast('Error: '+(data.message||'Could not approve.'),'error'); }
     })
     .catch(function(){showToast('Network error. Please try again.','error');})
@@ -1819,7 +1830,7 @@ function confirmApprove(){
 function openRejectModal(id){
   var r=allRequests.find(function(x){return x.submissionId===id;}); if(!r) return;
   currentRejectId=id;
-  $('rejectModalSub').textContent='Rejecting: '+r.brand+' ('+id+') — seller notified at '+r.sellerEmail;
+  $('rejectModalSub').textContent='Rejecting: '+getRequestTitle(r)+' ('+id+') — seller notified at '+r.sellerEmail;
   $('emailPreviewTo').textContent='To: '+r.sellerEmail;
   $('rejectReasonInput').value='';
   $('rejectReasonInput').classList.remove('error'); $('rejectReasonErr').style.display='none';
@@ -1830,7 +1841,7 @@ function updateEmailPreview(){
   var r=allRequests.find(function(x){return x.submissionId===currentRejectId;}); if(!r) return;
   var reason=$('rejectReasonInput').value.trim()||'[Your reason here]';
   $('emailPreviewBody').innerHTML='Hi <strong>'+esc(r.sellerUsername)+'</strong>,<br><br>'
-    +'Thank you for submitting your product listing request for <strong>'+esc(r.brand)+'</strong>.<br><br>'
+    +'Thank you for submitting your product listing request for <strong>'+esc(getRequestTitle(r))+'</strong>.<br><br>'
     +'After review, we are unable to approve this request for the following reason:<br><br>'
     +'<span style="background:#fff0f0;padding:6px 10px;border-radius:4px;border-left:3px solid #e3001b;display:block;margin:4px 0;white-space:pre-wrap;">'+esc(reason)+'</span><br>'
     +'If you believe this is an error or have further queries, please contact the G2G BD team.<br><br>'
@@ -1847,7 +1858,7 @@ function confirmReject(){
       if(data.status==='success'){
         r.status='Rejected'; r.reviewerNotes=reason; r.reviewedBy=loggedInName; r.reviewedAt=new Date().toLocaleDateString();
         updateStats(); renderList();
-        showToast('❌ Rejected — '+r.brand+'. Seller notified.','error');
+        showToast('❌ Rejected — '+getRequestTitle(r)+'. Seller notified.','error');
       } else { showToast('Error: '+(data.message||'Could not reject.'),'error'); }
     })
     .catch(function(){showToast('Network error. Please try again.','error');})
@@ -1913,8 +1924,13 @@ function updateNeedInfoPreview(){
     flagHtml='The following fields need your attention:<br>'
       +'<span style="background:#fefce8;padding:6px 10px;border-radius:4px;border-left:3px solid #d97706;display:block;margin:4px 0;">'+flagged.map(function(f){return '• '+f;}).join('<br>')+'</span><br>';
   }
-  // Build resubmit link with flagged fields encoded
-  var resubmitLink=SELLER_FORM_URL+'?resubmit='+encodeURIComponent(r.submissionId)+'&flagged='+encodeURIComponent(flagged.join('|'));
+  // Build resubmit link — extract token from editUrl so preview matches what seller actually receives
+  var tokenMatch=r.editUrl?r.editUrl.match(/[?&]token=([^&]+)/):null;
+  var editToken=tokenMatch?decodeURIComponent(tokenMatch[1]):'';
+  var resubmitLink=SELLER_FORM_URL
+    +'?resubmit='+encodeURIComponent(r.submissionId)
+    +(editToken?'&token='+encodeURIComponent(editToken):'')
+    +'&flagged='+encodeURIComponent(flagged.join('|'));
   var niName=getTeamInfo(r)==='Main Market'?(r.brand||'your product'):(r.gameName||r.brand||'your product');
   $('needInfoPreviewBody').innerHTML='Hi <strong>'+esc(r.sellerUsername)+'</strong>,<br><br>'
     +'Thank you for submitting your product listing request for <strong>'+esc(niName)+'</strong>.<br><br>'
@@ -1943,11 +1959,18 @@ function confirmNeedInfo(){
         r.status='Need Info'; r.reviewerNotes=q; r.flaggedFields=flagged.join('|');
         r.reviewedBy=loggedInName; r.reviewedAt=new Date().toLocaleDateString();
         updateStats(); renderList();
-        showToast('🔍 Info requested — '+r.brand+'. Seller notified.','info');
-      } else { showToast('Error: '+(data.message||'Could not send.'),'error'); }
+        showToast('🔍 Info requested — '+getRequestTitle(r)+'. Seller notified.','info');
+        closeNeedInfoModal();
+        $('sendNeedInfoBtn').disabled=false; $('sendNeedInfoBtn').textContent='Send & Request Info';
+      } else {
+        showToast('Error: '+(data.message||'Could not send.'),'error');
+        $('sendNeedInfoBtn').disabled=false; $('sendNeedInfoBtn').textContent='Send & Request Info';
+      }
     })
-    .catch(function(){showToast('Network error. Please try again.','error');})
-    .finally(function(){closeNeedInfoModal(); $('sendNeedInfoBtn').disabled=false; $('sendNeedInfoBtn').textContent='Send & Request Info';});
+    .catch(function(){
+      showToast('Network error. Please try again.','error');
+      $('sendNeedInfoBtn').disabled=false; $('sendNeedInfoBtn').textContent='Send & Request Info';
+    });
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1955,18 +1978,31 @@ function confirmNeedInfo(){
 // ══════════════════════════════════════════════════════════════════════════════
 function confirmUnapprove(id){
   var r=allRequests.find(function(x){return x.submissionId===id;}); if(!r) return;
-  if(!confirm('Revert "'+r.brand+'" back to Pending?')) return;
+  var title=getRequestTitle(r);
+  if(!confirm('Revert "'+title+'" back to Pending?')) return;
+  // Save current state for rollback
+  var prevStatus=r.status,prevBy=r.reviewedBy,prevAt=r.reviewedAt,prevNotes=r.reviewerNotes;
   // Optimistic update immediately so UI feels instant
   r.status='Pending'; r.reviewedBy=''; r.reviewedAt=''; r.reviewerNotes='';
   updateStats(); renderList();
-  showToast('↩ '+r.brand+' reverted to Pending.','info');
+  showToast('↩ '+title+' reverted to Pending.','info');
   // Sync to backend (action=reopen)
   fetch(SCRIPT_URL+'?action=reopen&id='+encodeURIComponent(id)+'&reviewer='+encodeURIComponent(loggedInName),{method:'GET',redirect:'follow'})
     .then(function(res){return res.json();})
     .then(function(data){
-      if(data.status!=='success') showToast('⚠ Revert saved locally but server sync failed: '+(data.message||''),'warn');
+      if(data.status!=='success'){
+        // Rollback optimistic update
+        r.status=prevStatus; r.reviewedBy=prevBy; r.reviewedAt=prevAt; r.reviewerNotes=prevNotes;
+        updateStats(); renderList();
+        showToast('⚠ Revert failed — server error: '+(data.message||'Please try again.'),'warn');
+      }
     })
-    .catch(function(){ /* already updated locally, silently ignore network errors */ });
+    .catch(function(){
+      // Rollback on network error
+      r.status=prevStatus; r.reviewedBy=prevBy; r.reviewedAt=prevAt; r.reviewerNotes=prevNotes;
+      updateStats(); renderList();
+      showToast('⚠ Network error — revert not saved. Please try again.','warn');
+    });
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -2008,7 +2044,15 @@ function clearDateRange(){
 }
 function matchesDateFilter(r){
   var from=$('dateFrom').value,to=$('dateTo').value; if(!from&&!to) return true;
-  var ts=r.timestamp?r.timestamp.substring(0,10):''; if(!ts) return true;
+  var ts='';
+  try{
+    var raw=r.timestamp||'';
+    // Normalize any date format (ISO, locale, slash-separated) to YYYY-MM-DD
+    var d=new Date(raw);
+    if(!isNaN(d.getTime())) ts=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+    else ts=raw.substring(0,10);
+  }catch(e){}
+  if(!ts) return true;
   if(from&&ts<from) return false; if(to&&ts>to) return false; return true;
 }
 
@@ -2081,7 +2125,7 @@ function renderAnalytics(){
   // Aggregate by category
   var cats={};
   filtered.forEach(function(r){
-    var cat=(r.category||'Uncategorised').trim()||'Uncategorised';
+    var cat=(r.marketTeam||r.productType||'Uncategorised').trim()||'Uncategorised';
     if(!cats[cat]) cats[cat]={total:0,approved:0,rejected:0,other:0};
     cats[cat].total++;
     if(r.status==='Approved') cats[cat].approved++;
@@ -2237,9 +2281,19 @@ function navTo(page, el){
 // ══════════════════════════════════════════════════════════════════════════════
 // MODAL OVERLAY CLOSE
 // ══════════════════════════════════════════════════════════════════════════════
-$('rejectModal').addEventListener('click',   function(e){if(e.target===this) closeRejectModal();});
+$('rejectModal').addEventListener('click', function(e){
+  if(e.target===this){
+    if($('rejectReasonInput').value.trim()&&!confirm('Close without saving? Your rejection reason will be lost.')) return;
+    closeRejectModal();
+  }
+});
 $('approveModal').addEventListener('click',  function(e){if(e.target===this) closeApproveModal();});
-$('needInfoModal').addEventListener('click', function(e){if(e.target===this) closeNeedInfoModal();});
+$('needInfoModal').addEventListener('click', function(e){
+  if(e.target===this){
+    if($('needInfoReasonInput').value.trim()&&!confirm('Close without saving? Your notes will be lost.')) return;
+    closeNeedInfoModal();
+  }
+});
 
 // ══════════════════════════════════════════════════════════════════════════════
 // INIT
