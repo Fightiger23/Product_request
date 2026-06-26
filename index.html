@@ -187,6 +187,41 @@
   input:disabled,select:disabled,textarea:disabled{opacity:0.45;cursor:not-allowed;background:var(--bg)!important;}
   /* Field locked state */
   .field-locked-section{opacity:.42;pointer-events:none;user-select:none;}
+  /* ── Resubmit mode: CSS-level lock on entire tabContent ─────────────────────
+     Cascade locks ALL elements — including ones created AFTER applyFieldLocking runs.
+     fl-unlocked class on an element (or its parent) overrides the lock. */
+  #tabContent.form-locked input:not([type=submit]):not(.tab-submit-btn):not(.fl-unlocked),
+  #tabContent.form-locked select:not(.fl-unlocked),
+  #tabContent.form-locked textarea:not(.fl-unlocked){pointer-events:none!important;opacity:.45!important;cursor:not-allowed!important;background:var(--bg)!important;user-select:none!important;}
+  #tabContent.form-locked input[type=file]:not(.fl-unlocked){pointer-events:none!important;}
+  #tabContent.form-locked .btn-add:not(.fl-unlocked),
+  #tabContent.form-locked .btn-remove:not(.fl-unlocked),
+  #tabContent.form-locked .ref-upload-zone:not(.fl-unlocked),
+  #tabContent.form-locked .dropdown-input:not(.fl-unlocked),
+  #tabContent.form-locked .dropdown-container:not(.fl-unlocked),
+  #tabContent.form-locked .dropdown-tags-wrapper:not(.fl-unlocked),
+  #tabContent.form-locked .cross-region-toggle:not(.fl-unlocked),
+  #tabContent.form-locked .ref-url-pill-rm:not(.fl-unlocked){pointer-events:none!important;opacity:.4!important;}
+  #tabContent.form-locked .denom-rows-wrap:not(.fl-unlocked){pointer-events:none!important;opacity:.38!important;}
+  /* Unlock overrides — direct element */
+  #tabContent.form-locked input.fl-unlocked,
+  #tabContent.form-locked select.fl-unlocked,
+  #tabContent.form-locked textarea.fl-unlocked{pointer-events:auto!important;opacity:1!important;cursor:text!important;background:var(--white)!important;user-select:auto!important;}
+  /* Unlock overrides — elements inside an unlocked container */
+  #tabContent.form-locked .fl-unlocked input,
+  #tabContent.form-locked .fl-unlocked select,
+  #tabContent.form-locked .fl-unlocked textarea{pointer-events:auto!important;opacity:1!important;cursor:text!important;background:var(--white)!important;user-select:auto!important;}
+  #tabContent.form-locked .fl-unlocked .btn-add,
+  #tabContent.form-locked .fl-unlocked .btn-remove,
+  #tabContent.form-locked .fl-unlocked .ref-upload-zone,
+  #tabContent.form-locked .fl-unlocked .dropdown-input,
+  #tabContent.form-locked .fl-unlocked .dropdown-container,
+  #tabContent.form-locked .fl-unlocked .dropdown-tags-wrapper,
+  #tabContent.form-locked .fl-unlocked .cross-region-toggle,
+  #tabContent.form-locked .fl-unlocked .ref-url-pill-rm{pointer-events:auto!important;opacity:1!important;}
+  #tabContent.form-locked .fl-unlocked .denom-rows-wrap{pointer-events:auto!important;opacity:1!important;}
+  /* Submit button always active */
+  #tabContent.form-locked .tab-submit-btn{pointer-events:auto!important;opacity:1!important;cursor:pointer!important;}
   @media(max-width:520px){
     .two-col{grid-template-columns:1fr;}
     .denom-row{grid-template-columns:1fr 1fr;grid-template-rows:auto auto;}
@@ -461,6 +496,9 @@ function goToStep3(){
 }
 function buildTabs(){
   renderTabBar();renderTabContent(activeTab);updateTabProgress();
+  // Immediately apply CSS-level lock if in flagged resubmit mode
+  var tc=$('tabContent');
+  if(tc&&resubmitFlagged.length>0)tc.classList.add('form-locked');
   if(resubmitData)setTimeout(function(){prefillTab(activeTab);},250);
 }
 function renderTabBar(){
@@ -483,7 +521,11 @@ function saveTabState(){
   }
   tabStates[activeTab]=tabStates[activeTab]||{};Object.assign(tabStates[activeTab],s);
 }
-function switchTab(idx){saveTabState();activeTab=idx;renderTabBar();renderTabContent(idx);if(resubmitData)setTimeout(function(){prefillTab(idx);},250);}
+function switchTab(idx){
+  saveTabState();activeTab=idx;renderTabBar();renderTabContent(idx);
+  var tc=$('tabContent');if(tc&&resubmitFlagged.length>0)tc.classList.add('form-locked');
+  if(resubmitData)setTimeout(function(){prefillTab(idx);},250);
+}
 
 // ── MAIN MARKET TAB RENDERING ─────────────────────────────────────────────────
 function renderTabContent(idx){
@@ -524,7 +566,7 @@ function renderTabContent(idx){
   h+='<div style="margin-bottom:14px;padding-top:14px;border-top:1px solid var(--border);">'
     +'<label class="field-label">Tiered Region <span class="optional-tag">optional</span></label>'
     +'<div id="tierList_'+idx+'" style="display:flex;flex-direction:column;gap:8px;"></div>'
-    +'<button type="button" class="btn-add" style="margin-top:8px;" onclick="addTier('+idx+')">+ Add Tier</button>'
+    +'<button type="button" id="addTierBtn_'+idx+'" class="btn-add" style="margin-top:8px;" onclick="addTier('+idx+')">+ Add Tier</button>'
     +'</div>';
   if(dm.methods.length>1){
     h+='<div style="margin-bottom:14px;"><label class="field-label">Delivery Method <span class="required">*</span></label>'
@@ -1465,9 +1507,12 @@ function applyFieldLocking(idx){
   if(!resubmitFlagged||!resubmitFlagged.length)return;
   var tc=$('tabContent');if(!tc)return;
   var flaggedLower=resubmitFlagged.map(function(f){return f.trim().toLowerCase();});
-  // Lock everything
-  tc.querySelectorAll('input:not([type=file]),select,textarea').forEach(function(el){el.disabled=true;});
-  tc.querySelectorAll('.dropdown-input,.dropdown-container,.cross-region-toggle,.btn-add,.layer-btn').forEach(function(el){el.style.pointerEvents='none';el.style.opacity='0.4';});
+  // Ensure CSS-level lock is active (cascade covers all current + future elements)
+  tc.classList.add('form-locked');
+  // Reset: clear any previously unlocked fl-unlocked classes before re-evaluating
+  tc.querySelectorAll('.fl-unlocked').forEach(function(el){el.classList.remove('fl-unlocked');});
+  // Also lock at JS level: disable inputs (prevents keyboard nav to locked fields)
+  tc.querySelectorAll('input,select,textarea').forEach(function(el){el.disabled=true;});
   tc.querySelectorAll('.denom-rows-wrap').forEach(function(el){el.classList.add('locked');});
   // Unlock flagged sections
   flaggedLower.forEach(function(label){unlockSection(idx,label,tc);});
@@ -1497,9 +1542,9 @@ function applyFieldLocking(idx){
 
 function unlockSection(idx,label,tc){
   var isSec=selL3[idx]&&isSecondaryProd(selL3[idx]);
-  function en(sel){try{tc.querySelectorAll(sel).forEach(function(el){el.disabled=false;el.style.pointerEvents='';el.style.opacity='';el.style.cursor='';});}catch(e){}}
-  function enEl(el){if(!el)return;el.disabled=false;el.style.pointerEvents='';el.style.opacity='';el.style.cursor='';}
-  function enWrap(el){if(!el)return;el.style.pointerEvents='';el.style.opacity='';el.querySelectorAll('*').forEach(function(c){c.style.pointerEvents='';c.style.opacity='';try{if('disabled'in c)c.disabled=false;}catch(e){}});}
+  function en(sel){try{tc.querySelectorAll(sel).forEach(function(el){el.disabled=false;el.classList.add('fl-unlocked');el.style.pointerEvents='';el.style.opacity='';el.style.cursor='';});}catch(e){}}
+  function enEl(el){if(!el)return;el.disabled=false;el.classList.add('fl-unlocked');el.style.pointerEvents='';el.style.opacity='';el.style.cursor='';}
+  function enWrap(el){if(!el)return;el.classList.add('fl-unlocked');el.style.pointerEvents='';el.style.opacity='';el.querySelectorAll('*').forEach(function(c){c.classList.add('fl-unlocked');c.style.pointerEvents='';c.style.opacity='';try{if('disabled'in c)c.disabled=false;}catch(e){}});}
   // Show the hidden delivery-info section in secondary form (contains UID/CharName/Username)
   function showDelivInfo(){var di=$('secDelivInfo_'+idx);if(di)di.classList.remove('hidden');}
 
@@ -1508,7 +1553,11 @@ function unlockSection(idx,label,tc){
   else if(label==='region'){
     // Secondary market uses a plain text input; main market uses the fancy dropdown
     if(isSec){en('#secRegion_'+idx);}
-    else{enWrap($('regionDropWrap_'+idx));en('#crCheck_'+idx);enEl($('crToggle_'+idx));enWrap($('regionTags_'+idx));}
+    else{
+      enWrap($('regionDropWrap_'+idx));en('#crCheck_'+idx);enEl($('crToggle_'+idx));enWrap($('regionTags_'+idx));
+      // Also re-enable tier region rows (btn-remove + dropdowns inside tierList) and the Add Tier button
+      enWrap($('tierList_'+idx));enEl($('addTierBtn_'+idx));
+    }
   }
   else if(label==='delivery method'){
     en('input[name="delivery_'+idx+'"]');en('input[name="secDeliv_'+idx+'"]');
