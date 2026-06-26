@@ -314,6 +314,7 @@
       <div class="done-icon">🎉</div>
       <div class="done-title" id="doneTitle">All requests submitted!</div>
       <div class="done-sub" id="doneSummaryText"></div>
+      <div id="doneRefBox" class="hidden" style="margin:16px auto 0;max-width:380px;background:#f4f7ff;border:1px solid #c7d6f7;border-radius:8px;padding:12px 16px;font-size:13px;color:#374151;text-align:left;"></div>
       <button class="done-restart" onclick="resetAll()">Submit another request</button>
     </div>
   </div>
@@ -1092,6 +1093,20 @@ function getTeam(prod){
   return 'Main Market';
 }
 
+function showTabError(idx,msg){
+  var errId='tabErr_'+idx;
+  var existing=document.getElementById(errId);
+  if(existing){existing.textContent=msg;existing.style.display='block';}
+  else{
+    var btn=document.querySelector('.tab-submit-btn');
+    if(btn){
+      var div=document.createElement('div');div.id=errId;div.textContent=msg;
+      div.style.cssText='color:#b91c1c;background:#fff0f0;border:1px solid #fca5a5;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px;';
+      btn.parentNode.insertBefore(div,btn);
+    } else { alert(msg); return; }
+  }
+  setTimeout(function(){var e=document.getElementById(errId);if(e)e.style.display='none';},5000);
+}
 function submitTab(idx){
   var prod=selL3[idx];
   var isSec=isSecondaryProd(prod);
@@ -1099,15 +1114,15 @@ function submitTab(idx){
     var gn=($('secGameName_'+idx)||{}).value||'';
     var pn=($('secProdName_'+idx)||{}).value||'';
     var rg=($('secRegion_'+idx)||{}).value||'';
-    if(!gn.trim()){alert('Please enter the Game Name.');return;}
-    if(!pn.trim()){alert('Please enter the product name.');return;}
-    if(!rg.trim()){alert('Please enter the Region.');return;}
-    if(!(tabRefUrls[idx]&&tabRefUrls[idx].length)){$('refHint_'+idx)&&$('refHint_'+idx).classList.remove('hidden');alert('Please add at least one reference URL.');return;}
+    if(!gn.trim()){showTabError(idx,'Please enter the Game Name.');return;}
+    if(!pn.trim()){showTabError(idx,'Please enter the product name.');return;}
+    if(!rg.trim()){showTabError(idx,'Please enter the Region.');return;}
+    if(!(tabRefUrls[idx]&&tabRefUrls[idx].length)){$('refHint_'+idx)&&$('refHint_'+idx).classList.remove('hidden');showTabError(idx,'Please add at least one reference URL.');return;}
   }else{
     var brand=($('tabBrand_'+idx)||{}).value||'';
-    if(!brand.trim()){alert('Please enter a Brand Name.');return;}
-    if(!(tabRegions[idx]&&tabRegions[idx].length)){alert('Please select at least one region.');return;}
-    if(!(tabRefUrls[idx]&&tabRefUrls[idx].length)){$('refHint_'+idx)&&$('refHint_'+idx).classList.remove('hidden');alert('Please add at least one reference URL.');return;}
+    if(!brand.trim()){showTabError(idx,'Please enter a Brand Name.');return;}
+    if(!(tabRegions[idx]&&tabRegions[idx].length)){showTabError(idx,'Please select at least one region.');return;}
+    if(!(tabRefUrls[idx]&&tabRefUrls[idx].length)){$('refHint_'+idx)&&$('refHint_'+idx).classList.remove('hidden');showTabError(idx,'Please add at least one reference URL.');return;}
   }
   var payload=isSec?collectSecondaryTabData(idx):collectTabData(idx);
   var btn=document.querySelector('.tab-submit-btn');if(btn){btn.disabled=true;btn.textContent='Submitting...';}
@@ -1131,9 +1146,27 @@ function goToStep4(){
   $('doneSummaryText').innerHTML=isResub
     ?'Your updated submission has been sent to the BD team. You\'ll be notified at <strong>'+esc($('sellerEmail').value)+'</strong>.'
     :'All <strong>'+selL3.length+'</strong> product request'+(selL3.length>1?'s have':' has')+' been sent to the BD team for review. You\'ll be notified at <strong>'+esc($('sellerEmail').value)+'</strong>.';
+  // E11 — show reference info
+  var refBox=$('doneRefBox');
+  if(isResub){
+    refBox.innerHTML='<strong>Reference ID:</strong> '+esc(resubmitSid)
+      +'<br><span style="color:#6b7280;font-size:12px;">Keep this for your records. The BD team will review your update shortly.</span>';
+    refBox.classList.remove('hidden');
+  } else {
+    // For new submissions, the IDs are generated server-side; show a helpful note instead
+    refBox.innerHTML='<strong>What happens next?</strong>'
+      +'<br>The BD team will review your request and reach out within 3–5 business days.'
+      +'<br><span style="color:#6b7280;font-size:12px;">A confirmation will be sent to your email once processing begins.</span>';
+    refBox.classList.remove('hidden');
+  }
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function resetAll(){
+  // Clear resubmit URL params so a new submission doesn't accidentally overwrite the old one
+  if(resubmitSid){
+    resubmitSid=''; resubmitToken=''; resubmitFlagged=[];
+    try{ window.history.replaceState({},'',window.location.pathname); }catch(e){}
+  }
   selL1=[];selL2=[];selL3=[];activeTab=0;submittedTabs=[];tabStates={};tabRegions={};tabTiers={};tierCounters={};denomCounts={};entryFieldCounts={};tabRefUrls={};tabRefImgs={};resubmitData=null;
   $('step4Wrap').classList.add('hidden');$('step3Wrap').classList.add('hidden');$('step2Wrap').classList.add('hidden');$('step1Wrap').classList.remove('hidden');
   $('l2Card').classList.add('hidden');$('l3Card').classList.add('hidden');$('selSummaryCard').classList.add('hidden');
@@ -1170,8 +1203,19 @@ function initResubmitMode(){
     +'<div style="font-size:13px;color:var(--muted);">Please wait a moment.</div>';
   document.body.appendChild(loader);
 
-  fetch(SCRIPT_URL+'?action=getSubmission&id='+encodeURIComponent(resubmitSid)+'&token='+encodeURIComponent(resubmitToken))
-    .then(function(r){return r.json();})
+  var controller=typeof AbortController!=='undefined'?new AbortController():null;
+  var timeoutId=controller?setTimeout(function(){controller.abort();},15000):null;
+  function showFetchError(msg){
+    loader.innerHTML='<div style="text-align:center;max-width:360px;padding:20px;">'
+      +'<div style="font-size:40px;margin-bottom:16px;">⚠️</div>'
+      +'<div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;">'+esc(msg)+'</div>'
+      +'<div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Please try again or check that your link is correct.</div>'
+      +'<button onclick="location.reload()" style="padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:\'Inter\',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Retry</button></div>';
+  }
+  fetch(SCRIPT_URL+'?action=getSubmission&id='+encodeURIComponent(resubmitSid)+'&token='+encodeURIComponent(resubmitToken),
+    controller?{signal:controller.signal}:{}
+  )
+    .then(function(r){if(timeoutId)clearTimeout(timeoutId);return r.json();})
     .then(function(res){
       if(res.status!=='success'){
         loader.innerHTML='<div style="text-align:center;max-width:360px;padding:20px;">'
@@ -1184,12 +1228,10 @@ function initResubmitMode(){
       loader.remove();
       autoNavigateToResubmit();
     })
-    .catch(function(){
-      loader.innerHTML='<div style="text-align:center;max-width:360px;padding:20px;">'
-        +'<div style="font-size:40px;margin-bottom:16px;">⚠️</div>'
-        +'<div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;">Connection error</div>'
-        +'<div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Could not reach the server. Please try again.</div>'
-        +'<button onclick="location.reload()" style="padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:\'Inter\',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Retry</button></div>';
+    .catch(function(err){
+      if(timeoutId)clearTimeout(timeoutId);
+      var msg=(err&&err.name==='AbortError')?'Request timed out — server took too long to respond':'Connection error — could not reach the server';
+      showFetchError(msg);
     });
 }
 
@@ -1291,13 +1333,14 @@ function prefillDeliverySubFields(idx,d){
         addDenom(idx);var n=denomCounts[idx];
         setTimeout((function(nn,dn){return function(){
           var ptEl=document.getElementById('dPT_'+idx+'_'+nn);
-          if(ptEl&&dn.productType){ptEl.value=dn.productType;ptEl.dispatchEvent(new Event('change'));
+          if(!ptEl){console.warn('Denom prefill: element dPT_'+idx+'_'+nn+' not ready');return;}
+          if(dn.productType){ptEl.value=dn.productType;ptEl.dispatchEvent(new Event('change'));
             setTimeout(function(){
               var dsEl=document.getElementById('dDS_'+idx+'_'+nn);if(dsEl)dsEl.value=dn.dataset||'';
               var amtEl=document.getElementById('dAmt_'+idx+'_'+nn);if(amtEl)amtEl.value=dn.amount||'';
-            },60);
+            },150);
           }
-        };})(n,denom),30);
+        };})(n,denom),150);
       });
     }
   }
@@ -1334,6 +1377,12 @@ function applyFieldLocking(idx){
   flaggedLower.forEach(function(label){unlockSection(idx,label,tc);});
   // Always keep submit button enabled
   var sb=tc.querySelector('.tab-submit-btn');if(sb){sb.disabled=false;sb.style.pointerEvents='';sb.style.opacity='';}
+  // Re-apply locking when delivery method changes (new sub-fields are rendered)
+  tc.querySelectorAll('input[name="delivery_'+idx+'"],input[name="secDeliv_'+idx+'"]').forEach(function(r){
+    r.removeEventListener('change',r._lockHandler);
+    r._lockHandler=function(){setTimeout(function(){applyFieldLocking(idx);},180);};
+    r.addEventListener('change',r._lockHandler);
+  });
 }
 
 function unlockSection(idx,label,tc){
@@ -1341,8 +1390,8 @@ function unlockSection(idx,label,tc){
   function enEl(el){if(!el)return;el.disabled=false;el.style.pointerEvents='';el.style.opacity='';el.style.cursor='';}
   function enWrap(el){if(!el)return;el.style.pointerEvents='';el.style.opacity='';el.querySelectorAll('*').forEach(function(c){c.style.pointerEvents='';c.style.opacity='';try{if('disabled'in c)c.disabled=false;}catch(e){}});}
 
-  if(label==='brand name'){en('#tabBrand_'+idx);}
-  else if(label==='product variation'){en('#tabVariation_'+idx);}
+  if(label==='brand / game name'||label==='brand name'){en('#tabBrand_'+idx);}
+  else if(label==='series / variation'||label==='product variation'){en('#tabVariation_'+idx);}
   else if(label==='region'){enWrap($('regionDropWrap_'+idx));en('#crCheck_'+idx);enEl($('crToggle_'+idx));enWrap($('regionTags_'+idx));}
   else if(label==='delivery method'){
     en('input[name="delivery_'+idx+'"]');en('input[name="secDeliv_'+idx+'"]');
